@@ -1,7 +1,13 @@
+
 package matt.collect.weak
 
 import matt.lang.err
 import java.lang.ref.WeakReference
+import java.util.WeakHashMap
+
+/*SERIOUS EQUALITY ISSUES HAVE LEAD ME TO USING HASH CODES INSTEAD OF THE OBJECTS THEMSELVES*/
+/*... IT WORKED*/
+actual class WeakMap<K, V>(): MutableMap<K, V> by WeakHashMap<K,V>()
 
 class WeakSet<T>: MutableSet<T> {
 
