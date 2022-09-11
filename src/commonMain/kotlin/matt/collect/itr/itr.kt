@@ -250,3 +250,29 @@ open class MutableListIteratorWrapper<E>(
   override fun add(element: E) = changeWrapper(Add) { itr.add(element) }
   override fun set(element: E) = changeWrapper(Replace) { itr.set(element) }
 }
+
+
+open class MutableIteratorWithSomeMemory<E>(list: MutableCollection<E>): MutableIteratorWrapper<E>(list) {
+  var hadFirstReturn = false
+  var lastReturned: E? = null
+  override val itrWrapper: (()->E)->E = {
+	val r = it()
+	hadFirstReturn = true
+	lastReturned = r
+	r
+  }
+}
+
+open class MutableListIteratorWithSomeMemory<E>(list: MutableList<E>, index: Int? = null):
+  MutableListIteratorWrapper<E>(
+	list, index = index
+  ) {
+  var hadFirstReturn = false
+  var lastReturned: E? = null
+  override val itrWrapper: (()->E)->E = {
+	val r = it()
+	hadFirstReturn = true
+	lastReturned = r
+	r
+  }
+}

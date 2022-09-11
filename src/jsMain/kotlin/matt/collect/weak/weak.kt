@@ -4,7 +4,7 @@ import kotlin.collections.MutableMap.MutableEntry
 
 actual class WeakMap<K, V>: MutableMap<K, V> {
 
-  private val map = js("matt.collect.weak.WeakMap();")
+  private val map = js("WeakMap();")
 
 
   override val entries: MutableSet<MutableEntry<K, V>>
