@@ -4,6 +4,11 @@ import matt.collect.itr.ItrChange.Add
 import matt.collect.itr.ItrChange.Remove
 import matt.collect.itr.ItrChange.Replace
 import matt.lang.err
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.InvocationKind.AT_LEAST_ONCE
+import kotlin.contracts.InvocationKind.UNKNOWN
+import kotlin.contracts.contract
 
 fun <E> List<E>.loopIterator() = LoopIterator(this)
 fun <E> MutableList<E>.loopIterator() = MutableLoopIterator(this)
