@@ -4,10 +4,6 @@ import matt.collect.itr.ItrChange.Add
 import matt.collect.itr.ItrChange.Remove
 import matt.collect.itr.ItrChange.Replace
 import matt.lang.err
-import kotlin.contracts.ExperimentalContracts
-import kotlin.contracts.InvocationKind.AT_LEAST_ONCE
-import kotlin.contracts.InvocationKind.UNKNOWN
-import kotlin.contracts.contract
 
 fun <E> List<E>.loopIterator() = LoopIterator(this)
 fun <E> MutableList<E>.loopIterator() = MutableLoopIterator(this)
@@ -464,7 +460,7 @@ fun <T: Any> T.searchDepth(
   getNext: T.()->T?
 ): Int {
   contract {
-	callsInPlace(getNext, AT_LEAST_ONCE)
+	callsInPlace(getNext, InvocationKind.AT_LEAST_ONCE)
   }
   var i = -1
   var next: T? = this
@@ -567,4 +563,8 @@ fun <T> ListIterator<T>.firstBackwards(op: (T)->Boolean): T {
 }
 
 
-fun <T> Iterator<T>.nextOrNull() = takeIf { hasNext() }?.next(
+inline fun <T> Iterable<T>.forEachNested(action: (T, T)->Unit): Unit {
+  for (element1 in this) for (element2 in this) action(element1, element2)
+}
+
+fun <T> Iterator<T>.nextOrNull() = takeIf { hasNext() }?.next()
