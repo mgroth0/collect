@@ -1,5 +1,7 @@
 package matt.collect
 
+import matt.lang.NOT_IMPLEMENTED
+
 
 infix fun <K, V> Map<K, V>.isEquivalentTo(other: Map<K, V>?): Boolean {
   if (other == null) return false
@@ -9,4 +11,10 @@ infix fun <K, V> Map<K, V>.isEquivalentTo(other: Map<K, V>?): Boolean {
 	if (v != other[k]) return false
   }
   return true
+}
+
+
+fun <E> Collection<E>.snapshotToPreventConcurrentModification() = when (this) {
+  is List -> toList()
+  else    -> NOT_IMPLEMENTED
 }
