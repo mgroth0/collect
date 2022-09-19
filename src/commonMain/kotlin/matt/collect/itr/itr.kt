@@ -227,6 +227,7 @@ open class MutableIteratorWrapper<E>(
   open val itrWrapper: (()->E)->E = { it() },
   val changeWrapper: (ItrChange, ()->Unit)->Unit = { _, it -> it() }
 ): MutableIterator<E> {
+
   protected open val itr = list.iterator()
 
   override fun hasNext() = itr.hasNext()
@@ -245,14 +246,27 @@ open class MutableListIteratorWrapper<E>(
   itrWrapper: (()->E)->E = { it() },
   changeWrapper: (ItrChange, ()->Unit)->Unit = { _, it -> it() }
 ): MutableIteratorWrapper<E>(list, itrWrapper = itrWrapper, changeWrapper = changeWrapper), MutableListIterator<E> {
-  override val itr = if (index != null) list.listIterator(index) else list.listIterator()
+  final override val itr = if (index != null) list.listIterator(index) else list.listIterator()
 
-  override fun hasPrevious() = itr.hasPrevious()
-  override fun nextIndex() = itr.nextIndex()
-  override fun previous() = itrWrapper { itr.previous() }
-  override fun previousIndex() = itr.previousIndex()
 
-  override fun add(element: E) = changeWrapper(Add) { itr.add(element) }
+
+
+  final override fun hasPrevious() = itr.hasPrevious()
+  final override fun nextIndex() = itr.nextIndex()
+  final override fun next() = itrWrapper {
+	itr.next()
+  }
+
+  final override fun previous() = itrWrapper {
+	itr.previous()
+  }
+
+  final override fun previousIndex() = itr.previousIndex()
+
+  override fun add(element: E) = changeWrapper(Add) {
+	itr.add(element)
+  }
+
   override fun set(element: E) = changeWrapper(Replace) { itr.set(element) }
 }
 
@@ -272,9 +286,9 @@ open class MutableListIteratorWithSomeMemory<E>(list: MutableList<E>, index: Int
   MutableListIteratorWrapper<E>(
 	list, index = index
   ) {
-  var hadFirstReturn = false
+  private var hadFirstReturn = false
   var lastReturned: E? = null
-  override val itrWrapper: (()->E)->E = {
+  final override val itrWrapper: (()->E)->E = {
 	val r = it()
 	hadFirstReturn = true
 	lastReturned = r
