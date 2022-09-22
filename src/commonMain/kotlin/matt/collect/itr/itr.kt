@@ -3,6 +3,8 @@ package matt.collect.itr
 import matt.collect.itr.ItrChange.Add
 import matt.collect.itr.ItrChange.Remove
 import matt.collect.itr.ItrChange.Replace
+import matt.collect.itr.ItrDir.NEXT
+import matt.collect.itr.ItrDir.PREVIOUS
 import matt.lang.err
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
@@ -222,16 +224,20 @@ class MutableLoopListIterator<E>(override val list: MutableList<E>): MutableList
   }
 }
 
+enum class ItrDir {
+  NEXT, PREVIOUS
+}
+
 open class MutableIteratorWrapper<E>(
   list: MutableCollection<E>,
-  open val itrWrapper: (()->E)->E = { it() },
+  open val itrWrapper: (ItrDir, ()->E)->E = { _, it -> it() },
   val changeWrapper: (ItrChange, ()->Unit)->Unit = { _, it -> it() }
 ): MutableIterator<E> {
 
   protected open val itr = list.iterator()
 
   override fun hasNext() = itr.hasNext()
-  override fun next() = itrWrapper { itr.next() }
+  override fun next() = itrWrapper(NEXT) { itr.next() }
 
   override fun remove(): Unit = changeWrapper(Remove) { itr.remove() }
 }
@@ -243,21 +249,19 @@ enum class ItrChange {
 open class MutableListIteratorWrapper<E>(
   list: MutableList<E>,
   index: Int? = null,
-  itrWrapper: (()->E)->E = { it() },
+  itrWrapper: (ItrDir, ()->E)->E = { _, it -> it() },
   changeWrapper: (ItrChange, ()->Unit)->Unit = { _, it -> it() }
 ): MutableIteratorWrapper<E>(list, itrWrapper = itrWrapper, changeWrapper = changeWrapper), MutableListIterator<E> {
   final override val itr = if (index != null) list.listIterator(index) else list.listIterator()
 
 
-
-
   final override fun hasPrevious() = itr.hasPrevious()
   final override fun nextIndex() = itr.nextIndex()
-  final override fun next() = itrWrapper {
+  final override fun next() = itrWrapper(NEXT) {
 	itr.next()
   }
 
-  final override fun previous() = itrWrapper {
+  final override fun previous() = itrWrapper(PREVIOUS) {
 	itr.previous()
   }
 
@@ -274,7 +278,7 @@ open class MutableListIteratorWrapper<E>(
 open class MutableIteratorWithSomeMemory<E>(list: MutableCollection<E>): MutableIteratorWrapper<E>(list) {
   var hadFirstReturn = false
   var lastReturned: E? = null
-  override val itrWrapper: (()->E)->E = {
+  override val itrWrapper: (ItrDir, ()->E)->E = { _, it ->
 	val r = it()
 	hadFirstReturn = true
 	lastReturned = r
@@ -288,10 +292,15 @@ open class MutableListIteratorWithSomeMemory<E>(list: MutableList<E>, index: Int
   ) {
   private var hadFirstReturn = false
   var lastReturned: E? = null
-  final override val itrWrapper: (()->E)->E = {
+  protected var currentIndex = index ?: 0
+  final override val itrWrapper: (ItrDir, ()->E)->E = { dir, it ->
 	val r = it()
 	hadFirstReturn = true
 	lastReturned = r
+	when (dir) {
+	  NEXT     -> currentIndex += 1
+	  PREVIOUS -> currentIndex -= 1
+	}
 	r
   }
 }
