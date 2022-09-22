@@ -7,7 +7,7 @@ import java.util.WeakHashMap
 
 /*SERIOUS EQUALITY ISSUES HAVE LEAD ME TO USING HASH CODES INSTEAD OF THE OBJECTS THEMSELVES*/
 /*... IT WORKED*/
-actual class WeakMap<K, V>: MutableMap<K, V> by WeakHashMap<K,V>()
+actual class WeakMap<K, V>: MutableMap<K, V> by WeakHashMap()
 
 class WeakSet<T>: MutableSet<T> {
 
