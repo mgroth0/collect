@@ -386,9 +386,6 @@ inline fun <T> Array<out T>.applyEach(action: T.()->Unit) {
 //  for (element in this) action.invoke(element)
 //}
 
-inline fun <T> Sequence<T>.applyEach(action: T.()->Unit) {
-  for (element in this) action.invoke(element)
-}
 
 /*does not duplicate a pairing, even considering other orders. ie if A,B has been found, B,A will not be found*/
 inline fun <T> Sequence<T>.forEachPairing(action: Pair<T, T>.()->Unit) {
@@ -457,10 +454,14 @@ fun <E> List<E>.subList(from: Int) = subList(from, size)
 fun <E> List<E?>.filterNotNull(): List<E> = mapNotNull { it }
 fun <E> Sequence<E?>.filterNotNull(): Sequence<E> = mapNotNull { it }
 
+inline fun <T> Sequence<T>.applyEach(action: T.()->Unit) {
+  for (element in this) action.invoke(element)
+}
 
 fun <T> Iterable<T>.applyEach(op: T.()->Unit) = forEach { it.apply(op) }
 
 fun <T> Sequence<T>.onEachApply(op: T.()->Unit) = onEach { it.apply(op) }
+fun <T> Iterable<T>.onEachApply(op: T.()->Unit) = onEach { it.apply(op) }
 
 
 @ExperimentalContracts
