@@ -597,3 +597,4 @@ inline fun <T> Iterable<T>.forEachNested(action: (T, T)->Unit): Unit {
 }
 
 fun <T> Iterator<T>.nextOrNull() = takeIf { hasNext() }?.next()
+
