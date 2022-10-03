@@ -5,6 +5,7 @@ import matt.collect.itr.ItrChange.Remove
 import matt.collect.itr.ItrChange.Replace
 import matt.collect.itr.ItrDir.NEXT
 import matt.collect.itr.ItrDir.PREVIOUS
+import matt.lang.ILLEGAL
 import matt.lang.err
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
@@ -20,21 +21,24 @@ fun <E> MutableList<E>.loopListIterator() = MutableLoopListIterator(this)
 
 fun <E> Iterator<E>.toFakeMutableIterator() = FakeMutableIterator(this)
 
-class FakeMutableIterator<E>(val itr: Iterator<E>): MutableIterator<E> {
-  override fun hasNext(): Boolean {
-	return itr.hasNext()
-  }
-
-  override fun next(): E {
-	return itr.next()
-  }
-
+open class FakeMutableIterator<E>(val itr: Iterator<E>): Iterator<E> by itr, MutableIterator<E> {
   override fun remove() {
 	err("tried remove in ${FakeMutableIterator::class.simpleName}")
   }
 
 }
 
+class FakeMutableListIterator<E>(itr: ListIterator<E>): ListIterator<E> by itr,
+														MutableListIterator<E> {
+  override fun add(element: E) = ILLEGAL
+
+  override fun previous() = ILLEGAL
+  override fun remove() = ILLEGAL
+
+  override fun set(element: E) = ILLEGAL
+
+
+}
 
 interface LoopIteratorFun<E>: Iterator<E> {
   val list: List<E>
