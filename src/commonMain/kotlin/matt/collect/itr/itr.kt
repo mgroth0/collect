@@ -595,7 +595,7 @@ fun <T> ListIterator<T>.firstBackwards(op: (T)->Boolean): T {
   throw NoSuchElementException("couldn't find one")
 }
 
-
+object YesIUseCollect
 inline fun <T> Iterable<T>.forEachNested(action: (T, T)->Unit): Unit {
   for (element1 in this) for (element2 in this) action(element1, element2)
 }
