@@ -7,6 +7,7 @@ import matt.collect.itr.ItrDir.NEXT
 import matt.collect.itr.ItrDir.PREVIOUS
 import matt.lang.ILLEGAL
 import matt.lang.err
+import matt.model.yes.YesIUse
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.InvocationKind.AT_LEAST_ONCE
@@ -595,7 +596,7 @@ fun <T> ListIterator<T>.firstBackwards(op: (T)->Boolean): T {
   throw NoSuchElementException("couldn't find one")
 }
 
-object YesIUseCollect
+object YesIUseCollect: YesIUse
 inline fun <T> Iterable<T>.forEachNested(action: (T, T)->Unit): Unit {
   for (element1 in this) for (element2 in this) action(element1, element2)
 }
