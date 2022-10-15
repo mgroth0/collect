@@ -296,15 +296,23 @@ open class MutableListIteratorWithSomeMemory<E>(list: MutableList<E>, index: Int
   ) {
   private var hadFirstReturn = false
   var lastReturned: E? = null
+	private set
   protected var currentIndex = index ?: 0
+	private set
+  protected var lastItrDir: ItrDir? = null
+  	private set
   final override val itrWrapper: (ItrDir, ()->E)->E = { dir, it ->
 	val r = it()
 	hadFirstReturn = true
 	lastReturned = r
 	when (dir) {
-	  NEXT     -> currentIndex += 1
+	  NEXT     -> {
+		currentIndex += 1
+	  }
+
 	  PREVIOUS -> currentIndex -= 1
 	}
+	lastItrDir = dir
 	r
   }
 }
@@ -596,6 +604,7 @@ fun <T> ListIterator<T>.firstBackwards(op: (T)->Boolean): T {
 }
 
 object YesIUseCollect
+
 inline fun <T> Iterable<T>.forEachNested(action: (T, T)->Unit): Unit {
   for (element1 in this) for (element2 in this) action(element1, element2)
 }
