@@ -300,7 +300,7 @@ open class MutableListIteratorWithSomeMemory<E>(list: MutableList<E>, index: Int
   protected var currentIndex = index ?: 0
 	private set
   protected var lastItrDir: ItrDir? = null
-  	private set
+	private set
   final override val itrWrapper: (ItrDir, ()->E)->E = { dir, it ->
 	val r = it()
 	hadFirstReturn = true
@@ -352,7 +352,6 @@ fun <T> Iterable<T>.filterIn(vararg matches: T): List<T> {
   return filterTo(ArrayList()) { it in matches }
 }
 
-@OptIn(ExperimentalContracts::class)
 inline fun <E, I: Iterator<E>> I.whileHasNext(op: I.(E)->Unit) {
   contract {
 	callsInPlace(op, UNKNOWN)
