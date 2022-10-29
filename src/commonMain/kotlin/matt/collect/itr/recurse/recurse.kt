@@ -99,7 +99,7 @@ inline fun <T: Any> T.chain(crossinline op: (T)->T?): Sequence<T> {
 //}
 
 fun <T> T.recurse(includeSelf: Boolean = true, rchildren: (T)->Iterable<T>?): Sequence<T> {
-  val mychildren = rchildren(this)?.iterator()
+  val myChildren = rchildren(this)?.iterator()
   var gaveSelf = false
   var currentChild: Iterator<T>? = null
   return object: Iterator<T> {
@@ -107,14 +107,14 @@ fun <T> T.recurse(includeSelf: Boolean = true, rchildren: (T)->Iterable<T>?): Se
 	  if (currentChild != null && currentChild!!.hasNext()) {
 		return true
 	  }
-	  return (mychildren != null && mychildren.hasNext()) || (!gaveSelf && includeSelf)
+	  return (myChildren != null && myChildren.hasNext()) || (!gaveSelf && includeSelf)
 	}
 
 	override fun next(): T {
 	  return if (currentChild != null && currentChild!!.hasNext()) {
 		currentChild!!.next()
-	  } else if (mychildren != null && mychildren.hasNext()) {
-		currentChild = mychildren.next().recurse(rchildren = rchildren).iterator()
+	  } else if (myChildren != null && myChildren.hasNext()) {
+		currentChild = myChildren.next().recurse(rchildren = rchildren).iterator()
 		next()
 	  } else if (!gaveSelf && includeSelf) {
 		gaveSelf = true
