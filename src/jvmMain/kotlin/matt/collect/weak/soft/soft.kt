@@ -1,12 +1,13 @@
 package matt.collect.weak.soft
 
+import matt.collect.dmap.DefaultStoringMap
 import matt.collect.dmap.withStoringDefault
 import java.lang.ref.ReferenceQueue
 import java.lang.ref.SoftReference
 import java.util.AbstractMap
 import kotlin.collections.MutableMap.MutableEntry
 
-fun <K: Any, V: Any> lazySoftMap(op: (K)->V) = SoftHashMap<K, V>().withStoringDefault(op)
+fun <K: Any, V: Any> lazySoftMap(op: (K)->V): DefaultStoringMap<K, V> = SoftHashMap<K, V>().withStoringDefault(op)
 
 class SoftHashMap<K: Any, V: Any>: AbstractMap<K, V>() {
   private val hash: MutableMap<K, SoftReference<V>> = HashMap()

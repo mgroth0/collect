@@ -1,15 +1,19 @@
 @file:JvmName("WeakJvmKt")
+
 package matt.collect.weak
 
 import matt.lang.err
+import matt.lang.weak.WeakRef
 import java.lang.ref.WeakReference
+import java.util.Collections
 import java.util.WeakHashMap
 
 
-/*SERIOUS EQUALITY ISSUES HAVE LEAD ME TO USING HASH CODES INSTEAD OF THE OBJECTS THEMSELVES*/
-/*... IT WORKED*/
+/*SERIOUS EQUALITY ISSUES HAVE LEAD ME TO USING HASH CODES INSTEAD OF THE OBJECTS THEMSELVES*//*... IT WORKED*/
 
-actual class WeakMap<K, V>: MutableMap<K, V> by WeakHashMap()
+actual class WeakMap<K, V>: MutableMap<K, V> by Collections.synchronizedMap(
+  WeakHashMap()
+) /*/*need to do this or threads could deadlock or have any other weird issue (deadlocking HAS happened though) since WeakMap is not thread-safe. This issue has been discussed online, and this is the proper solution (also see WeakHashMap, where they say to do this) */*/
 
 class WeakSet<T>: MutableSet<T> {
 
@@ -168,3 +172,4 @@ class WeakSet<T>: MutableSet<T> {
   }
 
 }
+

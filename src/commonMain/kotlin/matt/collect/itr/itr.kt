@@ -585,7 +585,7 @@ fun <E> Collection<E>.duplicates(): List<Pair<IndexedValue<E>, IndexedValue<E>>>
   else    -> err("how to get duplicates of ${this}?")
 }
 
-inline fun <reified T> arrayOfNotNull(vararg elements: T?) = listOfNotNull(elements).toTypedArray()
+inline fun <reified T> arrayOfNotNull(vararg elements: T?): Array<T> = listOfNotNull(*elements).toTypedArray()
 
 
 fun <T> Iterator<T>.first(op: (T)->Boolean): T {
