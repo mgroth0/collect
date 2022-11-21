@@ -9,3 +9,11 @@ fun <E> sequenceUntil(endExclusive: E, op: ()->E) = sequence {
 	e != endExclusive
   }
 }
+
+fun <E> Sequence<E>.interleave(sep: E) = sequence<E> {
+  val itr = this@interleave.iterator()
+  while (itr.hasNext()) {
+	yield(itr.next())
+	if (itr.hasNext()) yield(sep)
+  }
+}

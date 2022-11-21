@@ -1,3 +1,5 @@
+@file:JvmName("ListJvmKt")
+
 package matt.collect.list
 
 fun <E> MutableList<E>.replaceEvery(a: E, b: E) = replaceAll {
