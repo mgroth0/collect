@@ -10,10 +10,29 @@ fun <E> sequenceUntil(endExclusive: E, op: ()->E) = sequence {
   }
 }
 
-fun <E> Sequence<E>.interleave(sep: E) = sequence<E> {
+fun <E> Sequence<E>.interleave(sep: E) = sequence {
   val itr = this@interleave.iterator()
   while (itr.hasNext()) {
+	println("interleave 1")
 	yield(itr.next())
-	if (itr.hasNext()) yield(sep)
+	println("interleave 2")
+	if (itr.hasNext()) {
+	  println("interleave 3")
+	  yield(sep)
+	  println("interleave 4")
+	}
+	println("interleave 5")
   }
+}
+
+fun <E> Sequence<E>.skip(num: Int) = sequence<E> {
+  require(num >= 0)
+  val itr = this@skip.iterator()
+  var numLeft = num
+  while (numLeft > 0) {
+	if (!itr.hasNext()) return@sequence
+	itr.next()
+	numLeft--
+  }
+  yieldAll(itr)
 }
