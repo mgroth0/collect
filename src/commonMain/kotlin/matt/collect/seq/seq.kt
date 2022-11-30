@@ -13,15 +13,10 @@ fun <E> sequenceUntil(endExclusive: E, op: ()->E) = sequence {
 fun <E> Sequence<E>.interleave(sep: E) = sequence {
   val itr = this@interleave.iterator()
   while (itr.hasNext()) {
-	println("interleave 1")
 	yield(itr.next())
-	println("interleave 2")
 	if (itr.hasNext()) {
-	  println("interleave 3")
 	  yield(sep)
-	  println("interleave 4")
 	}
-	println("interleave 5")
   }
 }
 
