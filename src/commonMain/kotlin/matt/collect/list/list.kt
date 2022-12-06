@@ -10,3 +10,5 @@ fun <E> List<E>.phase(newStartIndex: Int) = (newStartIndex until size).map {
   this[it]
 }
 
+
+fun <E> List<E>.downSampled() = slice(indices step 10)
