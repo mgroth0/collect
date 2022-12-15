@@ -8,6 +8,54 @@ import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.descriptors.listSerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
+import matt.collect.set.ordered.OrderedSet
+import matt.collect.set.ordered.toOrderedSet
+
+
+@OptIn(ExperimentalSerializationApi::class)
+class OrderedContentsSerializer<E>(private val dataSerializer: KSerializer<E>): KSerializer<OrderedContents<E>> {
+  override val descriptor: SerialDescriptor = listSerialDescriptor(dataSerializer.descriptor)
+
+  private val listSer by lazy {
+	ListSerializer(dataSerializer)
+  }
+
+  override fun serialize(encoder: Encoder, value: OrderedContents<E>) {
+	encoder.encodeSerializableValue(listSer, value.toList())
+  }
+
+  override fun deserialize(decoder: Decoder): OrderedContents<E> {
+	return OrderedContents(decoder.decodeSerializableValue(listSer))
+  }
+
+
+}
+
+
+fun <E> orderedContentsOf(vararg e: E) = OrderedContents(*e)
+fun <E> Iterable<E>.toOrderedContents() = OrderedContents(this)
+fun <E> Sequence<E>.toOrderedContents() = OrderedContents(this)
+
+
+@Serializable(with = OrderedContentsSerializer::class)
+class OrderedContents<E>(set: OrderedSet<E>): Set<E> by set {
+
+  constructor(itr: Iterable<E>): this(itr.toOrderedSet())
+  constructor(itr: Sequence<E>): this(itr.toSet())
+  constructor(vararg e: E): this(e.toSet())
+
+  override fun equals(other: Any?): Boolean {
+	return other is OrderedContents<*> && other.size == size && zip(other).all { it.first == it.second }
+  }
+
+  override fun hashCode(): Int {
+	return map { it.hashCode() }.sum()
+  }
+}
+
+
+
+
 
 @OptIn(ExperimentalSerializationApi::class)
 class ContentsSerializer<E>(private val dataSerializer: KSerializer<E>): KSerializer<Contents<E>> {
