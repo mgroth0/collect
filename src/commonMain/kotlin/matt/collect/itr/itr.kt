@@ -568,6 +568,9 @@ inline fun <E, reified R> Array<E>.mapToArray(op: (E)->R) = map { op(it) }.toTyp
 inline fun <E, reified R> Iterable<E>.flatMapToArray(op: (E)->Iterable<R>) = flatMap { op(it) }.toTypedArray()
 inline fun <E, reified R> Array<E>.flatMapToArray(op: (E)->Iterable<R>) = flatMap { op(it) }.toTypedArray()
 
+inline fun <E, reified R> Iterable<E>.flatMapToSet(op: (E)->Iterable<R>) = flatMapTo(mutableSetOf()) { op(it) }
+inline fun <E, reified R> Array<E>.flatMapToSet(op: (E)->Iterable<R>) = flatMapTo(mutableSetOf()) { op(it) }
+
 fun <E> Collection<E>.duplicates(): List<Pair<IndexedValue<E>, IndexedValue<E>>> = when (this) {
   is Set  -> listOf()
   is List -> {

@@ -23,7 +23,7 @@ import java.lang.ref.WeakReference
  * garbage collector wants to nuke. This class is not synchronized.
  */
 class WeakBag<T> {
-  private val set: HashSet<WeakReference<T>> = HashSet<WeakReference<T>>()
+  private val set: HashSet<WeakReference<T>> = HashSet()
   private val refQueue: ReferenceQueue<T> = ReferenceQueue<T>()
 
 

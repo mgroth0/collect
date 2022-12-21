@@ -1,6 +1,7 @@
 package matt.collect
 
 import matt.lang.NOT_IMPLEMENTED
+import matt.lang.function.Convert
 
 
 infix fun <K, V> Map<K, V>.isEquivalentTo(other: Map<K, V>?): Boolean {
@@ -18,3 +19,8 @@ fun <E> Collection<E>.snapshotToPreventConcurrentModification() = when (this) {
   is List -> toList()
   else    -> NOT_IMPLEMENTED
 }
+
+
+fun <E, R> Iterable<E>.mapToSet(transform: Convert<E, R>) = mapTo(mutableSetOf(), transform)
+fun <E, R> Array<E>.mapToSet(transform: Convert<E, R>) = mapTo(mutableSetOf(), transform)
+fun <E, R> Sequence<E>.mapToSet(transform: Convert<E, R>) = mapTo(mutableSetOf(), transform)

@@ -1,5 +1,6 @@
 package matt.collect.seq
 
+import matt.lang.function.Convert
 import matt.lang.whileTrue
 
 fun <E> sequenceUntil(endExclusive: E, op: ()->E) = sequence {
@@ -31,3 +32,19 @@ fun <E> Sequence<E>.skip(num: Int) = sequence<E> {
   }
   yieldAll(itr)
 }
+
+inline fun <E, R> Sequence<E>.skipDuplicatesBy(crossinline transform: Convert<E, R>) = sequence<E> {
+  val itr = this@skipDuplicatesBy.iterator()
+  val yielded = mutableSetOf<R>()
+  var n: E
+  while (itr.hasNext()) {
+	n = itr.next()
+	val transformed = transform(n)
+	if (transformed !in yielded) {
+	  yield(n)
+	  yielded += transformed
+	}
+  }
+}
+
+fun <E> Sequence<E>.skipDuplicates() = skipDuplicatesBy { it }
