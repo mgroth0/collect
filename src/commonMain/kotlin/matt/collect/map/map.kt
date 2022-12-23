@@ -176,3 +176,9 @@ class MutableCaseInsensitiveMap<V>: CaseInsensitiveMap<V>(), MutableMap<String, 
 
 
 
+
+fun Map<*,*>.toDictString() = entries.joinToString(
+  prefix = "{\n",
+  postfix = "\n}",
+  separator = "\n"
+) { "${it.key}: ${it.value}" }
