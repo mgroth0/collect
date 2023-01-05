@@ -321,8 +321,8 @@ open class MutableListIteratorWithSomeMemory<E>(list: MutableList<E>, index: Int
 }
 
 
-fun <T> mutableListsOf(num: Int) = (0 until num).map { mutableListOf<T>() }
-fun <T> listsOf(num: Int) = (0 until num).map { listOf<T>() }
+fun <T> mutableListsOf(num: Int) = (0 ..< num).map { mutableListOf<T>() }
+fun <T> listsOf(num: Int) = (0 ..< num).map { listOf<T>() }
 
 inline fun <T> Iterable<T>.first(errorMessage: String, predicate: (T)->Boolean): T {
   for (element in this) if (predicate(element)) return element

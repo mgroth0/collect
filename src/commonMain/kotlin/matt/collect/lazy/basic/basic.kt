@@ -119,7 +119,7 @@ open class BasicLazyList<E>(
   }
 
   override fun indexOf(element: E): Int {
-	(0 until size).forEach {
+	(0 ..< size).forEach {
 	  if (get(it) == element) return it
 	}
 	return -1

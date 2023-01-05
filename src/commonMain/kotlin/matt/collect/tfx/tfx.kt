@@ -72,7 +72,7 @@ fun <T, R, C: MutableCollection<in R>> Array<T>.mapEachTo(destination: C, action
  * Moves the given **T** item to the specified index
  */
 fun <T> MutableList<T>.move(item: T, newIndex: Int) {
-  check(newIndex in 0 until size)
+  check(newIndex in 0 ..< size)
   val currentIndex = indexOf(item)
   if (currentIndex < 0) return
   removeAt(currentIndex)
@@ -86,8 +86,8 @@ fun <T> MutableList<T>.move(item: T, newIndex: Int) {
  * Moves the given item at the `oldIndex` to the `newIndex`
  */
 fun <T> MutableList<T>.moveAt(oldIndex: Int, newIndex: Int) {
-  check(oldIndex in 0 until size)
-  check(newIndex in 0 until size)
+  check(oldIndex in 0 ..< size)
+  check(newIndex in 0 ..< size)
   val item = this[oldIndex]
   removeAt(oldIndex)
   add(newIndex, item)
@@ -97,7 +97,7 @@ fun <T> MutableList<T>.moveAt(oldIndex: Int, newIndex: Int) {
  * Moves all items meeting a predicate to the given index
  */
 fun <T> MutableList<T>.moveAll(newIndex: Int, predicate: (T)->Boolean) {
-  check(newIndex in 0 until size)
+  check(newIndex in 0 ..< size)
   val split = partition(predicate)
   clear()
   addAll(split.second)
