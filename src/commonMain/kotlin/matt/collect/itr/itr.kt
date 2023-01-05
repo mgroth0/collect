@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalStdlibApi::class)
+
 package matt.collect.itr
 
 import matt.collect.itr.ItrChange.Add

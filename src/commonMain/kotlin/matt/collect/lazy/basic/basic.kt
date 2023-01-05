@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalStdlibApi::class)
+
 package matt.collect.lazy.basic
 
 import matt.collect.itr.FakeMutableIterator
