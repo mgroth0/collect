@@ -101,7 +101,7 @@ sealed class CaseInsensitiveMap<V>: Map<String, V> {
 
 }
 
-class FakeMutableSet<E>(val set: MutableCollection<E>): MutableSet<E> {
+class FakeMutableSet<E>(val set: Collection<E>): MutableSet<E> {
   override fun add(element: E): Boolean {
 	err("tried to add in ${FakeMutableSet::class.simpleName}")
   }
