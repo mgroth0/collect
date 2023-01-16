@@ -5,6 +5,8 @@ import kotlin.jvm.Synchronized
 
 fun <E> Iterable<E>.toOrderedSet() = OrderedSet(this)
 
+fun <E> orderedSetOf(vararg e: E): OrderedSet<E> = OrderedSet(setOf(*e))
+
 open class OrderedSet<E>(elements: Iterable<E>): Set<E> {
 
   internal val data = elements.toMutableList()
