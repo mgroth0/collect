@@ -3,7 +3,6 @@
 package matt.collect.weak
 
 import matt.lang.err
-import matt.lang.weak.WeakRef
 import java.lang.ref.WeakReference
 import java.util.Collections
 import java.util.WeakHashMap
