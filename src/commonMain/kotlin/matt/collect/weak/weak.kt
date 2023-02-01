@@ -1,6 +1,6 @@
 package matt.collect.weak
 
-import matt.collect.dmap.withStoringDefault
+import matt.collect.map.dmap.withStoringDefault
 
 fun <K, V> lazyWeakMap(op: (K)->V) = WeakMap<K, V>().withStoringDefault { op(it) }
 

@@ -1,4 +1,4 @@
-package matt.collect.dmap
+package matt.collect.map.dmap
 
 fun <K, V> MutableMap<K, V>.withStoringDefault(
   d: (K)->V

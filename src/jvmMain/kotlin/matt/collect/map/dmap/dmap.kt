@@ -1,5 +1,6 @@
-package matt.collect.dmap
+package matt.collect.map.dmap
 
+import matt.collect.map.dmap.CanBeNotNullMutableMap
 import java.util.concurrent.Semaphore
 import kotlin.contracts.InvocationKind.EXACTLY_ONCE
 import kotlin.contracts.contract

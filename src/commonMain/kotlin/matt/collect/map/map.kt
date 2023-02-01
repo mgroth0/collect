@@ -1,9 +1,9 @@
 package matt.collect.map
 
-import matt.collect.dmap.CanBeNotNullMap
-import matt.collect.dmap.CanBeNotNullMutableMap
-import matt.collect.dmap.withStoringDefault
 import matt.collect.itr.FakeMutableIterator
+import matt.collect.map.dmap.CanBeNotNullMap
+import matt.collect.map.dmap.CanBeNotNullMutableMap
+import matt.collect.map.dmap.withStoringDefault
 import matt.lang.err
 import matt.prim.str.lower
 import kotlin.collections.MutableMap.MutableEntry

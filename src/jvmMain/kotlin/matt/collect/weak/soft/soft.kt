@@ -1,7 +1,7 @@
 package matt.collect.weak.soft
 
-import matt.collect.dmap.DefaultStoringMap
-import matt.collect.dmap.withStoringDefault
+import matt.collect.map.dmap.DefaultStoringMap
+import matt.collect.map.dmap.withStoringDefault
 import java.lang.ref.ReferenceQueue
 import java.lang.ref.SoftReference
 import java.util.AbstractMap
