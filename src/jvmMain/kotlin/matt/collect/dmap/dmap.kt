@@ -5,7 +5,6 @@ import kotlin.contracts.InvocationKind.EXACTLY_ONCE
 import kotlin.contracts.contract
 
 
-
 actual class DefaultStoringMap<K, V> actual constructor(
   actual val map: MutableMap<K, V>,
   actual val d: (K)->V
@@ -21,15 +20,11 @@ actual class DefaultStoringMap<K, V> actual constructor(
 
   actual override operator fun get(key: K): V {
 	return multiMonitor.with(key) {
-	  map[key] ?: d(key).also {
-		map[key] = it
-	  }
+	  map.getOrPut(key) { d(key) }
 	}
   }
 
-  actual fun getWithoutSetting(key: K): V? {
-	return map[key]
-  }
+  actual fun getWithoutSetting(key: K): V? = map[key]
 
   actual override fun isEmpty() = map.isEmpty()
 
