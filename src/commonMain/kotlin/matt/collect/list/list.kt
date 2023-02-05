@@ -2,10 +2,12 @@ package matt.collect.list
 
 import matt.collect.itr.duplicates
 import matt.lang.disabledCode
+import matt.lang.enums.map
 import matt.prim.str.elementsToString
 import kotlin.math.max
 import kotlin.math.min
 
+fun <E: Any> List<E>.nullable(): List<E?> = map<E, E?> { it }
 fun <E> List<E>.readOnly() = ReadOnlyList(this)
 class ReadOnlyList<E>(private val list: List<E>): List<E> by list
 
@@ -37,14 +39,14 @@ fun <E> MutableList<E>.swapWithNoDuplications(indexOne: Int, indexTwo: Int) {
 
 fun <E> MutableList<E>.setAllOneByOneNeverAllowingDuplicates(source: List<E>) {
 
-/*
-  require(size == toSet().size) {
-	"size=$size,toSet().size=${toSet().size}"
-  }
-  require(source.toSet().size == source.size) {
-	"source.toSet().size=${source.toSet().size},source.size=${source.size}"
-  }
-*/
+  /*
+	require(size == toSet().size) {
+	  "size=$size,toSet().size=${toSet().size}"
+	}
+	require(source.toSet().size == source.size) {
+	  "source.toSet().size=${source.toSet().size},source.size=${source.size}"
+	}
+  */
 
   disabledCode {
 	/*these checks are great for debugging, but extremely expensive and kill performance*/
@@ -55,7 +57,6 @@ fun <E> MutableList<E>.setAllOneByOneNeverAllowingDuplicates(source: List<E>) {
 	  "found duplicate in ${this}: ${duplicates().elementsToString()}"
 	}
   }
-
 
 
   val sourceItr = source.listIterator()
@@ -76,17 +77,17 @@ fun <E> MutableList<E>.setAllOneByOneNeverAllowingDuplicates(source: List<E>) {
 
 	val targetNext = targetItr.next()
 
-//	println("targetNext=$targetNext")
-//	println("sourceNext=$sourceNext")
+	//	println("targetNext=$targetNext")
+	//	println("sourceNext=$sourceNext")
 
 	if (targetNext != sourceNext) {
 
-//	  println("setAll 1")
+	  //	  println("setAll 1")
 
 	  val targetIdxOfSourceNext = indexOf(sourceNext)
 
 	  if (targetIdxOfSourceNext >= 0) {
-//		println("setAll 2")
+		//		println("setAll 2")
 
 		targetItr.remove()
 		addAfter[sourceItr.previousIndex()] = sourceNext
@@ -103,13 +104,13 @@ fun <E> MutableList<E>.setAllOneByOneNeverAllowingDuplicates(source: List<E>) {
   }
 
   while (targetItr.hasNext()) {
-//	println("setAll 3")
+	//	println("setAll 3")
 	targetItr.next()
 	targetItr.remove()
   }
 
   addAfter.entries.forEach {
-//	println("setAll 4")
+	//	println("setAll 4")
 	add(it.key, it.value)
   }
 
