@@ -2,13 +2,15 @@ package matt.collect.list
 
 import matt.collect.itr.duplicates
 import matt.lang.disabledCode
-import matt.lang.enums.map
 import matt.prim.str.elementsToString
 import kotlin.math.max
 import kotlin.math.min
 
 fun <E: Any> List<E>.nullable(): List<E?> = map<E, E?> { it }
 fun <E> List<E>.readOnly() = ReadOnlyList(this)
+
+inline fun <E, reified R: E> List<E>.requireEachIs(): List<R> = map { it as R }
+
 class ReadOnlyList<E>(private val list: List<E>): List<E> by list
 
 
@@ -115,3 +117,4 @@ fun <E> MutableList<E>.setAllOneByOneNeverAllowingDuplicates(source: List<E>) {
   }
 
 }
+
