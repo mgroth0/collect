@@ -9,8 +9,6 @@ import matt.prim.str.lower
 import kotlin.collections.MutableMap.MutableEntry
 
 
-
-
 fun <K, V> lazyMap(getter: (K)->V): CanBeNotNullMap<K, V> {
   return mutableMapOf<K, V>().withStoringDefault(getter)
 }
@@ -20,8 +18,10 @@ fun <K, V> lazyMutableMap(getter: (K)->V): CanBeNotNullMutableMap<K, V> {
 }
 
 
-class MapFromKeyValueLists<K, V>(private val keyList: MutableList<K>, private val valueList: MutableList<V>):
-  MutableMap<K, V> {
+class MapFromKeyValueLists<K, V>(
+  private val keyList: MutableList<K>,
+  private val valueList: MutableList<V>
+): MutableMap<K, V> {
 
   private val mapSnap: Map<K, V> get() = keyList.zip(valueList).toMap()
 
@@ -174,11 +174,10 @@ class MutableCaseInsensitiveMap<V>: CaseInsensitiveMap<V>(), MutableMap<String, 
 }
 
 
-
-
-
-fun Map<*,*>.toDictString() = entries.joinToString(
-  prefix = "{\n",
-  postfix = "\n}",
-  separator = "\n"
+fun Map<*, *>.toDictString() = entries.joinToString(
+  prefix = "{\n", postfix = "\n}", separator = "\n"
 ) { "${it.key}: ${it.value}" }
+
+
+fun <K, V> Map<K, V>.readOnly() = ReadOnlyMap(this)
+class ReadOnlyMap<K, V>(map: Map<K, V>): Map<K, V> by map
