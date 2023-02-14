@@ -1,7 +1,7 @@
 package matt.collect.set.ordered
 
+import matt.lang.anno.OnlySynchronizedOnJvm
 import matt.lang.sync.inSync
-import kotlin.jvm.Synchronized
 
 fun <E> Iterable<E>.toOrderedSet() = OrderedSet(this)
 
@@ -13,24 +13,24 @@ open class OrderedSet<E>(elements: Iterable<E>): Set<E> {
 
 
   override val size: Int
-	@Synchronized get() = data.size
+	@OnlySynchronizedOnJvm get() = data.size
 
-  @Synchronized override fun contains(element: E): Boolean {
+  @OnlySynchronizedOnJvm override fun contains(element: E): Boolean {
 	return element in data
   }
 
-  @Synchronized override fun containsAll(elements: Collection<E>): Boolean {
+  @OnlySynchronizedOnJvm override fun containsAll(elements: Collection<E>): Boolean {
 	return data.containsAll(elements)
   }
 
-  @Synchronized override fun isEmpty(): Boolean {
+  @OnlySynchronizedOnJvm override fun isEmpty(): Boolean {
 	return data.isEmpty()
   }
 
   protected var lastChangeStamp = ChangeStamp()
-  @Synchronized override fun iterator(): Iterator<E> = OrderedSetIterator()
+  @OnlySynchronizedOnJvm override fun iterator(): Iterator<E> = OrderedSetIterator()
 
-  @Synchronized protected fun changeStamp(): ChangeStamp {
+  @OnlySynchronizedOnJvm protected fun changeStamp(): ChangeStamp {
 	lastChangeStamp = ChangeStamp()
 	return lastChangeStamp
   }
@@ -64,7 +64,7 @@ open class OrderedSet<E>(elements: Iterable<E>): Set<E> {
 class MutableOrderedSet<E>(): OrderedSet<E>(setOf()), MutableSet<E> {
 
 
-  @Synchronized override fun add(element: E): Boolean {
+  @OnlySynchronizedOnJvm override fun add(element: E): Boolean {
 	if (element in data) {
 	  return false
 	}
@@ -73,21 +73,21 @@ class MutableOrderedSet<E>(): OrderedSet<E>(setOf()), MutableSet<E> {
 	return true
   }
 
-  @Synchronized override fun addAll(elements: Collection<E>): Boolean {
+  @OnlySynchronizedOnJvm override fun addAll(elements: Collection<E>): Boolean {
 	val eSet = elements.toSet()
 	return eSet.map {
 	  add(it)
 	}.any { it }
   }
 
-  @Synchronized override fun clear() {
+  @OnlySynchronizedOnJvm override fun clear() {
 	if (data.isEmpty()) {
 	  data.clear()
 	  changeStamp()
 	}
   }
 
-  @Synchronized override fun iterator(): MutableIterator<E> = MutableOrderedSetIterator()
+  @OnlySynchronizedOnJvm override fun iterator(): MutableIterator<E> = MutableOrderedSetIterator()
 
 
   private inner class MutableOrderedSetIterator: OrderedSetIterator(), MutableIterator<E> {
@@ -102,7 +102,7 @@ class MutableOrderedSet<E>(): OrderedSet<E>(setOf()), MutableSet<E> {
 
   }
 
-  @Synchronized
+  @OnlySynchronizedOnJvm
   override fun retainAll(elements: Collection<E>): Boolean {
 	val eSet = elements.toSet()
 
@@ -112,7 +112,7 @@ class MutableOrderedSet<E>(): OrderedSet<E>(setOf()), MutableSet<E> {
 
   }
 
-  @Synchronized override fun removeAll(elements: Collection<E>): Boolean {
+  @OnlySynchronizedOnJvm override fun removeAll(elements: Collection<E>): Boolean {
 	val eSet = elements.toSet()
 
 	return eSet.map {
@@ -121,7 +121,7 @@ class MutableOrderedSet<E>(): OrderedSet<E>(setOf()), MutableSet<E> {
 
   }
 
-  @Synchronized override fun remove(element: E): Boolean {
+  @OnlySynchronizedOnJvm override fun remove(element: E): Boolean {
 
 	if (data.remove(element)) {
 	  changeStamp()

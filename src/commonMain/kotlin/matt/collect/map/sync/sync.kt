@@ -1,34 +1,34 @@
 package matt.collect.map.sync
 
+import matt.lang.anno.OnlySynchronizedOnJvm
 import kotlin.collections.Map.Entry
 import kotlin.collections.MutableMap.MutableEntry
-import kotlin.jvm.Synchronized
 
 fun <K, V> Map<K, V>.synchronized() = SynchronizedMap(this)
 
 
 open class SynchronizedMap<K, V>(protected open val map: Map<K, V>): Map<K, V> {
-  override val entries: Set<Entry<K, V>> @Synchronized get() = map.entries
-  override val keys: Set<K> @Synchronized get() = map.keys
-  override val size: Int @Synchronized get() = map.size
-  override val values: Collection<V> @Synchronized get() = map.values
+  override val entries: Set<Entry<K, V>> @OnlySynchronizedOnJvm get() = map.entries
+  override val keys: Set<K> @OnlySynchronizedOnJvm get() = map.keys
+  override val size: Int @OnlySynchronizedOnJvm get() = map.size
+  override val values: Collection<V> @OnlySynchronizedOnJvm get() = map.values
 
-  @Synchronized
+  @OnlySynchronizedOnJvm
   override fun isEmpty(): Boolean {
 	return map.isEmpty()
   }
 
-  @Synchronized
+  @OnlySynchronizedOnJvm
   override fun get(key: K): V? {
 	return map[key]
   }
 
-  @Synchronized
+  @OnlySynchronizedOnJvm
   override fun containsValue(value: V): Boolean {
 	return map.containsValue(value)
   }
 
-  @Synchronized
+  @OnlySynchronizedOnJvm
   override fun containsKey(key: K): Boolean {
 	return map.containsKey(key)
   }
@@ -42,30 +42,30 @@ class SynchronizedMutableMap<K, V>(protected override val map: MutableMap<K, V>)
 																				  MutableMap<K, V> {
 
   override val entries: MutableSet<MutableEntry<K, V>>
-	@Synchronized get() = map.entries
+	@OnlySynchronizedOnJvm get() = map.entries
   override val keys: MutableSet<K>
-	@Synchronized get() = map.keys
+	@OnlySynchronizedOnJvm get() = map.keys
   override val values: MutableCollection<V>
-	@Synchronized get() = map.values
+	@OnlySynchronizedOnJvm get() = map.values
 
-  @Synchronized
+  @OnlySynchronizedOnJvm
   override fun clear() {
 	return map.clear()
   }
 
-  @Synchronized
+  @OnlySynchronizedOnJvm
   override fun put(key: K, value: V): V? {
 	return map.put(key, value)
   }
 
 
-  @Synchronized
+  @OnlySynchronizedOnJvm
   override fun putAll(from: Map<out K, V>) {
 	return map.putAll(from)
   }
 
 
-  @Synchronized
+  @OnlySynchronizedOnJvm
   override fun remove(key: K): V? {
 	return map.remove(key)
   }

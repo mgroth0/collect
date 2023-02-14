@@ -1,7 +1,7 @@
 package matt.collect.list.single
 
+import matt.lang.anno.OnlySynchronizedOnJvm
 import kotlin.jvm.JvmInline
-import kotlin.jvm.Synchronized
 
 @JvmInline
 value class SingleElementList<E>(private val e: E): List<E> {
@@ -37,12 +37,12 @@ value class SingleElementList<E>(private val e: E): List<E> {
 
 	private var didNext = false
 
-	@Synchronized
+	@OnlySynchronizedOnJvm
 	override fun hasNext(): Boolean {
 	  return !didNext
 	}
 
-	@Synchronized
+	@OnlySynchronizedOnJvm
 	override fun next(): E {
 	  require(!didNext)
 	  didNext = true
