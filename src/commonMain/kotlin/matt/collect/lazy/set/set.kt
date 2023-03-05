@@ -64,6 +64,10 @@ class LazySet<E: Any>(
   @OnlySynchronizedOnJvm override fun iterator() = object: Iterator<E> {
 
 
+	init {
+	  lastGeneratedFrom = null
+	}
+
 	private var itr = theSet.toSet().iterator()
 
 	override fun hasNext(): Boolean {
