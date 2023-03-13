@@ -9,6 +9,7 @@ import matt.prim.str.lower
 import kotlin.collections.MutableMap.MutableEntry
 
 
+
 fun <K, V> lazyMap(getter: (K)->V): CanBeNotNullMap<K, V> {
   return mutableMapOf<K, V>().withStoringDefault(getter)
 }
