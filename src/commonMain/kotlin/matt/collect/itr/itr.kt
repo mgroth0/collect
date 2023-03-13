@@ -33,6 +33,8 @@ open class FakeMutableIterator<E>(val itr: Iterator<E>): Iterator<E> by itr, Mut
 
 }
 
+fun <E> ListIterator<E>.toFakeMutableListIterator() = FakeMutableListIterator(this)
+
 class FakeMutableListIterator<E>(itr: ListIterator<E>): ListIterator<E> by itr,
 														MutableListIterator<E> {
   override fun add(element: E) = ILLEGAL
