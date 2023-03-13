@@ -149,6 +149,16 @@ class FakeMutableSet<E>(val set: Collection<E>): MutableSet<E> {
 
 }
 
+
+
+
+
+
+
+
+
+
+
 class MutableCaseInsensitiveMap<V>: CaseInsensitiveMap<V>(), MutableMap<String, V> {
   override val entries: MutableSet<MutableMap.MutableEntry<String, V>>
 	get() = FakeMutableSet(map.entries)
