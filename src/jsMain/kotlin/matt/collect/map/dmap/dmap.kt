@@ -1,7 +1,5 @@
 package matt.collect.map.dmap
 
-import matt.collect.map.dmap.CanBeNotNullMutableMap
-
 actual class DefaultStoringMap<K, V> actual constructor(
   actual val map: MutableMap<K, V>,
   actual val d: (K)->V
