@@ -3,6 +3,7 @@ package matt.collect.list
 import matt.collect.itr.duplicates
 import matt.lang.disabledCode
 import matt.prim.str.elementsToString
+import matt.prim.str.mybuild.string
 import kotlin.math.max
 import kotlin.math.min
 
@@ -118,3 +119,40 @@ fun <E> MutableList<E>.setAllOneByOneNeverAllowingDuplicates(source: List<E>) {
 
 }
 
+
+
+fun <E> List<E>.diffWithTarget(target: List<E>) = ListDiff(targetList = target, testList = this)
+
+class ListDiff<E>(
+	val targetList: List<E>,
+	val testList: List<E>
+) {
+	val isSameSize = targetList.size == testList.size
+
+	val needToAdd = targetList.mapIndexedNotNull { index, e ->
+		if (index !in testList.indices || testList[index] != e) {
+			IndexedValue(index = index, value = e)
+		} else null
+	}
+	val needToRemove = testList.mapIndexedNotNull { index, e ->
+		if (index !in targetList.indices || targetList[index] != e) {
+			IndexedValue(index = index, value = e)
+		} else null
+	}
+
+	override fun toString(): String {
+		return string {
+			lineDelimited {
+				+"To Add"
+				needToAdd.forEach {
+					+"\t$it"
+				}
+				blankLine()
+				+"To Remove"
+				needToRemove.forEach {
+					+"\t$it"
+				}
+			}
+		}
+	}
+}
