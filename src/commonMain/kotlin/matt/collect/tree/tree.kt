@@ -14,6 +14,7 @@ import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.encoding.decodeStructure
 import kotlinx.serialization.encoding.encodeStructure
+import matt.collect.list.readOnly
 import matt.lang.go
 import matt.lang.model.value.Value
 
@@ -128,10 +129,16 @@ class TreeNodeSerializer<T>(private val elementSerializer: KSerializer<T>) : KSe
 
 }
 
-@Serializable(with = TreeNodeSerializer::class)
-class TreeDataNode<T>(val value: T, val children: List<TreeDataNode<T>>? = null) {
+interface TreeDataNodeInter<T> {
+    val value: T
+    val children: List<TreeDataNodeInter<T>>?
+}
+
+typealias MTreeNode<T> = TreeDataNodeInter<T>
+
+abstract class TreeDataNodeBase<T, N : TreeDataNodeBase<T, N>> : TreeDataNodeInter<T> {
     override fun equals(other: Any?): Boolean {
-        return other is TreeDataNode<*>
+        return other is TreeDataNodeInter<*>
                 && other.value == value
                 && other.children == children
     }
@@ -141,4 +148,33 @@ class TreeDataNode<T>(val value: T, val children: List<TreeDataNode<T>>? = null)
         result = 31 * result + (children?.hashCode() ?: 0)
         return result
     }
+
+    override fun toString(): String {
+        return "${this::class.simpleName}[value=$value,size=${children?.size}]"
+    }
+}
+
+@Serializable(with = TreeNodeSerializer::class)
+class TreeDataNode<T>(override val value: T, override val children: List<TreeDataNode<T>>? = null) :
+    TreeDataNodeBase<T, TreeDataNode<T>>()
+
+class MutableTreeDataNode<T>(
+    override val value: T,
+    override val children: MutableList<MutableTreeDataNode<T>> = mutableListOf()
+) :
+    TreeDataNodeBase<T, MutableTreeDataNode<T>>()
+
+
+fun <T, R> MTreeNode<T>.map(op: (T) -> R): TreeDataNode<R> {
+    val newValue: R = op(value)
+    val newChildren: List<TreeDataNode<R>>? = children?.map { it.map(op) }
+    return TreeDataNode(newValue, newChildren)
+}
+
+fun <T> MTreeNode<T>.allValuesRecursive(): List<T> {
+    val r = mutableListOf<T>(value)
+    children?.forEach {
+        r.addAll(it.allValuesRecursive())
+    }
+    return r.readOnly()
 }
