@@ -21,6 +21,6 @@ fun <E> Collection<E>.snapshotToPreventConcurrentModification() = when (this) {
 }
 
 
-fun <E, R> Iterable<E>.mapToSet(transform: Convert<E, R>) = mapTo(mutableSetOf(), transform)
+inline fun <E, R> Iterable<E>.mapToSet(transform: Convert<E, R>) = mapTo(mutableSetOf(), transform)
 fun <E, R> Array<E>.mapToSet(transform: Convert<E, R>) = mapTo(mutableSetOf(), transform)
 fun <E, R> Sequence<E>.mapToSet(transform: Convert<E, R>) = mapTo(mutableSetOf(), transform)
