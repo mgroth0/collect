@@ -481,6 +481,14 @@ inline fun <T> Iterable<T>.firstOrErr(
     err(msg)
 }
 
+inline fun <T> Sequence<T>.firstOrErr(
+    msg: String,
+    predicate: (T) -> Boolean
+): T {
+    for (element in this) if (predicate(element)) return element
+    err(msg)
+}
+
 
 fun <T> Collection<T>.only(): T {
     require(this.size == 1)
