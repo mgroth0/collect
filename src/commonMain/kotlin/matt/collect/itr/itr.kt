@@ -249,7 +249,7 @@ open class MutableIteratorWrapper<E>(
 
     protected open val itr = list.iterator()
 
-    override fun hasNext() = itr.hasNext()
+    final override fun hasNext() = itr.hasNext()
     override fun next() = itrWrapper(NEXT) { itr.next() }
 
     override fun remove(): Unit = changeWrapper(Remove) { itr.remove() }
