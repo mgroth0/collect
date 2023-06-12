@@ -207,3 +207,14 @@ fun Map<*, *>.toDictString() = entries.joinToString(
 
 fun <K, V> Map<K, V>.readOnly() = ReadOnlyMap(this)
 class ReadOnlyMap<K, V>(map: Map<K, V>) : Map<K, V> by map
+
+fun <K, V> Map<K, V>.filterOutNullValues(): Map<K, V & Any> {
+    val r = mutableMapOf<K, V & Any>()
+    entries.forEach {
+        val v = it.value
+        if (v != null) {
+            r[it.key] = v
+        }
+    }
+    return r
+}
