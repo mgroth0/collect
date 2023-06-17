@@ -44,15 +44,16 @@ class SlidingWindowIterator<E : Any>(
     override fun next(): SlidingWindow<E> {
         if (window.isEmpty()) {
             var center: E? = null
-            repeat(windowSize) {
+            repeat(windowSize) { i ->
                 val n = sourceItr.next()
-                if (n == centerI) {
+                if (i == centerI) {
                     center = n
                 }
                 window.add(n)
             }
             slidingWindow = MutableSlidingWindow(
-                centerElement = center!!,
+                centerElement = center
+                    ?: error("null center (window.size=${window.size},centerI=${centerI},source.size=${source.size},windowSize=${windowSize})"),
                 window = window
             )
             return slidingWindow!!
