@@ -14,6 +14,7 @@ import kotlin.contracts.InvocationKind
 import kotlin.contracts.InvocationKind.AT_LEAST_ONCE
 import kotlin.contracts.InvocationKind.UNKNOWN
 import kotlin.contracts.contract
+import kotlin.coroutines.CoroutineContext.Element
 
 fun <E> List<E>.loopIterator() = LoopIterator(this)
 fun <E> MutableList<E>.loopIterator() = MutableLoopIterator(this)
@@ -241,6 +242,25 @@ enum class ItrDir {
     NEXT, PREVIOUS
 }
 
+/*more performant than the wrapper, fewer lambda objects*/
+abstract class MutableIteratorExtender<E>(
+    list: MutableCollection<E>,
+) : MutableIterator<E> {
+
+    protected open val itr = list.iterator()
+
+    final override fun hasNext() = itr.hasNext()
+    override fun next(): E {
+        val e = itr.next()
+        postNext(e)
+        return e
+    }
+
+    abstract fun postNext(e: E)
+
+    override fun remove(): Unit = itr.remove()
+}
+
 open class MutableIteratorWrapper<E>(
     list: MutableCollection<E>,
     open val itrWrapper: (ItrDir, () -> E) -> E = { _, it -> it() },
@@ -258,6 +278,40 @@ open class MutableIteratorWrapper<E>(
 enum class ItrChange {
     Add, Remove, Replace
 }
+
+/*more performant than the wrapper, fewer lambda objects*/
+abstract class MutableListIteratorExtender<E>(
+    list: MutableList<E>,
+    index: Int = 0,
+) : MutableListIterator<E> {
+
+    protected open val itr = list.listIterator(index)
+
+    final override fun hasPrevious() = itr.hasPrevious()
+    final override fun nextIndex() = itr.nextIndex()
+    final override fun hasNext() = itr.hasNext()
+    override fun next(): E {
+        val e = itr.next()
+        postNext(e)
+        return e
+    }
+
+    abstract fun postNext(e: E)
+    override fun previous(): E {
+        val e = itr.previous()
+        postPrevious(e)
+        return e
+    }
+
+    abstract fun postPrevious(e: E)
+
+
+    override fun remove(): Unit = itr.remove()
+    override fun add(element: E) = itr.add(element)
+    override fun set(element: E) = itr.set(element)
+    override fun previousIndex() = itr.previousIndex()
+}
+
 
 open class MutableListIteratorWrapper<E>(
     list: MutableList<E>,
@@ -323,13 +377,6 @@ open class MutableListIteratorWithSomeMemory<E>(
         val r = it()
         hadFirstReturn = true
         lastReturned = r
-//	when (dir) {
-//	  NEXT     -> {
-//		currentIndex += 1
-//	  }
-//
-//	  PREVIOUS -> currentIndex -= 1
-//	}
         lastItrDir = dir
         r
     }
@@ -602,11 +649,11 @@ fun <E> Collection<E>.allUnique(): Boolean {
             return true
         }
 
-        is Set<E> -> {
+        is Set<E>  -> {
             return true
         }
 
-        else -> return toList().allUnique()
+        else       -> return toList().allUnique()
     }
 }
 
@@ -638,29 +685,32 @@ inline fun <E, reified R> Iterable<E>.flatMapToSet(op: (E) -> Iterable<R>) = fla
 inline fun <E, reified R> Array<E>.flatMapToSet(op: (E) -> Iterable<R>) = flatMapTo(mutableSetOf()) { op(it) }
 
 fun <E> Collection<E>.duplicates(): List<Pair<IndexedValue<E>, IndexedValue<E>>> = when (this) {
-    is Set -> listOf()
+    is Set  -> emptyList()
     is List -> {
-        val r = mutableListOf<Pair<IndexedValue<E>, IndexedValue<E>>>()
-        val itr = listIterator()
-        while (itr.hasNext()) {
-            val n = itr.next()
-            val i = itr.previousIndex()
-            forEachIndexed { index, e ->
-                if (index != i && e == n) {
-                    r += IndexedValue(
-                        i,
-                        n
-                    ) to IndexedValue<E>(
-                        index,
-                        e
-                    )
+        if (size < 2) emptyList()
+        else {
+            val r = mutableListOf<Pair<IndexedValue<E>, IndexedValue<E>>>()
+            val itr = listIterator()
+            while (itr.hasNext()) {
+                val n = itr.next()
+                val i = itr.previousIndex()
+                forEachIndexed { index, e ->
+                    if (index != i && e == n) {
+                        r += IndexedValue(
+                            i,
+                            n
+                        ) to IndexedValue<E>(
+                            index,
+                            e
+                        )
+                    }
                 }
             }
+            r
         }
-        r
     }
 
-    else -> err("how to get duplicates of ${this}?")
+    else    -> err("how to get duplicates of ${this}?")
 }
 
 inline fun <reified T> arrayOfNotNull(vararg elements: T?): Array<T> = listOfNotNull(*elements).toTypedArray()

@@ -1,24 +1,26 @@
 package matt.collect.list
 
 import matt.collect.itr.duplicates
+import matt.collect.itr.subList
 import matt.lang.disabledCode
 import matt.prim.str.elementsToString
 import matt.prim.str.mybuild.string
 import kotlin.math.max
 import kotlin.math.min
 
-fun <E: Any> List<E>.nullable(): List<E?> = map<E, E?> { it }
+fun <E : Any> List<E>.nullable(): List<E?> = map<E, E?> { it }
 fun <E> List<E>.readOnly() = ReadOnlyList(this)
 
-inline fun <E, reified R: E> List<E>.requireEachIs(): List<R> = map { it as R }
+inline fun <E, reified R : E> List<E>.requireEachIs(): List<R> = map { it as R }
 
-class ReadOnlyList<E>(private val list: List<E>): List<E> by list
+class ReadOnlyList<E>(private val list: List<E>) : List<E> by list
 
 
-@OptIn(ExperimentalStdlibApi::class) fun <E> List<E>.phase(newStartIndex: Int) = (newStartIndex..<size).map {
-  this[it]
+@OptIn(ExperimentalStdlibApi::class)
+fun <E> List<E>.phase(newStartIndex: Int) = (newStartIndex..<size).map {
+    this[it]
 } + (0..<newStartIndex).map {
-  this[it]
+    this[it]
 }
 
 
@@ -26,133 +28,116 @@ fun <E> List<E>.downSampled() = slice(indices step 10)
 
 
 fun <E> MutableList<E>.swapWithNoDuplications(itemOne: E, itemTwo: E) {
-  swapWithNoDuplications(indexOf(itemOne), indexOf(itemTwo))
+    swapWithNoDuplications(indexOf(itemOne), indexOf(itemTwo))
 }
 
 fun <E> MutableList<E>.swapWithNoDuplications(indexOne: Int, indexTwo: Int) {
-  if (indexOne == indexTwo) return
-  val min = min(indexOne, indexTwo)
-  val max = max(indexOne, indexTwo)
-  val o2 = removeAt(max)
-  val o1 = removeAt(min)
-  add(min, o2)
-  add(max, o1)
+    if (indexOne == indexTwo) return
+    val min = min(indexOne, indexTwo)
+    val max = max(indexOne, indexTwo)
+    val o2 = removeAt(max)
+    val o1 = removeAt(min)
+    add(min, o2)
+    add(max, o1)
 }
 
 
 fun <E> MutableList<E>.setAllOneByOneNeverAllowingDuplicates(source: List<E>) {
 
-  /*
-	require(size == toSet().size) {
-	  "size=$size,toSet().size=${toSet().size}"
-	}
-	require(source.toSet().size == source.size) {
-	  "source.toSet().size=${source.toSet().size},source.size=${source.size}"
-	}
-  */
+    disabledCode {
+        /*these checks are great for debugging, but extremely expensive and kill performance*/
+        require(source.duplicates().isEmpty()) {
+            "found duplicates in ${source}: ${source.duplicates().elementsToString()}"
+        }
+        require(duplicates().isEmpty()) {
+            "found duplicate in ${this}: ${duplicates().elementsToString()}"
+        }
+    }
 
-  disabledCode {
-	/*these checks are great for debugging, but extremely expensive and kill performance*/
-	require(source.duplicates().isEmpty()) {
-	  "found duplicates in ${source}: ${source.duplicates().elementsToString()}"
-	}
-	require(duplicates().isEmpty()) {
-	  "found duplicate in ${this}: ${duplicates().elementsToString()}"
-	}
-  }
+    if (isEmpty()) {
+        addAll(source)
+        return
+    }
 
+    val sourceItr = source.listIterator()
+    val targetItr = listIterator()
 
-  val sourceItr = source.listIterator()
-  val targetItr = listIterator()
+    val addAfter by lazy { mutableMapOf<Int, E>() }
 
-  val addAfter = mutableMapOf<Int, E>()
-  while (sourceItr.hasNext()) {
+    while (sourceItr.hasNext()) {
 
-	val sourceNext = sourceItr.next()
+        if (!targetItr.hasNext()) {
+            addAll(source.subList(sourceItr.nextIndex()))
+            return
+        }
 
-	if (!targetItr.hasNext()) {
-	  targetItr.add(sourceNext)
-	  while (sourceItr.hasNext()) {
-		targetItr.add(sourceItr.next())
-	  }
-	  return
-	}
+        val sourceNext = sourceItr.next()
+        val targetNext = targetItr.next()
 
-	val targetNext = targetItr.next()
+        if (targetNext != sourceNext) {
 
-	//	println("targetNext=$targetNext")
-	//	println("sourceNext=$sourceNext")
+            val targetIdxOfSourceNext = indexOf(sourceNext)
 
-	if (targetNext != sourceNext) {
+            if (targetIdxOfSourceNext >= 0) {
 
-	  //	  println("setAll 1")
-
-	  val targetIdxOfSourceNext = indexOf(sourceNext)
-
-	  if (targetIdxOfSourceNext >= 0) {
-		//		println("setAll 2")
-
-		targetItr.remove()
-		addAfter[sourceItr.previousIndex()] = sourceNext
+                targetItr.remove()
+                addAfter[sourceItr.previousIndex()] = sourceNext
 
 
-	  } else {
-		targetItr.set(sourceNext)
-	  }
+            } else {
+                targetItr.set(sourceNext)
+            }
 
 
-	}
+        }
 
 
-  }
+    }
 
-  while (targetItr.hasNext()) {
-	//	println("setAll 3")
-	targetItr.next()
-	targetItr.remove()
-  }
+    while (targetItr.hasNext()) {
+        targetItr.next()
+        targetItr.remove()
+    }
 
-  addAfter.entries.forEach {
-	//	println("setAll 4")
-	add(it.key, it.value)
-  }
+    addAfter.entries.forEach {
+        add(it.key, it.value)
+    }
 
 }
-
 
 
 fun <E> List<E>.diffWithTarget(target: List<E>) = ListDiff(targetList = target, testList = this)
 
 class ListDiff<E>(
-	val targetList: List<E>,
-	val testList: List<E>
+    val targetList: List<E>,
+    val testList: List<E>
 ) {
-	val isSameSize = targetList.size == testList.size
+    val isSameSize = targetList.size == testList.size
 
-	val needToAdd = targetList.mapIndexedNotNull { index, e ->
-		if (index !in testList.indices || testList[index] != e) {
-			IndexedValue(index = index, value = e)
-		} else null
-	}
-	val needToRemove = testList.mapIndexedNotNull { index, e ->
-		if (index !in targetList.indices || targetList[index] != e) {
-			IndexedValue(index = index, value = e)
-		} else null
-	}
+    val needToAdd = targetList.mapIndexedNotNull { index, e ->
+        if (index !in testList.indices || testList[index] != e) {
+            IndexedValue(index = index, value = e)
+        } else null
+    }
+    val needToRemove = testList.mapIndexedNotNull { index, e ->
+        if (index !in targetList.indices || targetList[index] != e) {
+            IndexedValue(index = index, value = e)
+        } else null
+    }
 
-	override fun toString(): String {
-		return string {
-			lineDelimited {
-				+"To Add"
-				needToAdd.forEach {
-					+"\t$it"
-				}
-				blankLine()
-				+"To Remove"
-				needToRemove.forEach {
-					+"\t$it"
-				}
-			}
-		}
-	}
+    override fun toString(): String {
+        return string {
+            lineDelimited {
+                +"To Add"
+                needToAdd.forEach {
+                    +"\t$it"
+                }
+                blankLine()
+                +"To Remove"
+                needToRemove.forEach {
+                    +"\t$it"
+                }
+            }
+        }
+    }
 }
