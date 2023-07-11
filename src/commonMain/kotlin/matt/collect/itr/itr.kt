@@ -9,6 +9,9 @@ import matt.collect.itr.ItrDir.NEXT
 import matt.collect.itr.ItrDir.PREVIOUS
 import matt.lang.ILLEGAL
 import matt.lang.err
+import matt.lang.require.requireNot
+import matt.lang.require.requireNotEmpty
+import matt.lang.require.requireOne
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.InvocationKind.AT_LEAST_ONCE
@@ -104,12 +107,12 @@ class MutableLoopIterator<E>(override val list: MutableList<E>) : MutableIterato
 
 class LoopListIterator<E>(override val list: List<E>) : ListIterator<E>, LoopIteratorFun<E> {
     fun atEnd(): Boolean {
-        require(list.isNotEmpty()) /*or else definition is ambiguous*/
+        requireNotEmpty(list) /*or else definition is ambiguous*/
         return itr.hasPrevious() && itr.previousIndex() == list.lastIndex
     }
 
     fun atStart(): Boolean {
-        require(list.isNotEmpty()) /*or else definition is ambiguous*/
+        requireNotEmpty(list) /*or else definition is ambiguous*/
         return itr.hasNext() && itr.nextIndex() == 0
     }
 
@@ -161,12 +164,12 @@ class LoopListIterator<E>(override val list: List<E>) : ListIterator<E>, LoopIte
 
 class MutableLoopListIterator<E>(override val list: MutableList<E>) : MutableListIterator<E>, LoopIteratorFun<E> {
     fun atEnd(): Boolean {
-        require(list.isNotEmpty()) /*or else definition is ambiguous*/
+        requireNotEmpty(list) /*or else definition is ambiguous*/
         return itr.hasPrevious() && itr.previousIndex() == list.lastIndex
     }
 
     fun atStart(): Boolean {
-        require(list.isNotEmpty()) /*or else definition is ambiguous*/
+        requireNotEmpty(list) /*or else definition is ambiguous*/
         return itr.hasNext() && itr.nextIndex() == 0
     }
 
@@ -537,7 +540,7 @@ inline fun <T> Sequence<T>.firstOrErr(
 
 
 fun <T> Collection<T>.only(): T {
-    require(this.size == 1)
+    requireOne(this.size)
     return first()
 }
 
@@ -545,7 +548,7 @@ fun <T> Sequence<T>.only() = iterator().only()
 fun <T> Iterable<T>.only() = iterator().only()
 fun <T> Iterator<T>.only(): T {
     val r = next()
-    require(!hasNext())
+    requireNot(hasNext())
     return r
 }
 
@@ -656,7 +659,7 @@ fun <E> Collection<E>.allUnique(): Boolean {
     }
 }
 
-fun <E> Collection<E>.allSame(): Boolean {
+fun <E> Collection<E>.areAllTheSame(): Boolean {
     if (this.size <= 1) {
         return true
     } else {

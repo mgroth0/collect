@@ -107,7 +107,7 @@ class TreeNodeSerializer<T>(private val elementSerializer: KSerializer<T>) : KSe
                 }
             }
 
-            require(theValue != null)
+            requireNotNull(theValue)
 
             TreeDataNode(value = theValue.value, children = children?.value)
 
@@ -116,7 +116,10 @@ class TreeNodeSerializer<T>(private val elementSerializer: KSerializer<T>) : KSe
 
     }
 
-    override fun serialize(encoder: Encoder, value: TreeDataNode<T>) {
+    override fun serialize(
+        encoder: Encoder,
+        value: TreeDataNode<T>
+    ) {
 
         encoder.encodeStructure(descriptor) {
             encodeSerializableElement(descriptor, 0, elementSerializer, value.value)
@@ -155,7 +158,10 @@ abstract class TreeDataNodeBase<T, N : TreeDataNodeBase<T, N>> : TreeDataNodeInt
 }
 
 @Serializable(with = TreeNodeSerializer::class)
-class TreeDataNode<T>(override val value: T, override val children: List<TreeDataNode<T>>? = null) :
+class TreeDataNode<T>(
+    override val value: T,
+    override val children: List<TreeDataNode<T>>? = null
+) :
     TreeDataNodeBase<T, TreeDataNode<T>>()
 
 class MutableTreeDataNode<T>(

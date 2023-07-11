@@ -2,6 +2,7 @@ package matt.collect.list.slide
 
 import matt.collect.list.linked.MyLinkedList
 import matt.lang.idea.Idea
+import matt.lang.require.requireNotEqual
 import kotlin.math.floor
 
 interface SlidingWindowIdea : Idea
@@ -22,7 +23,7 @@ class SlidingWindowIterator<E : Any>(
 ) : SlidingWindowIdea, Iterator<SlidingWindow<E>> {
 
     init {
-        require(windowSize % 2 != 0) {
+        requireNotEqual(windowSize % 2, 0) {
             "needs to be odd to get center"
         }
     }

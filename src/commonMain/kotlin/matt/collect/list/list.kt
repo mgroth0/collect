@@ -3,6 +3,7 @@ package matt.collect.list
 import matt.collect.itr.duplicates
 import matt.collect.itr.subList
 import matt.lang.disabledCode
+import matt.lang.require.requireEmpty
 import matt.prim.str.elementsToString
 import matt.prim.str.mybuild.string
 import kotlin.math.max
@@ -27,11 +28,17 @@ fun <E> List<E>.phase(newStartIndex: Int) = (newStartIndex..<size).map {
 fun <E> List<E>.downSampled() = slice(indices step 10)
 
 
-fun <E> MutableList<E>.swapWithNoDuplications(itemOne: E, itemTwo: E) {
+fun <E> MutableList<E>.swapWithNoDuplications(
+    itemOne: E,
+    itemTwo: E
+) {
     swapWithNoDuplications(indexOf(itemOne), indexOf(itemTwo))
 }
 
-fun <E> MutableList<E>.swapWithNoDuplications(indexOne: Int, indexTwo: Int) {
+fun <E> MutableList<E>.swapWithNoDuplications(
+    indexOne: Int,
+    indexTwo: Int
+) {
     if (indexOne == indexTwo) return
     val min = min(indexOne, indexTwo)
     val max = max(indexOne, indexTwo)
@@ -46,10 +53,10 @@ fun <E> MutableList<E>.setAllOneByOneNeverAllowingDuplicates(source: List<E>) {
 
     disabledCode {
         /*these checks are great for debugging, but extremely expensive and kill performance*/
-        require(source.duplicates().isEmpty()) {
+        requireEmpty(source.duplicates()) {
             "found duplicates in ${source}: ${source.duplicates().elementsToString()}"
         }
-        require(duplicates().isEmpty()) {
+        requireEmpty(duplicates()) {
             "found duplicate in ${this}: ${duplicates().elementsToString()}"
         }
     }
