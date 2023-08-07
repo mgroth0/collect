@@ -17,7 +17,6 @@ inline fun <E, reified R : E> List<E>.requireEachIs(): List<R> = map { it as R }
 class ReadOnlyList<E>(private val list: List<E>) : List<E> by list
 
 
-@OptIn(ExperimentalStdlibApi::class)
 fun <E> List<E>.phase(newStartIndex: Int) = (newStartIndex..<size).map {
     this[it]
 } + (0..<newStartIndex).map {

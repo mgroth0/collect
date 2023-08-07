@@ -17,6 +17,9 @@ import kotlinx.serialization.encoding.encodeStructure
 import matt.collect.list.readOnly
 import matt.lang.go
 import matt.lang.model.value.Value
+import matt.prim.str.mybuild.string
+import matt.prim.str.requireIsOneLine
+import matt.prim.str.times
 
 /*See [[ListLikeDescriptor]] */
 @ExperimentalSerializationApi
@@ -178,9 +181,23 @@ fun <T, R> MTreeNode<T>.map(op: (T) -> R): TreeDataNode<R> {
 }
 
 fun <T> MTreeNode<T>.allValuesRecursive(): List<T> {
-    val r = mutableListOf<T>(value)
+    val r = mutableListOf(value)
     children?.forEach {
         r.addAll(it.allValuesRecursive())
     }
     return r.readOnly()
+}
+
+
+fun TreeDataNode<*>.buildTreeString(depth: Int = 0): String {
+    return string {
+        lineDelimited {
+            +(("\t" * depth) + value.toString().requireIsOneLine())
+            children?.takeIf { it.isNotEmpty() }?.go {
+                it.forEach {
+                    +it.buildTreeString(depth + 1)
+                }
+            }
+        }
+    }
 }
