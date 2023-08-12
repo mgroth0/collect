@@ -98,7 +98,9 @@ inline fun <T: Any> T.chain(crossinline op: (T)->T?): Sequence<T> {
 //  } as (T)->List<T>?)
 //}
 
-fun <T> T.recurse(includeSelf: Boolean = true, rchildren: (T)->Iterable<T>?): Sequence<T> {
+const val DEFAULT_INCLUDE_SELF = true
+
+fun <T> T.recurse(includeSelf: Boolean = DEFAULT_INCLUDE_SELF, rchildren: (T)->Iterable<T>?): Sequence<T> {
   val myChildren = rchildren(this)?.iterator()
   var gaveSelf = false
   var currentChild: Iterator<T>? = null
