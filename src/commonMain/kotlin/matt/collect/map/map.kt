@@ -115,9 +115,6 @@ fun <E> Set<E>.toFakeMutableSet() = FakeMutableSet(this)
 class FakeMutableSet<E>(val set: Collection<E>) : MutableSet<E> {
 
 
-    init {
-        println("WARNING: there are two FakeMutableSet classes. UGH!")
-    }
 
     override fun add(element: E): Boolean {
         err("tried to add in ${FakeMutableSet::class.simpleName}")

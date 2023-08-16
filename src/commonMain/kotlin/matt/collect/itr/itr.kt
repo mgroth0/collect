@@ -28,9 +28,7 @@ fun <E> Iterator<E>.toFakeMutableIterator() = FakeMutableIterator(this)
 
 
 open class FakeMutableIterator<E>(val itr: Iterator<E>) : Iterator<E> by itr, MutableIterator<E> {
-    init {
-        println("WARNING: there are two FakeMutableIterator classes. UGH!")
-    }
+
 
     override fun remove() {
         err("tried remove in ${FakeMutableIterator::class.simpleName}")
