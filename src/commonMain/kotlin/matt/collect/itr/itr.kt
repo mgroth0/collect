@@ -243,6 +243,24 @@ enum class ItrDir {
 }
 
 /*more performant than the wrapper, fewer lambda objects*/
+abstract class IteratorExtender<E>(
+    collection: Collection<E>,
+) : Iterator<E> {
+
+    protected open val itr = collection.iterator()
+
+    final override fun hasNext() = itr.hasNext()
+    override fun next(): E {
+        val e = itr.next()
+        postNext(e)
+        return e
+    }
+
+    abstract fun postNext(e: E)
+
+}
+
+/*more performant than the wrapper, fewer lambda objects*/
 abstract class MutableIteratorExtender<E>(
     list: MutableCollection<E>,
 ) : MutableIterator<E> {
@@ -396,6 +414,9 @@ inline fun <T> Iterable<T>.first(
 
 
 inline fun <E> MutableList<E>.iterateM(op: MutableListIterator<E>.(E) -> Unit) {
+    return listIterator().whileHasNext(op)
+}
+fun <E> MutableList<E>.iterateMNoLambda(op: MutableListIterator<E>.(E) -> Unit) {
     return listIterator().whileHasNext(op)
 }
 
@@ -681,8 +702,8 @@ inline fun <E, reified R> Array<E>.mapToArray(op: (E) -> R) = map { op(it) }.toT
 inline fun <E, reified R> Iterable<E>.flatMapToArray(op: (E) -> Iterable<R>) = flatMap { op(it) }.toTypedArray()
 inline fun <E, reified R> Array<E>.flatMapToArray(op: (E) -> Iterable<R>) = flatMap { op(it) }.toTypedArray()
 
-inline fun <E, reified R> Iterable<E>.flatMapToSet(op: (E) -> Iterable<R>) = flatMapTo(mutableSetOf()) { op(it) }
-inline fun <E, reified R> Array<E>.flatMapToSet(op: (E) -> Iterable<R>) = flatMapTo(mutableSetOf()) { op(it) }
+inline fun <E, R> Iterable<E>.flatMapToSet(op: (E) -> Iterable<R>) = flatMapTo(mutableSetOf()) { op(it) }
+inline fun <E, R> Array<E>.flatMapToSet(op: (E) -> Iterable<R>) = flatMapTo(mutableSetOf()) { op(it) }
 
 fun <E> Collection<E>.duplicates(): List<Pair<IndexedValue<E>, IndexedValue<E>>> = when (this) {
     is Set  -> emptyList()

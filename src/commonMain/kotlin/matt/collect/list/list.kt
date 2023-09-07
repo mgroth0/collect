@@ -9,12 +9,55 @@ import matt.prim.str.mybuild.string
 import kotlin.math.max
 import kotlin.math.min
 
+abstract class StructuralList<E> : List<E> {
+    companion object {
+        /*taken from kotlin standard lib*/
+        private fun orderedHashCode(c: Collection<*>): Int {
+            var hashCode = 1
+            for (e in c) {
+                hashCode = 31 * hashCode + (e?.hashCode() ?: 0)
+            }
+            return hashCode
+        }
+
+        /*taken from kotlin standard lib*/
+        private fun orderedEquals(
+            c: Collection<*>,
+            other: Collection<*>
+        ): Boolean {
+            if (c.size != other.size) return false
+
+            val otherIterator = other.iterator()
+            for (elem in c) {
+                val elemOther = otherIterator.next()
+                if (elem != elemOther) {
+                    return false
+                }
+            }
+            return true
+        }
+    }
+
+    /*taken from kotlin standard lib*/
+    final override fun equals(other: Any?): Boolean {
+        if (other === this) return true
+        if (other !is List<*>) return false
+
+        return orderedEquals(this, other)
+    }
+
+    /*taken from kotlin standard lib*/
+    final override fun hashCode(): Int {
+        return orderedHashCode(this)
+    }
+}
+
 fun <E : Any> List<E>.nullable(): List<E?> = map<E, E?> { it }
 fun <E> List<E>.readOnly() = ReadOnlyList(this)
 
 inline fun <E, reified R : E> List<E>.requireEachIs(): List<R> = map { it as R }
 
-class ReadOnlyList<E>(private val list: List<E>) : List<E> by list
+class ReadOnlyList<E>(private val list: List<E>) : StructuralList<E>(), List<E> by list
 
 
 fun <E> List<E>.phase(newStartIndex: Int) = (newStartIndex..<size).map {

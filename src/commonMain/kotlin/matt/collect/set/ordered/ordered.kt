@@ -31,6 +31,7 @@ open class OrderedSet<E>(elements: Iterable<E>) : Set<E> {
     }
 
     protected var lastChangeStamp = ChangeStamp()
+
     @OnlySynchronizedOnJvm
     override fun iterator(): Iterator<E> = OrderedSetIterator()
 

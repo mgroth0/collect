@@ -1,8 +1,8 @@
 package matt.collect.list.sub
 
-class SubList<E>(
+import matt.collect.list.StructuralList
 
-): List<E> {
+class SubList<E>(): StructuralList<E>(), List<E> {
   override val size: Int
 	get() = TODO("Not yet implemented")
 

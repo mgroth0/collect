@@ -1,10 +1,11 @@
 package matt.collect.weak
 
+import matt.lang.dyn.call
 import kotlin.collections.MutableMap.MutableEntry
 
 actual class WeakMap<K, V>: MutableMap<K, V> {
 
-  private val map = js("WeakMap();")
+  private val map = call("WeakMap")
 
 
   override val entries: MutableSet<MutableEntry<K, V>>

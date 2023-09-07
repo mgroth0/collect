@@ -9,6 +9,8 @@ class LazySet<E : Any>(
     private val generator: Iterator<E>
 ) : LazyCollection<E>, Set<E> {
 
+    constructor(generator: Sequence<E>): this(generator.iterator())
+
     private val theSet = mutableSetOf<E>()
 
     private var lastGeneratedFrom: Any? = null

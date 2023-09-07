@@ -1,5 +1,6 @@
 package matt.collect.list.awaitlist
 
+import matt.collect.list.StructuralList
 import java.util.concurrent.ArrayBlockingQueue
 
 class BlockListBuilder<E: Any>(size: Int) {
@@ -13,7 +14,7 @@ class BlockListBuilder<E: Any>(size: Int) {
 class BlockList<E: Any>(
   override val size: Int,
   private val queue: ArrayBlockingQueue<E>
-): List<E> {
+): StructuralList<E>(), List<E> {
 
   override fun isEmpty() = size == 0
 

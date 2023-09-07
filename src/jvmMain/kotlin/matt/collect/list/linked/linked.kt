@@ -1,3 +1,5 @@
+@file:JvmName("LinkedJvmKt")
+
 package matt.collect.list.linked
 
 import java.util.*

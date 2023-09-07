@@ -21,7 +21,7 @@ class FakeMutableList<E>(private val list: List<E>): List<E> by list, MutableLis
   override fun iterator() = list.iterator().toFakeMutableIterator()
   override fun listIterator() = list.listIterator().toFakeMutableListIterator()
   override fun listIterator(index: Int) = list.listIterator(index).toFakeMutableListIterator()
-  override fun subList(fromIndex: Int, toIndex: Int) = theErr()
+  override fun subList(fromIndex: Int, toIndex: Int) = FakeMutableList(list.subList(fromIndex,toIndex))
 }
 
 
