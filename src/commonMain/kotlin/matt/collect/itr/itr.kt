@@ -1,5 +1,3 @@
-@file:OptIn(ExperimentalStdlibApi::class)
-
 package matt.collect.itr
 
 import matt.collect.itr.ItrChange.Add
@@ -17,6 +15,8 @@ import kotlin.contracts.InvocationKind
 import kotlin.contracts.InvocationKind.AT_LEAST_ONCE
 import kotlin.contracts.InvocationKind.UNKNOWN
 import kotlin.contracts.contract
+import kotlin.experimental.ExperimentalTypeInference
+import kotlin.jvm.JvmName
 
 fun <E> List<E>.loopIterator() = LoopIterator(this)
 fun <E> MutableList<E>.loopIterator() = MutableLoopIterator(this)
@@ -702,7 +702,13 @@ inline fun <E, reified R> Array<E>.mapToArray(op: (E) -> R) = map { op(it) }.toT
 inline fun <E, reified R> Iterable<E>.flatMapToArray(op: (E) -> Iterable<R>) = flatMap { op(it) }.toTypedArray()
 inline fun <E, reified R> Array<E>.flatMapToArray(op: (E) -> Iterable<R>) = flatMap { op(it) }.toTypedArray()
 
+@JvmName("flatMapToSet1")
 inline fun <E, R> Iterable<E>.flatMapToSet(op: (E) -> Iterable<R>) = flatMapTo(mutableSetOf()) { op(it) }
+
+@JvmName("flatMapToSet2")
+@OptIn(ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+inline fun <E, R> Iterable<E>.flatMapToSet(op: (E) -> Sequence<R>) = flatMapTo(mutableSetOf()) { op(it) }
 inline fun <E, R> Array<E>.flatMapToSet(op: (E) -> Iterable<R>) = flatMapTo(mutableSetOf()) { op(it) }
 
 fun <E> Collection<E>.duplicates(): List<Pair<IndexedValue<E>, IndexedValue<E>>> = when (this) {
