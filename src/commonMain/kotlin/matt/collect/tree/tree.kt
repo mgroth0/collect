@@ -17,7 +17,7 @@ import kotlinx.serialization.encoding.encodeStructure
 import matt.collect.list.readOnly
 import matt.lang.go
 import matt.lang.model.value.Value
-import matt.prim.str.mybuild.string
+import matt.prim.str.mybuild.api.string
 import matt.prim.str.requireIsOneLine
 import matt.prim.str.times
 

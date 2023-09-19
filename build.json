@@ -4,11 +4,6 @@
         {
             "type": "Project",
             "cfg": "commonMainApi",
-            "path": ":k:lang"
-        },
-        {
-            "type": "Project",
-            "cfg": "commonMainApi",
             "path": ":k:prim"
         },
         {

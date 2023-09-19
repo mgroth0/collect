@@ -5,7 +5,7 @@ import matt.collect.itr.subList
 import matt.lang.disabledCode
 import matt.lang.require.requireEmpty
 import matt.prim.str.elementsToString
-import matt.prim.str.mybuild.string
+import matt.prim.str.mybuild.api.string
 import kotlin.math.max
 import kotlin.math.min
 

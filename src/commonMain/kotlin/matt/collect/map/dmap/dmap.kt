@@ -1,19 +1,19 @@
 package matt.collect.map.dmap
 
-fun <K, V> MutableMap<K, V>.withStoringDefault(
+fun <K, V : Any> MutableMap<K, V>.withStoringDefault(
     d: (K) -> V
 ): DefaultStoringMap<K, V> {
     return DefaultStoringMap(this, d)
 }
 
-interface CanBeNotNullMutableMap<K, V> : MutableMap<K, V>, CanBeNotNullMap<K, V>
+interface CanBeNotNullMutableMap<K, V : Any> : MutableMap<K, V>, CanBeNotNullMap<K, V>
 
-interface CanBeNotNullMap<K, V> : Map<K, V> {
+interface CanBeNotNullMap<K, V : Any> : Map<K, V> {
     override operator fun get(key: K): V
 }
 
 
-expect class DefaultStoringMap<K, V>(
+expect class DefaultStoringMap<K, V : Any>(
     map: MutableMap<K, V>,
     d: (K) -> V
 ) : CanBeNotNullMutableMap<K, V> {

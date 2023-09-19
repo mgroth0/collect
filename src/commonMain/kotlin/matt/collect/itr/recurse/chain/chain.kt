@@ -5,6 +5,8 @@ import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind.UNKNOWN
 import kotlin.contracts.contract
 
+
+
 @ExperimentalContracts
 fun <T : Any> T.chain(op: (T) -> T?): Sequence<T> {
     contract {

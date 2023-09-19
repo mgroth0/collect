@@ -11,7 +11,6 @@ import matt.lang.require.requireNot
 import matt.lang.require.requireNotEmpty
 import matt.lang.require.requireOne
 import kotlin.contracts.ExperimentalContracts
-import kotlin.contracts.InvocationKind
 import kotlin.contracts.InvocationKind.AT_LEAST_ONCE
 import kotlin.contracts.InvocationKind.UNKNOWN
 import kotlin.contracts.contract
@@ -38,8 +37,7 @@ open class FakeMutableIterator<E>(val itr: Iterator<E>) : Iterator<E> by itr, Mu
 
 fun <E> ListIterator<E>.toFakeMutableListIterator() = FakeMutableListIterator(this)
 
-class FakeMutableListIterator<E>(itr: ListIterator<E>) : ListIterator<E> by itr,
-    MutableListIterator<E> {
+class FakeMutableListIterator<E>(itr: ListIterator<E>) : ListIterator<E> by itr, MutableListIterator<E> {
     override fun add(element: E) = ILLEGAL
 
     override fun previous() = ILLEGAL
@@ -337,9 +335,7 @@ open class MutableListIteratorWrapper<E>(
     itrWrapper: (ItrDir, () -> E) -> E = { _, it -> it() },
     changeWrapper: (ItrChange, () -> Unit) -> Unit = { _, it -> it() }
 ) : MutableIteratorWrapper<E>(
-    list,
-    itrWrapper = itrWrapper,
-    changeWrapper = changeWrapper
+    list, itrWrapper = itrWrapper, changeWrapper = changeWrapper
 ), MutableListIterator<E> {
     final override val itr = if (index != null) list.listIterator(index) else list.listIterator()
 
@@ -378,11 +374,9 @@ open class MutableIteratorWithSomeMemory<E>(list: MutableCollection<E>) : Mutabl
 open class MutableListIteratorWithSomeMemory<E>(
     list: MutableList<E>,
     index: Int? = null
-) :
-    MutableListIteratorWrapper<E>(
-        list,
-        index = index
-    ) {
+) : MutableListIteratorWrapper<E>(
+    list, index = index
+) {
     private var hadFirstReturn = false
     var lastReturned: E? = null
         private set
@@ -416,6 +410,7 @@ inline fun <T> Iterable<T>.first(
 inline fun <E> MutableList<E>.iterateM(op: MutableListIterator<E>.(E) -> Unit) {
     return listIterator().whileHasNext(op)
 }
+
 fun <E> MutableList<E>.iterateMNoLambda(op: MutableListIterator<E>.(E) -> Unit) {
     return listIterator().whileHasNext(op)
 }
@@ -444,8 +439,7 @@ fun <T> Iterable<T>.filterIn(vararg matches: T): List<T> {
 inline fun <E, I : Iterator<E>> I.whileHasNext(op: I.(E) -> Unit) {
     contract {
         callsInPlace(
-            op,
-            UNKNOWN
+            op, UNKNOWN
         )
     }
     while (hasNext()) {
@@ -458,8 +452,7 @@ inline fun <E, I : Iterator<E>> I.whileHasNext(op: I.(E) -> Unit) {
 inline fun <T, R> Iterable<T>.mapNested(converter: (T, T) -> R): List<R> {
     val r = mutableListOf<R>()
     for (element1 in this) for (element2 in this) r += converter(
-        element1,
-        element2
+        element1, element2
     )
     return r
 }
@@ -486,8 +479,7 @@ fun <T> Sequence<T>.onEveryIndexed(
 ): Sequence<T> {
     return mapIndexed { index, t ->
         if (index % ith == 0) action(
-            index,
-            t
+            index, t
         )
         t
     }
@@ -509,8 +501,7 @@ inline fun <T> Sequence<T>.forEachPairing(action: Pair<T, T>.() -> Unit) {
     unique.forEach { a ->
         i += 1
         unique.subList(
-            i + 1,
-            unique.size
+            i + 1, unique.size
         ).forEach { b ->
             (a to b).action()
         }
@@ -534,11 +525,9 @@ fun Array<FloatArray>.flatten() = FloatArray(this.map { it.size }.sum()).also { 
 }
 
 @Suppress(
-    "SimplifiableCall",
-    "UNCHECKED_CAST"
+    "SimplifiableCall", "UNCHECKED_CAST"
 )
-fun <T> Array<T>.filterNotNull(): List<T & Any> =
-    filter { it != null } as List<T & Any>
+fun <T> Array<T>.filterNotNull(): List<T & Any> = filter { it != null } as List<T & Any>
 //@Suppress("SimplifiableCall", "UNCHECKED_CAST") fun FloatArray.filterNotNull(): List<Float> = filter { it != null } as List<T & Any>
 
 inline fun <T> Iterable<T>.firstOrErr(
@@ -583,8 +572,7 @@ fun <E> List<E>.sameContentsAnyOrder(list: List<E>): Boolean {
 
 /*from is inclusive*/
 fun <E> List<E>.subList(from: Int) = subList(
-    from,
-    size
+    from, size
 )
 
 fun <E> List<E?>.filterNotNull(): List<E> = mapNotNull { it }
@@ -601,48 +589,32 @@ fun <T> Iterable<T>.onEachApply(op: T.() -> Unit) = onEach { it.apply(op) }
 
 
 @ExperimentalContracts
-fun <T : Any, R> T.search(
+tailrec fun <T : Any, R> T.search(
     getTarget: T.() -> R?,
     getNext: T.() -> T?
 ): R? {
     contract {
         callsInPlace(
-            getTarget,
-            AT_LEAST_ONCE
+            getTarget, AT_LEAST_ONCE
         )
         callsInPlace(
-            getNext,
-            UNKNOWN
+            getNext, UNKNOWN
         )
     }
-    var next: T? = this
-    do {
-        next!!.getTarget()?.let {
-            return it
-        }
-        next = next.getNext()
-    } while (next != null)
-    return null
+    return getTarget() ?: getNext()?.search(getTarget = getTarget, getNext = getNext)
 }
 
 
 @ExperimentalContracts
-fun <T : Any> T.searchDepth(
+tailrec fun <T : Any> T.searchDepth(
+    currentDepth: Int = 0,
     getNext: T.() -> T?
 ): Int {
     contract {
-        callsInPlace(
-            getNext,
-            InvocationKind.AT_LEAST_ONCE
-        )
+        callsInPlace(getNext, AT_LEAST_ONCE)
     }
-    var i = -1
-    var next: T? = this
-    do {
-        next = next!!.getNext()
-        i++
-    } while (next != null)
-    return i
+    val theNext = getNext() ?: return currentDepth
+    return theNext.searchDepth(currentDepth + 1, getNext)
 }
 
 
@@ -653,8 +625,7 @@ fun <E> Collection<E>.allUnique(): Boolean {
         is List<E> -> {
             forEachIndexed { index1, t1 ->
                 for (t2 in subList(
-                    index1 + 1,
-                    size
+                    index1 + 1, size
                 )) {
                     if (t1 == t2) {
                         println("t1 is t2")
@@ -679,11 +650,11 @@ fun <E> Collection<E>.allUnique(): Boolean {
 }
 
 fun <E> Collection<E>.areAllTheSame(): Boolean {
-    if (this.size <= 1) {
-        return true
+    return if (this.size <= 1) {
+        true
     } else {
         val example = this.first()
-        return this.all { it == example }
+        this.all { it == example }
     }
 }
 
@@ -724,11 +695,9 @@ fun <E> Collection<E>.duplicates(): List<Pair<IndexedValue<E>, IndexedValue<E>>>
                 forEachIndexed { index, e ->
                     if (index != i && e == n) {
                         r += IndexedValue(
-                            i,
-                            n
+                            i, n
                         ) to IndexedValue<E>(
-                            index,
-                            e
+                            index, e
                         )
                     }
                 }
@@ -743,12 +712,10 @@ fun <E> Collection<E>.duplicates(): List<Pair<IndexedValue<E>, IndexedValue<E>>>
 inline fun <reified T> arrayOfNotNull(vararg elements: T?): Array<T> = listOfNotNull(*elements).toTypedArray()
 
 
-fun <T> Iterator<T>.first(op: (T) -> Boolean): T {
-    while (hasNext()) {
-        val n = next()
-        if (op(n)) return n
-    }
-    throw NoSuchElementException("couldn't find one")
+tailrec fun <T> Iterator<T>.first(op: (T) -> Boolean): T {
+    if (!hasNext()) throw NoSuchElementException("couldn't find one")
+    next().takeIf(op)?.let { return it }
+    return first(op)
 }
 
 
@@ -764,8 +731,7 @@ object YesIUseCollect
 
 inline fun <T> Iterable<T>.forEachNested(action: (T, T) -> Unit): Unit {
     for (element1 in this) for (element2 in this) action(
-        element1,
-        element2
+        element1, element2
     )
 }
 

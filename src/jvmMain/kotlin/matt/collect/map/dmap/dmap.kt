@@ -1,94 +1,91 @@
 package matt.collect.map.dmap
 
-import java.util.concurrent.Semaphore
-import kotlin.contracts.InvocationKind.EXACTLY_ONCE
-import kotlin.contracts.contract
+import java.util.concurrent.CountDownLatch
 
 
-actual class DefaultStoringMap<K, V> actual constructor(
+actual class DefaultStoringMap<K, V : Any> actual constructor(
     actual val map: MutableMap<K, V>,
     actual val d: (K) -> V
 ) : CanBeNotNullMutableMap<K, V> {
+
     actual override val size: Int
         get() = map.size
 
+    @Synchronized
     actual override fun containsKey(key: K) = map.containsKey(key)
 
+    @Synchronized
     actual override fun containsValue(value: V) = map.containsValue(value)
 
-    private val multiMonitor = MultiMonitor<K>()
 
-    actual override operator fun get(key: K): V {
-
-        return multiMonitor.with(key) {
-            map.getOrPut(key) { d(key) }
-        }
+    private inner class CreateJob(val key: K) {
+        var result: V? = null
+        val latch = CountDownLatch(1)
     }
 
+    private val createJobs = mutableMapOf<K, CreateJob>()
+    actual override operator fun get(key: K): V {
+        val g = synchronized(this) {
+            map[key]
+        }
+        if (g != null) return g
+        var r: V?
+        do {
+            var jobIsMine = false
+            val createJob = synchronized(this) {
+                createJobs.getOrPut(key) {
+                    jobIsMine = true
+                    CreateJob(key)
+                }
+            }
+            if (jobIsMine) {
+                try {
+                    r = d(key)
+                    createJob.result = r
+                } finally {
+                    createJob.latch.countDown()
+                }
+            } else {
+                createJob.latch.await()
+                r = createJob.result
+                r ?: get(key)
+            }
+        } while (r == null)
+        return r
+    }
+
+    @Synchronized
     actual fun getWithoutSetting(key: K): V? = map[key]
 
+    @Synchronized
     actual override fun isEmpty() = map.isEmpty()
 
-    actual override val entries: MutableSet<MutableMap.MutableEntry<K, V>>
-        get() = map.entries
-    actual override val keys: MutableSet<K>
-        get() = map.keys
-    actual override val values: MutableCollection<V>
-        get() = map.values
 
+    /*these all need to be more deephys synchronized... this is a common issue*/
+    actual override val entries: MutableSet<MutableMap.MutableEntry<K, V>>
+        @Synchronized get() = map.entries
+
+    /*these all need to be more deephys synchronized... this is a common issue*/
+    actual override val keys: MutableSet<K>
+        @Synchronized get() = map.keys
+
+    /*these all need to be more deephys synchronized... this is a common issue*/
+    actual override val values: MutableCollection<V>
+        @Synchronized get() = map.values
+
+    @Synchronized
     actual override fun clear() = map.clear()
 
+    @Synchronized
     actual override fun put(
         key: K,
         value: V
     ): V? = map.put(key, value)
 
+    @Synchronized
     actual override fun putAll(from: Map<out K, V>) = map.putAll(from)
 
+    @Synchronized
     actual override fun remove(key: K): V? = map.remove(key)
-
-}
-
-
-class MultiMonitor<T> {
-    fun <R> with(
-        t: T,
-        op: () -> R
-    ): R {
-        contract {
-            callsInPlace(op, EXACTLY_ONCE)
-        }
-        val sem = takeMonitor(t)
-        sem.acquire()
-        val r = op()
-        sem.release()
-        giveBackMonitor(t)
-        return r
-    }
-
-
-    private val currentlyHeld = mutableMapOf<T, Semaphore>()
-    private val currentlyWaiting = mutableMapOf<T, Int>()
-
-    @Synchronized
-    private fun takeMonitor(t: T): Semaphore {
-
-        val r = currentlyHeld.getOrPut(t) { Semaphore(1) }
-
-        val c = currentlyWaiting[t] ?: 0
-        currentlyWaiting[t] = c + 1
-        return r
-    }
-
-    @Synchronized
-    private fun giveBackMonitor(t: T) {
-        val c = currentlyWaiting[t]!!
-        val newC = c - 1
-        currentlyWaiting[t] = newC
-        if (newC == 0) {
-            currentlyWaiting.remove(t)
-            currentlyHeld.remove(t)
-        }
-    }
 
 }

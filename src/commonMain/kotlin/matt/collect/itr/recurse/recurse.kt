@@ -7,7 +7,6 @@ const val DEFAULT_INCLUDE_SELF = true
 
 fun <T> T.recurseChildren(rChildren: (T) -> Iterable<T>) = recurse(includeSelf = false, rChildren)
 
-
 fun <T> T.recurseToFlat(
     rChildren: (T) -> Iterable<T>,
     r: MutableList<T>? = null

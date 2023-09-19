@@ -1,6 +1,5 @@
 package matt.collect.list.singlen
 
-import matt.collect.single.SingleElementCollection
 import matt.collect.single.SingleElementIterator
 import matt.collect.singlen.SingleElementOrEmptyCollection
 import matt.lang.NEVER
