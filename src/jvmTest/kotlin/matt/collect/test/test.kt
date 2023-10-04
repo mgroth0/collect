@@ -21,10 +21,13 @@ import matt.collect.lazy.basic.MutableLazyList
 import matt.collect.lazy.seq.LazySequenceList
 import matt.collect.lazy.set.LazySet
 import matt.collect.list.single.SingleElementListImpl
+import matt.collect.map.dmap.withStoringDefault
 import matt.collect.weak.bag.WeakBag
 import matt.lang.model.value.LazyValue
-import matt.test.JupiterTestAssertions.assertRunsInOneMinute
+import matt.test.assertions.JupiterTestAssertions.assertRunsInOneMinute
 import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 class CollectTests {
     @Test
@@ -65,4 +68,14 @@ class CollectTests {
     fun iniEnums() {
         ItrDir.entries
     }
+
+    @Test
+    fun testMapImplementation() {
+        val m = mutableMapOf<Int, String>().withStoringDefault { it.toString() }
+        assertTrue(m.isEmpty())
+        m[1]
+        assertEquals(1, m.size)
+        assertEquals("1", m.getWithoutSetting(1))
+    }
+
 }

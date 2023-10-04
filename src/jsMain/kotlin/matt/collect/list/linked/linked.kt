@@ -1,86 +1,86 @@
 package matt.collect.list.linked
 
 actual class MyLinkedList<E> : MutableList<E> {
-    override val size: Int
+    actual override val size: Int
         get() = TODO("Not yet implemented")
 
-    override fun clear() {
+    actual override fun clear() {
         TODO("Not yet implemented")
     }
 
-    override fun addAll(elements: Collection<E>): Boolean {
+    actual override fun addAll(elements: Collection<E>): Boolean {
         TODO("Not yet implemented")
     }
 
-    override fun addAll(index: Int, elements: Collection<E>): Boolean {
+    actual override fun addAll(index: Int, elements: Collection<E>): Boolean {
         TODO("Not yet implemented")
     }
 
-    override fun add(index: Int, element: E) {
+    actual override fun add(index: Int, element: E) {
         TODO("Not yet implemented")
     }
 
-    override fun add(element: E): Boolean {
+    actual override fun add(element: E): Boolean {
         TODO("Not yet implemented")
     }
 
-    override fun get(index: Int): E {
+    actual override fun get(index: Int): E {
         TODO("Not yet implemented")
     }
 
-    override fun isEmpty(): Boolean {
+    actual override fun isEmpty(): Boolean {
         TODO("Not yet implemented")
     }
 
-    override fun iterator(): MutableIterator<E> {
+    actual override fun iterator(): MutableIterator<E> {
         TODO("Not yet implemented")
     }
 
-    override fun listIterator(): MutableListIterator<E> {
+    actual override fun listIterator(): MutableListIterator<E> {
         TODO("Not yet implemented")
     }
 
-    override fun listIterator(index: Int): MutableListIterator<E> {
+    actual override fun listIterator(index: Int): MutableListIterator<E> {
         TODO("Not yet implemented")
     }
 
-    override fun removeAt(index: Int): E {
+    actual override fun removeAt(index: Int): E {
         TODO("Not yet implemented")
     }
 
-    override fun subList(fromIndex: Int, toIndex: Int): MutableList<E> {
+    actual override fun subList(fromIndex: Int, toIndex: Int): MutableList<E> {
         TODO("Not yet implemented")
     }
 
-    override fun set(index: Int, element: E): E {
+    actual override fun set(index: Int, element: E): E {
         TODO("Not yet implemented")
     }
 
-    override fun retainAll(elements: Collection<E>): Boolean {
+    actual override fun retainAll(elements: Collection<E>): Boolean {
         TODO("Not yet implemented")
     }
 
-    override fun removeAll(elements: Collection<E>): Boolean {
+    actual override fun removeAll(elements: Collection<E>): Boolean {
         TODO("Not yet implemented")
     }
 
-    override fun remove(element: E): Boolean {
+    actual override fun remove(element: E): Boolean {
         TODO("Not yet implemented")
     }
 
-    override fun lastIndexOf(element: E): Int {
+    actual override fun lastIndexOf(element: E): Int {
         TODO("Not yet implemented")
     }
 
-    override fun indexOf(element: E): Int {
+    actual override fun indexOf(element: E): Int {
         TODO("Not yet implemented")
     }
 
-    override fun containsAll(elements: Collection<E>): Boolean {
+    actual override fun containsAll(elements: Collection<E>): Boolean {
         TODO("Not yet implemented")
     }
 
-    override fun contains(element: E): Boolean {
+    actual override fun contains(element: E): Boolean {
         TODO("Not yet implemented")
     }
 

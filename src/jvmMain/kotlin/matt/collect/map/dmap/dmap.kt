@@ -33,6 +33,7 @@ actual class DefaultStoringMap<K, V : Any> actual constructor(
         do {
             var jobIsMine = false
             val createJob = synchronized(this) {
+                map[key]?.let { return it }
                 createJobs.getOrPut(key) {
                     jobIsMine = true
                     CreateJob(key)
@@ -41,8 +42,14 @@ actual class DefaultStoringMap<K, V : Any> actual constructor(
             if (jobIsMine) {
                 try {
                     r = d(key)
+                    synchronized(this) {
+                        map[key] = r!!
+                    }
                     createJob.result = r
                 } finally {
+                    synchronized(this) {
+                        createJobs.remove(key)
+                    }
                     createJob.latch.countDown()
                 }
             } else {

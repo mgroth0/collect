@@ -411,8 +411,8 @@ inline fun <E> MutableList<E>.iterateM(op: MutableListIterator<E>.(E) -> Unit) {
     return listIterator().whileHasNext(op)
 }
 
-fun <E> MutableList<E>.iterateMNoLambda(op: MutableListIterator<E>.(E) -> Unit) {
-    return listIterator().whileHasNext(op)
+inline fun <E> MutableSet<E>.iterateM(op: MutableIterator<E>.(E) -> Unit) {
+    return iterator().whileHasNext(op)
 }
 
 inline fun <E> List<E>.iterateL(op: ListIterator<E>.(E) -> Unit) {

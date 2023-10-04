@@ -35,7 +35,7 @@ open class SynchronizedMap<K, V>(protected open val map: Map<K, V>) : Map<K, V> 
 
 }
 
-fun <K, V> MutableMap<K, V>.synchronized() = SynchronizedMutableMap(this)
+fun <K, V> MutableMap<K, V>.synchronized(): MutableMap<K, V> = SynchronizedMutableMap(this)
 
 
 class SynchronizedMutableMap<K, V>(protected override val map: MutableMap<K, V>) : SynchronizedMap<K, V>(map),
@@ -74,8 +74,11 @@ class SynchronizedMutableMap<K, V>(protected override val map: MutableMap<K, V>)
     }
 
     @OnlySynchronizedOnJvm
-    fun getOrPutAtomically(key: K, defaultValue: () -> V): V {
-        return map.getOrPut(key,defaultValue)
+    fun getOrPutAtomically(
+        key: K,
+        defaultValue: () -> V
+    ): V {
+        return map.getOrPut(key, defaultValue)
     }
 
 }
