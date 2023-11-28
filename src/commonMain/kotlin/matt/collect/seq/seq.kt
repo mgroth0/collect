@@ -1,7 +1,7 @@
 package matt.collect.seq
 
 import matt.lang.function.Convert
-import matt.lang.require.requireNonNegative
+import matt.lang.assertions.require.requireNonNegative
 import matt.lang.whileTrue
 
 fun <E> sequenceUntil(endExclusive: E, op: ()->E) = sequence {

@@ -2,8 +2,8 @@ package matt.collect.list
 
 import matt.collect.itr.duplicates
 import matt.collect.itr.subList
+import matt.lang.assertions.require.requireEmpty
 import matt.lang.disabledCode
-import matt.lang.require.requireEmpty
 import matt.prim.str.elementsToString
 import matt.prim.str.mybuild.api.string
 import kotlin.math.max
@@ -88,6 +88,14 @@ fun <E> MutableList<E>.swapWithNoDuplications(
     val o1 = removeAt(min)
     add(min, o2)
     add(max, o1)
+}
+
+
+fun <E> MutableList<E>.swapQuickly(
+    indexOne: Int,
+    indexTwo: Int
+) {
+    this[indexOne] = set(indexTwo, this[indexOne])
 }
 
 

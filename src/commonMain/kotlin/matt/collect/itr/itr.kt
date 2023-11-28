@@ -6,10 +6,10 @@ import matt.collect.itr.ItrChange.Replace
 import matt.collect.itr.ItrDir.NEXT
 import matt.collect.itr.ItrDir.PREVIOUS
 import matt.lang.ILLEGAL
+import matt.lang.assertions.require.requireNot
+import matt.lang.assertions.require.requireNotEmpty
+import matt.lang.assertions.require.requireOne
 import matt.lang.err
-import matt.lang.require.requireNot
-import matt.lang.require.requireNotEmpty
-import matt.lang.require.requireOne
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind.AT_LEAST_ONCE
 import kotlin.contracts.InvocationKind.UNKNOWN
@@ -570,6 +570,21 @@ fun <E> List<E>.sameContentsAnyOrder(list: List<E>): Boolean {
     return tempList.isEmpty()
 }
 
+infix fun <E> List<E>.sameContentsSameOrder(list: List<E>): Boolean {
+
+    if (size != list.size) {
+        return false
+    }
+    val itr1 = iterator()
+    val itr2 = list.iterator()
+    repeat(size) {
+        if (itr1.next() != itr2.next()) {
+            return false
+        }
+    }
+    return true
+}
+
 /*from is inclusive*/
 fun <E> List<E>.subList(from: Int) = subList(
     from, size
@@ -588,6 +603,7 @@ fun <T> Sequence<T>.onEachApply(op: T.() -> Unit) = onEach { it.apply(op) }
 fun <T> Iterable<T>.onEachApply(op: T.() -> Unit) = onEach { it.apply(op) }
 
 
+@Suppress("NO_TAIL_CALLS_FOUND", "NON_TAIL_RECURSIVE_CALL")
 @ExperimentalContracts
 tailrec fun <T : Any, R> T.search(
     getTarget: T.() -> R?,
@@ -601,6 +617,9 @@ tailrec fun <T : Any, R> T.search(
             getNext, UNKNOWN
         )
     }
+    /*
+    I guess this is broken for now? Fixed by https://youtrack.jetbrains.com/issue/KT-63529/K2-Compiler-does-not-detect-tailrec-call-in-elvis-expression
+    * */
     return getTarget() ?: getNext()?.search(getTarget = getTarget, getNext = getNext)
 }
 
@@ -618,9 +637,9 @@ tailrec fun <T : Any> T.searchDepth(
 }
 
 
-fun <E, T> Collection<E>.allUnique(op: (E) -> T) = map(op).allUnique()
+fun <E, T> Collection<E>.areAllUnique(op: (E) -> T) = map(op).areAllUnique()
 
-fun <E> Collection<E>.allUnique(): Boolean {
+fun <E> Collection<E>.areAllUnique(): Boolean {
     when (this) {
         is List<E> -> {
             forEachIndexed { index1, t1 ->
@@ -641,11 +660,8 @@ fun <E> Collection<E>.allUnique(): Boolean {
             return true
         }
 
-        is Set<E>  -> {
-            return true
-        }
-
-        else       -> return toList().allUnique()
+        is Set<E>  -> return true
+        else       -> return toList().areAllUnique()
     }
 }
 
@@ -735,5 +751,17 @@ inline fun <T> Iterable<T>.forEachNested(action: (T, T) -> Unit): Unit {
     )
 }
 
-fun <T> Iterator<T>.nextOrNull() = takeIf { hasNext() }?.next()
+fun <T : Any> Iterator<T>.nextOrNull() = takeIf { hasNext() }?.next()
+
+
+/*unsafe... NoSuchElement might come from a different source*/
+/*
+fun <T : Any> Iterator<T>.nextOrNullIfNoSuchElement(): T? {
+    try {
+        return next()
+    } catch (e: NoSuchElementException) {
+        return null
+    }
+}
+*/
 

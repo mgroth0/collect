@@ -1,34 +1,32 @@
 package matt.collect.lazy.set
 
 import matt.collect.lazy.LazyCollection
-import matt.lang.anno.OnlySynchronizedOnJvm
 import matt.lang.go
+import matt.lang.sync.ReferenceMonitor
 import matt.lang.sync.inSync
 
 class LazySet<E : Any>(
     private val generator: Iterator<E>
-) : LazyCollection<E>, Set<E> {
+) : LazyCollection<E>, Set<E>, ReferenceMonitor {
 
-    constructor(generator: Sequence<E>): this(generator.iterator())
+    constructor(generator: Sequence<E>) : this(generator.iterator())
 
     private val theSet = mutableSetOf<E>()
 
     private var lastGeneratedFrom: Any? = null
 
-    @OnlySynchronizedOnJvm
     private fun generateAll(
         from: Any
-    ) {
+    ) = inSync {
         lastGeneratedFrom = from
         while (generator.hasNext()) {
             theSet += generator.next()
         }
     }
 
-    @OnlySynchronizedOnJvm
     private fun generateAnother(
         from: Any
-    ): E? {
+    ): E? = inSync {
         lastGeneratedFrom = from
         if (generator.hasNext()) {
             val n = generator.next()
@@ -39,13 +37,12 @@ class LazySet<E : Any>(
     }
 
     override val size: Int
-        @OnlySynchronizedOnJvm get() {
+        get() = inSync {
             generateAll(this)
             return theSet.size
         }
 
-    @OnlySynchronizedOnJvm
-    override fun contains(element: E): Boolean {
+    override fun contains(element: E): Boolean = inSync {
         if (element in theSet) return true
         do {
             val n = generateAnother(this)
@@ -54,13 +51,11 @@ class LazySet<E : Any>(
         return false
     }
 
-    @OnlySynchronizedOnJvm
-    override fun containsAll(elements: Collection<E>): Boolean {
+    override fun containsAll(elements: Collection<E>): Boolean = inSync {
         return elements.all { it in this }
     }
 
-    @OnlySynchronizedOnJvm
-    override fun isEmpty(): Boolean {
+    override fun isEmpty(): Boolean = inSync {
         return if (theSet.isNotEmpty()) false
         else {
             generateAnother(this)
@@ -68,46 +63,47 @@ class LazySet<E : Any>(
         }
     }
 
-    @OnlySynchronizedOnJvm
-    override fun iterator() = object : Iterator<E> {
+    override fun iterator() = inSync{
+        object : Iterator<E> {
 
 
-        init {
-            lastGeneratedFrom = null
-        }
-
-        private var itr = theSet.toSet().iterator()
-
-        override fun hasNext(): Boolean {
-            return inSync(this@LazySet) {
-                lastGeneratedFrom?.go {
-                    if (it != this) {
-                        error("bad lazy set")
-                    }
-                }
-
-                if (itr.hasNext()) true
-                else {
-                    generator.hasNext()
-                }
-
-
+            init {
+                lastGeneratedFrom = null
             }
-        }
 
-        override fun next(): E {
-            return inSync(this@LazySet) {
-                lastGeneratedFrom?.go {
-                    if (it != this) {
-                        error("bad lazy set")
+            private var itr = theSet.toSet().iterator()
+
+            override fun hasNext(): Boolean {
+                return inSync(this@LazySet) {
+                    lastGeneratedFrom?.go {
+                        if (it != this) {
+                            error("bad lazy set")
+                        }
                     }
-                }
-                if (itr.hasNext()) itr.next()
-                else {
-                    generateAnother(this)!!
+
+                    if (itr.hasNext()) true
+                    else {
+                        generator.hasNext()
+                    }
+
+
                 }
             }
-        }
 
+            override fun next(): E {
+                return inSync(this@LazySet) {
+                    lastGeneratedFrom?.go {
+                        if (it != this) {
+                            error("bad lazy set")
+                        }
+                    }
+                    if (itr.hasNext()) itr.next()
+                    else {
+                        generateAnother(this)!!
+                    }
+                }
+            }
+
+        }
     }
 }

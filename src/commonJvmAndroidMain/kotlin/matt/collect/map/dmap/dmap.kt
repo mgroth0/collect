@@ -1,3 +1,5 @@
+@file:JvmName("DmapJvmAndroidKt")
+
 package matt.collect.map.dmap
 
 import java.util.concurrent.CountDownLatch

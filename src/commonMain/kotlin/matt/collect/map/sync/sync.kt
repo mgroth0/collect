@@ -1,35 +1,32 @@
 package matt.collect.map.sync
 
-import matt.lang.anno.OnlySynchronizedOnJvm
+import matt.lang.sync.ReferenceMonitor
+import matt.lang.sync.inSync
 import kotlin.collections.Map.Entry
 import kotlin.collections.MutableMap.MutableEntry
 
 fun <K, V> Map<K, V>.synchronized() = SynchronizedMap(this)
 
 
-open class SynchronizedMap<K, V>(protected open val map: Map<K, V>) : Map<K, V> {
-    override val entries: Set<Entry<K, V>> @OnlySynchronizedOnJvm get() = map.entries
-    override val keys: Set<K> @OnlySynchronizedOnJvm get() = map.keys
-    override val size: Int @OnlySynchronizedOnJvm get() = map.size
-    override val values: Collection<V> @OnlySynchronizedOnJvm get() = map.values
+open class SynchronizedMap<K, V>(protected open val map: Map<K, V>) : Map<K, V>, ReferenceMonitor {
+    override val entries: Set<Entry<K, V>> get() = inSync { map.entries }
+    override val keys: Set<K> get() = inSync { map.keys }
+    override val size: Int get() = inSync { map.size }
+    override val values: Collection<V> get() = inSync { map.values }
 
-    @OnlySynchronizedOnJvm
-    override fun isEmpty(): Boolean {
+    override fun isEmpty(): Boolean = inSync {
         return map.isEmpty()
     }
 
-    @OnlySynchronizedOnJvm
-    override fun get(key: K): V? {
+    override fun get(key: K): V? = inSync {
         return map[key]
     }
 
-    @OnlySynchronizedOnJvm
-    override fun containsValue(value: V): Boolean {
+    override fun containsValue(value: V): Boolean = inSync {
         return map.containsValue(value)
     }
 
-    @OnlySynchronizedOnJvm
-    override fun containsKey(key: K): Boolean {
+    override fun containsKey(key: K): Boolean = inSync {
         return map.containsKey(key)
     }
 
@@ -42,42 +39,37 @@ class SynchronizedMutableMap<K, V>(protected override val map: MutableMap<K, V>)
     MutableMap<K, V> {
 
     override val entries: MutableSet<MutableEntry<K, V>>
-        @OnlySynchronizedOnJvm get() = map.entries
+        get() = inSync { map.entries }
     override val keys: MutableSet<K>
-        @OnlySynchronizedOnJvm get() = map.keys
+        get() = inSync { map.keys }
     override val values: MutableCollection<V>
-        @OnlySynchronizedOnJvm get() = map.values
+        get() = inSync { map.values }
 
-    @OnlySynchronizedOnJvm
-    override fun clear() {
-        return map.clear()
+    override fun clear() = inSync {
+        map.clear()
     }
 
-    @OnlySynchronizedOnJvm
     override fun put(
         key: K,
         value: V
-    ): V? {
+    ): V? = inSync {
         return map.put(key, value)
     }
 
 
-    @OnlySynchronizedOnJvm
-    override fun putAll(from: Map<out K, V>) {
-        return map.putAll(from)
+    override fun putAll(from: Map<out K, V>) = inSync {
+        map.putAll(from)
     }
 
 
-    @OnlySynchronizedOnJvm
-    override fun remove(key: K): V? {
+    override fun remove(key: K): V? = inSync {
         return map.remove(key)
     }
 
-    @OnlySynchronizedOnJvm
     fun getOrPutAtomically(
         key: K,
         defaultValue: () -> V
-    ): V {
+    ): V = inSync {
         return map.getOrPut(key, defaultValue)
     }
 

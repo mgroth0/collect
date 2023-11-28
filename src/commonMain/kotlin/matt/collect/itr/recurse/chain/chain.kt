@@ -2,16 +2,10 @@ package matt.collect.itr.recurse.chain
 
 import matt.lang.err
 import kotlin.contracts.ExperimentalContracts
-import kotlin.contracts.InvocationKind.UNKNOWN
-import kotlin.contracts.contract
-
 
 
 @ExperimentalContracts
 fun <T : Any> T.chain(op: (T) -> T?): Sequence<T> {
-    contract {
-        callsInPlace(op, UNKNOWN)
-    }
     return ChainIterator(this, op).asSequence()
 }
 

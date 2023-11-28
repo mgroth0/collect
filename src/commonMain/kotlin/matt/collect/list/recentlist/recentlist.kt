@@ -4,16 +4,16 @@ import matt.collect.itr.FakeMutableIterator
 import matt.collect.queue.MyMutableQueue
 import matt.collect.queue.MyMutableQueueImpl
 import matt.collect.queue.removeJavaStyle
-import matt.lang.anno.OnlySynchronizedOnJvm
+import matt.lang.sync.ReferenceMonitor
+import matt.lang.sync.inSync
 
 
-class EvitctingQueue<E : Any>(val capacity: Int) : MyMutableQueue<E> {
+class EvitctingQueue<E : Any>(val capacity: Int) : MyMutableQueue<E>, ReferenceMonitor {
 
 
     private val data = MyMutableQueueImpl<E>()
 
-    @OnlySynchronizedOnJvm
-    override fun add(element: E): Boolean {
+    override fun add(element: E): Boolean = inSync {
         data.add(element)
         if (data.size > capacity) data.removeJavaStyle()
         return true
@@ -46,15 +46,13 @@ class EvitctingQueue<E : Any>(val capacity: Int) : MyMutableQueue<E> {
         TODO("Not yet implemented")
     }
 
-    @OnlySynchronizedOnJvm
-    override fun poll() = data.poll()
+    override fun poll() = inSync { data.poll() }
 
     override fun element(): E {
         TODO("Not yet implemented")
     }
 
-    @OnlySynchronizedOnJvm
-    override fun peek() = data.peek()
+    override fun peek() = inSync { data.peek() }
 
     override fun offer(e: E): Boolean {
         TODO("Not yet implemented")

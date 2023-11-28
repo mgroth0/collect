@@ -1,8 +1,8 @@
 package matt.collect.lazy.seq
 
 import matt.collect.lazy.LazyList
-import matt.lang.require.requireGreaterThan
-import matt.lang.require.requireNonNegative
+import matt.lang.assertions.require.requireGreaterThan
+import matt.lang.assertions.require.requireNonNegative
 
 fun <E> Sequence<E>.toLazyList() = LazySequenceList(this)
 

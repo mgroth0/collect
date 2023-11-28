@@ -9,11 +9,11 @@ import matt.prim.str.lower
 import kotlin.collections.MutableMap.MutableEntry
 
 
-fun <K, V: Any> lazyMap(getter: (K) -> V): CanBeNotNullMap<K, V> {
+fun <K, V : Any> lazyMap(getter: (K) -> V): CanBeNotNullMap<K, V> {
     return mutableMapOf<K, V>().withStoringDefault(getter)
 }
 
-fun <K, V: Any> lazyMutableMap(getter: (K) -> V): CanBeNotNullMutableMap<K, V> {
+fun <K, V : Any> lazyMutableMap(getter: (K) -> V): CanBeNotNullMutableMap<K, V> {
     return mutableMapOf<K, V>().withStoringDefault(getter)
 }
 
@@ -115,7 +115,6 @@ fun <E> Set<E>.toFakeMutableSet() = FakeMutableSet(this)
 class FakeMutableSet<E>(val set: Collection<E>) : MutableSet<E> {
 
 
-
     override fun add(element: E): Boolean {
         err("tried to add in ${FakeMutableSet::class.simpleName}")
     }
@@ -204,6 +203,17 @@ fun Map<*, *>.toDictString() = entries.joinToString(
 
 fun <K, V> Map<K, V>.readOnly() = ReadOnlyMap(this)
 class ReadOnlyMap<K, V>(map: Map<K, V>) : Map<K, V> by map
+
+fun <K, V> Map<K, V>.filterOutNullKeys(): Map<K & Any, V> {
+    val r = mutableMapOf<K & Any, V>()
+    entries.forEach {
+        val k = it.key
+        if (k != null) {
+            r[k] = it.value
+        }
+    }
+    return r
+}
 
 fun <K, V> Map<K, V>.filterOutNullValues(): Map<K, V & Any> {
     val r = mutableMapOf<K, V & Any>()

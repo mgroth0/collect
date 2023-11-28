@@ -1,7 +1,8 @@
 package matt.collect.queue
 
 import matt.collect.list.linked.MyLinkedList
-import matt.lang.anno.OnlySynchronizedOnJvm
+import matt.lang.sync.ReferenceMonitor
+import matt.lang.sync.inSync
 
 interface MyQueue<E : Any> : Collection<E> {
     fun poll(): E?
@@ -13,12 +14,11 @@ interface MyQueue<E : Any> : Collection<E> {
 
 interface MyMutableQueue<E : Any> : MyQueue<E>, MutableCollection<E>
 
-class MyMutableQueueImpl<E : Any>() : MyMutableQueue<E> {
+class MyMutableQueueImpl<E : Any>() : MyMutableQueue<E>, ReferenceMonitor {
 
     private val list = MyLinkedList<E>()
 
-    @OnlySynchronizedOnJvm
-    override fun poll(): E? {
+    override fun poll(): E? = inSync {
         return list.removeFirstOrNull()
     }
 
@@ -75,8 +75,7 @@ class MyMutableQueueImpl<E : Any>() : MyMutableQueue<E> {
         TODO("Not yet implemented")
     }
 
-    @OnlySynchronizedOnJvm
-    override fun add(element: E): Boolean {
+    override fun add(element: E): Boolean = inSync {
         list.add(element)
         return true
     }

@@ -2,7 +2,7 @@ package matt.collect.list.slide
 
 import matt.collect.list.linked.MyLinkedList
 import matt.lang.idea.Idea
-import matt.lang.require.requireNotEqual
+import matt.lang.assertions.require.requireNotEqual
 import kotlin.math.floor
 
 interface SlidingWindowIdea : Idea
