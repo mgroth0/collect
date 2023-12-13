@@ -165,10 +165,12 @@ fun <E> MutableList<E>.setAllOneByOneNeverAllowingDuplicates(source: List<E>) {
 
 fun <E> List<E>.diffWithTarget(target: List<E>) = ListDiff(targetList = target, testList = this)
 
+interface Diff
+
 class ListDiff<E>(
     val targetList: List<E>,
     val testList: List<E>
-) {
+): Diff {
     val isSameSize = targetList.size == testList.size
 
     val needToAdd = targetList.mapIndexedNotNull { index, e ->
@@ -186,9 +188,7 @@ class ListDiff<E>(
         return string {
             lineDelimited {
                 +"To Add"
-                needToAdd.forEach {
-                    +"\t$it"
-                }
+                needToAdd.forEach { +"\t$it" }
                 blankLine()
                 +"To Remove"
                 needToRemove.forEach {
@@ -196,5 +196,13 @@ class ListDiff<E>(
                 }
             }
         }
+    }
+}
+
+
+inline fun <reified R> List<*>.castToList(): List<R> {
+    val itr = iterator()
+    return List(size) {
+        itr.next() as R
     }
 }

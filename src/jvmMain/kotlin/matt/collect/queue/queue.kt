@@ -24,8 +24,9 @@ class JQueueWrapper<E : Any>(private val jQueue: Queue<E>) : MyMutableQueue<E> {
     override val size: Int
         get() = TODO("Not yet implemented")
 
+    @Synchronized
     override fun isEmpty(): Boolean {
-        TODO("Not yet implemented")
+        return jQueue.isEmpty()
     }
 
     override fun iterator(): MutableIterator<E> {
