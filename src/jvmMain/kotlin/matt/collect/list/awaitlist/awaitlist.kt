@@ -38,11 +38,11 @@ class BlockList<E: Any>(
   }
 
   override fun contains(element: E): Boolean {
-	TODO("Not yet implemented")
+	TODO()
   }
 
   override fun containsAll(elements: Collection<E>): Boolean {
-	TODO("Not yet implemented")
+	TODO()
   }
 
 
@@ -52,30 +52,30 @@ class BlockList<E: Any>(
 	private var nextIdx = index
 	override fun hasNext() = nextIdx < size
 	override fun hasPrevious(): Boolean {
-	  TODO("Not yet implemented")
+	  TODO()
 	}
 	override fun next(): E {
 	  return get(nextIdx++)
 	}
 	override fun nextIndex() = nextIdx
 	override fun previous(): E {
-	  TODO("Not yet implemented")
+	  TODO()
 	}
 	override fun previousIndex(): Int {
-	  TODO("Not yet implemented")
+	  TODO()
 	}
   }
 
   override fun subList(fromIndex: Int, toIndex: Int): List<E> {
-	TODO("Not yet implemented")
+	TODO()
   }
 
   override fun lastIndexOf(element: E): Int {
-	TODO("Not yet implemented")
+	TODO()
   }
 
   override fun indexOf(element: E): Int {
-	TODO("Not yet implemented")
+	TODO()
   }
 
 }

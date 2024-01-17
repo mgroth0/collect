@@ -8,56 +8,56 @@ actual class DefaultStoringMap<K, V : Any> actual constructor(
     d: (K) -> V
 ) : CanBeNotNullMutableMap<K, V> {
     actual override val entries: MutableSet<MutableEntry<K, V>>
-        get() = TODO("Not yet implemented")
+        get() = TODO()
     actual override val keys: MutableSet<K>
-        get() = TODO("Not yet implemented")
+        get() = TODO()
     actual override val size: Int
-        get() = TODO("Not yet implemented")
+        get() = TODO()
     actual override val values: MutableCollection<V>
-        get() = TODO("Not yet implemented")
+        get() = TODO()
 
     actual override fun clear() {
-        TODO("Not yet implemented")
+        TODO()
     }
 
     actual override fun isEmpty(): Boolean {
-        TODO("Not yet implemented")
+        TODO()
     }
 
     actual override fun remove(key: K): V? {
-        TODO("Not yet implemented")
+        TODO()
     }
 
     actual override fun putAll(from: Map<out K, V>) {
-        TODO("Not yet implemented")
+        TODO()
     }
 
     actual override fun put(
         key: K,
         value: V
     ): V? {
-        TODO("Not yet implemented")
+        TODO()
     }
 
     actual override fun get(key: K): V {
-        TODO("Not yet implemented")
+        TODO()
     }
 
     actual override fun containsValue(value: V): Boolean {
-        TODO("Not yet implemented")
+        TODO()
     }
 
     actual override fun containsKey(key: K): Boolean {
-        TODO("Not yet implemented")
+        TODO()
     }
 
     internal actual val map: MutableMap<K, V>
-        get() = TODO("Not yet implemented")
+        get() = TODO()
     internal actual val d: (K) -> V
-        get() = TODO("Not yet implemented")
+        get() = TODO()
 
     actual fun getWithoutSetting(key: K): V? {
-        TODO("Not yet implemented")
+        TODO()
     }
 
 }

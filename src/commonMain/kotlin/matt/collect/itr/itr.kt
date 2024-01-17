@@ -570,6 +570,15 @@ fun <E> List<E>.sameContentsAnyOrder(list: List<E>): Boolean {
     return tempList.isEmpty()
 }
 
+fun <E> Set<E>.sameContentsAnyOrder(set: Set<E>): Boolean {
+    if (size != set.size) return false
+    val tempSet = set.toMutableList()
+    forEach {
+        if (!tempSet.remove(it)) return false
+    }
+    return tempSet.isEmpty()
+}
+
 infix fun <E> List<E>.sameContentsSameOrder(list: List<E>): Boolean {
 
     if (size != list.size) {

@@ -23,38 +23,38 @@ class MyMutableQueueImpl<E : Any>() : MyMutableQueue<E>, ReferenceMonitor {
     }
 
     override fun peek(): E {
-        TODO("Not yet implemented")
+        TODO()
     }
 
     override fun element(): E {
-        TODO("Not yet implemented")
+        TODO()
     }
 
     override fun offer(e: E): Boolean {
-        TODO("Not yet implemented")
+        TODO()
     }
 
     override val size: Int
-        get() = TODO("Not yet implemented")
+        get() = TODO()
 
     override fun isEmpty(): Boolean {
-        TODO("Not yet implemented")
+        TODO()
     }
 
     override fun iterator(): MutableIterator<E> {
-        TODO("Not yet implemented")
+        TODO()
     }
 
     override fun clear() {
-        TODO("Not yet implemented")
+        TODO()
     }
 
     override fun retainAll(elements: Collection<E>): Boolean {
-        TODO("Not yet implemented")
+        TODO()
     }
 
     override fun removeAll(elements: Collection<E>): Boolean {
-        TODO("Not yet implemented")
+        TODO()
     }
 
 
@@ -68,11 +68,11 @@ class MyMutableQueueImpl<E : Any>() : MyMutableQueue<E>, ReferenceMonitor {
 
     * */
     override fun remove(element: E): Boolean {
-        TODO("Not yet implemented")
+        TODO()
     }
 
     override fun addAll(elements: Collection<E>): Boolean {
-        TODO("Not yet implemented")
+        TODO()
     }
 
     override fun add(element: E): Boolean = inSync {
@@ -81,11 +81,11 @@ class MyMutableQueueImpl<E : Any>() : MyMutableQueue<E>, ReferenceMonitor {
     }
 
     override fun containsAll(elements: Collection<E>): Boolean {
-        TODO("Not yet implemented")
+        TODO()
     }
 
     override fun contains(element: E): Boolean {
-        TODO("Not yet implemented")
+        TODO()
     }
 
 }

@@ -1,6 +1,6 @@
 package matt.collect.queue
 
-import java.util.*
+import java.util.Queue
 
 class JQueueWrapper<E : Any>(private val jQueue: Queue<E>) : MyMutableQueue<E> {
 
@@ -10,19 +10,19 @@ class JQueueWrapper<E : Any>(private val jQueue: Queue<E>) : MyMutableQueue<E> {
     }
 
     override fun peek(): E {
-        TODO("Not yet implemented")
+        TODO()
     }
 
     override fun element(): E {
-        TODO("Not yet implemented")
+        TODO()
     }
 
     override fun offer(e: E): Boolean {
-        TODO("Not yet implemented")
+        TODO()
     }
 
     override val size: Int
-        get() = TODO("Not yet implemented")
+        get() = TODO()
 
     @Synchronized
     override fun isEmpty(): Boolean {
@@ -30,27 +30,27 @@ class JQueueWrapper<E : Any>(private val jQueue: Queue<E>) : MyMutableQueue<E> {
     }
 
     override fun iterator(): MutableIterator<E> {
-        TODO("Not yet implemented")
+        TODO()
     }
 
     override fun clear() {
-        TODO("Not yet implemented")
+        TODO()
     }
 
     override fun retainAll(elements: Collection<E>): Boolean {
-        TODO("Not yet implemented")
+        TODO()
     }
 
     override fun removeAll(elements: Collection<E>): Boolean {
-        TODO("Not yet implemented")
+        TODO()
     }
 
     override fun remove(element: E): Boolean {
-        TODO("Not yet implemented")
+        TODO()
     }
 
     override fun addAll(elements: Collection<E>): Boolean {
-        TODO("Not yet implemented")
+        TODO()
     }
 
     @Synchronized
@@ -59,11 +59,11 @@ class JQueueWrapper<E : Any>(private val jQueue: Queue<E>) : MyMutableQueue<E> {
     }
 
     override fun containsAll(elements: Collection<E>): Boolean {
-        TODO("Not yet implemented")
+        TODO()
     }
 
     override fun contains(element: E): Boolean {
-        TODO("Not yet implemented")
+        TODO()
     }
 }
 

@@ -17,6 +17,7 @@ import java.lang.ref.Reference
 import java.lang.ref.ReferenceQueue
 import java.lang.ref.WeakReference
 
+
 /**
  * This maintains a bag of weakly referenced objects. The clean method
  * must be called from time to time to get rid of the objects that the

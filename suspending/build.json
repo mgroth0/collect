@@ -4,31 +4,35 @@
     {
       "type": "Project",
       "cfg": "commonMainApi",
-      "path": ":k:prim"
+      "path": ":k:collect"
     },
     {
-      "type": "Lib",
-      "cfg": "jvmMainApi",
-      "key": "guava"
+      "type": "Project",
+      "cfg": "commonMainApi",
+      "path": ":k:model"
     },
     {
       "type": "Lib",
       "cfg": "commonMainApi",
-      "key": "kotlinx-serialization-core"
+      "key": "kotlinx-coroutines"
     },
     {
       "type": "Project",
       "cfg": "jvmTestImplementation",
       "path": ":k:test"
+    },
+    {
+      "type": "Project",
+      "cfg": "jvmTestImplementation",
+      "path": ":k:test:co"
     }
   ],
-  "android": {
-    "type": "Lib"
-  },
   "jvm": {
   },
   "js": {
     "type": "lib"
   },
-  "native": "LIB"
+  "android": {
+    "type": "Lib"
+  }
 }

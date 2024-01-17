@@ -14,7 +14,6 @@ import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.encoding.decodeStructure
 import kotlinx.serialization.encoding.encodeStructure
-import matt.collect.list.readOnly
 import matt.lang.go
 import matt.lang.model.value.Value
 import matt.prim.str.mybuild.api.string
@@ -32,11 +31,13 @@ class TreeNodeSerialDescriptor(private val elementDescriptor: SerialDescriptor) 
 
     override val serialName: String = "TreeDataNode"
 
+    private fun badIndexError(index: Int): Nothing = error("bad index: $index")
+
     override fun getElementAnnotations(index: Int): List<Annotation> {
         return when (index) {
             0    -> listOf()
             1    -> listOf()
-            else -> error("bad index: $index")
+            else -> badIndexError(index)
         }
     }
 
@@ -48,7 +49,7 @@ class TreeNodeSerialDescriptor(private val elementDescriptor: SerialDescriptor) 
         return when (index) {
             0    -> elementDescriptor
             1    -> chilrenDescriptor
-            else -> error("bad index: $index")
+            else -> badIndexError(index)
         }
     }
 
@@ -64,7 +65,7 @@ class TreeNodeSerialDescriptor(private val elementDescriptor: SerialDescriptor) 
         return when (index) {
             0    -> "value"
             1    -> "children"
-            else -> error("bad index: $index")
+            else -> badIndexError(index)
         }
     }
 
@@ -72,33 +73,37 @@ class TreeNodeSerialDescriptor(private val elementDescriptor: SerialDescriptor) 
         return when (index) {
             0    -> false
             1    -> true
-            else -> error("bad index: $index")
+            else -> badIndexError(index)
         }
     }
 
 }
 
 @OptIn(ExperimentalSerializationApi::class)
-class TreeNodeSerializer<T>(private val elementSerializer: KSerializer<T>) : KSerializer<TreeDataNode<T>> {
+abstract class TreeMaybeDataNodeSerializer<T, N : TreeMaybeDataNodeInter<T, N>>(private val elementSerializer: KSerializer<T>) :
+    KSerializer<N> {
     override val descriptor by lazy {
         TreeNodeSerialDescriptor(elementSerializer.descriptor)
     }
 
-    override fun deserialize(decoder: Decoder): TreeDataNode<T> {
+    override fun deserialize(decoder: Decoder): N {
 
         return decoder.decodeStructure(descriptor) {
             var theValue: Value<T>? = null
-            var children: Value<List<TreeDataNode<T>>>? = null
+            var children: Value<List<N>>? = null
             while (true) {
-                val index = decodeElementIndex(descriptor)
-                when (index) {
+                when (val index = decodeElementIndex(descriptor)) {
                     0            -> {
                         val e = decodeSerializableElement(descriptor, index, elementSerializer)
                         theValue = Value(e)
                     }
 
                     1            -> {
-                        val c = decodeSerializableElement(descriptor, index, ListSerializer(this@TreeNodeSerializer))
+                        val c = decodeSerializableElement(
+                            descriptor,
+                            index,
+                            ListSerializer(this@TreeMaybeDataNodeSerializer)
+                        )
                         children = Value(c)
                     }
 
@@ -112,22 +117,33 @@ class TreeNodeSerializer<T>(private val elementSerializer: KSerializer<T>) : KSe
 
             requireNotNull(theValue)
 
-            TreeDataNode(value = theValue.value, children = children?.value)
+
+            construct(value = theValue.value, children = children?.value)
 
         }
 
 
     }
 
+    abstract fun construct(
+        value: T,
+        children: List<N>?
+    ): N
+
     override fun serialize(
         encoder: Encoder,
-        value: TreeDataNode<T>
+        value: N
     ) {
 
         encoder.encodeStructure(descriptor) {
             encodeSerializableElement(descriptor, 0, elementSerializer, value.value)
             value.children?.go { children ->
-                encodeSerializableElement(descriptor, 1, ListSerializer(this@TreeNodeSerializer), children)
+                encodeSerializableElement(
+                    descriptor,
+                    1,
+                    ListSerializer(this@TreeMaybeDataNodeSerializer),
+                    children
+                )
             }
         }
 
@@ -135,16 +151,46 @@ class TreeNodeSerializer<T>(private val elementSerializer: KSerializer<T>) : KSe
 
 }
 
-interface TreeDataNodeInter<T> {
-    val value: T
-    val children: List<TreeDataNodeInter<T>>?
+
+class TreeDataNodeSerializer<T>(elementSerializer: KSerializer<T>) :
+    TreeMaybeDataNodeSerializer<T, TreeDataNode<T>>(elementSerializer) {
+    override fun construct(
+        value: T,
+        children: List<TreeDataNode<T>>?
+    ): TreeDataNode<T> {
+        return TreeDataNode(value, children)
+    }
 }
 
-typealias MTreeNode<T> = TreeDataNodeInter<T>
 
-abstract class TreeDataNodeBase<T, N : TreeDataNodeBase<T, N>> : TreeDataNodeInter<T> {
+class TreeNodeSerializer<T>(elementSerializer: KSerializer<T>) :
+    TreeMaybeDataNodeSerializer<T, TreeNode<T>>(elementSerializer) {
+    override fun construct(
+        value: T,
+        children: List<TreeNode<T>>?
+    ): TreeNode<T> {
+        return TreeNode(value, children)
+    }
+}
+
+
+sealed interface TreeMaybeDataNodeInter<T, N : TreeMaybeDataNodeInter<T, N>> {
+    val value: T
+    val children: List<N>?
+    fun construct(
+        value: T,
+        children: List<N>
+    ): N
+}
+
+interface TreeNodeInter<T, N : TreeNodeInter<T, N>> : TreeMaybeDataNodeInter<T, N>
+
+interface TreeDataNodeInter<T, N : TreeDataNodeInter<T, N>> : TreeMaybeDataNodeInter<T, N>
+
+
+abstract class TreeDataNodeBase<T, N : TreeDataNodeBase<T, N>> : TreeDataNodeInter<T, N> {
     override fun equals(other: Any?): Boolean {
-        return other is TreeDataNodeInter<*>
+        return other is TreeDataNodeInter<*, *>
                 && other.value == value
                 && other.children == children
     }
@@ -160,32 +206,202 @@ abstract class TreeDataNodeBase<T, N : TreeDataNodeBase<T, N>> : TreeDataNodeInt
     }
 }
 
-@Serializable(with = TreeNodeSerializer::class)
+
+abstract class TreeNodeBase<T, N : TreeNodeBase<T, N>> : TreeNodeInter<T, N> {
+    override fun toString(): String {
+        return "${this::class.simpleName}[value=$value,size=${children?.size}]"
+    }
+}
+
+
+@Serializable(with = TreeDataNodeSerializer::class)
 class TreeDataNode<T>(
     override val value: T,
     override val children: List<TreeDataNode<T>>? = null
-) :
-    TreeDataNodeBase<T, TreeDataNode<T>>()
+) : TreeDataNodeBase<T, TreeDataNode<T>>() {
+    override fun construct(
+        value: T,
+        children: List<TreeDataNode<T>>
+    ): TreeDataNode<T> {
+        return TreeDataNode(value, children)
+    }
+
+}
+
+
+@Serializable(with = TreeNodeSerializer::class)
+class TreeNode<T>(
+    override val value: T,
+    override val children: List<TreeNode<T>>? = null
+) : TreeNodeBase<T, TreeNode<T>>() {
+    override fun construct(
+        value: T,
+        children: List<TreeNode<T>>
+    ): TreeNode<T> {
+        return TreeNode(value, children)
+    }
+}
+
+
+class BiTreeNode<T>(
+    val parents: Set<BiTreeNode<T>>,
+    override val value: T,
+    override val children: List<BiTreeNode<T>>? = null
+) : TreeNodeBase<T, BiTreeNode<T>>() {
+    override fun construct(
+        value: T,
+        children: List<BiTreeNode<T>>
+    ): BiTreeNode<T> {
+        error("can't construct BiTreeNode this way... would lose parent info")
+        /*return BiTreeNode(parent = null, value, children)*/
+    }
+}
 
 class MutableTreeDataNode<T>(
     override val value: T,
     override val children: MutableList<MutableTreeDataNode<T>> = mutableListOf()
-) :
-    TreeDataNodeBase<T, MutableTreeDataNode<T>>()
+) : TreeDataNodeBase<T, MutableTreeDataNode<T>>() {
+    override fun construct(
+        value: T,
+        children: List<MutableTreeDataNode<T>>
+    ): MutableTreeDataNode<T> {
+        return MutableTreeDataNode(value, children.toMutableList())
+    }
+}
+
+class MutableTreeNode<T>(
+    override val value: T,
+    override val children: MutableList<MutableTreeNode<T>> = mutableListOf()
+) : TreeNodeBase<T, MutableTreeNode<T>>() {
+    override fun construct(
+        value: T,
+        children: List<MutableTreeNode<T>>
+    ): MutableTreeNode<T> {
+        return MutableTreeNode(value, children.toMutableList())
+    }
+}
 
 
-fun <T, R> MTreeNode<T>.map(op: (T) -> R): TreeDataNode<R> {
+fun <T, R> TreeDataNode<T>.map(op: (T) -> R): TreeDataNode<R> {
     val newValue: R = op(value)
-    val newChildren: List<TreeDataNode<R>>? = children?.map { it.map(op) }
+    val newChildren: List<TreeDataNode<R>>? = children?.map {
+        it.map(op)
+    }
     return TreeDataNode(newValue, newChildren)
 }
 
-fun <T> MTreeNode<T>.allValuesRecursive(): List<T> {
-    val r = mutableListOf(value)
-    children?.forEach {
-        r.addAll(it.allValuesRecursive())
+fun <T, R> MutableTreeDataNode<T>.map(op: (T) -> R): MutableTreeDataNode<R> {
+    val newValue: R = op(value)
+    val newChildren: List<MutableTreeDataNode<R>> = children.map {
+        it.map(op)
     }
-    return r.readOnly()
+    return MutableTreeDataNode(newValue, newChildren.toMutableList())
+}
+
+/*cannot do this with tree data node!! the hashCode will not work!*/
+fun <T, R, N : TreeNodeInter<T, N>> N.mapCircular(
+    mapped: MutableMap<TreeNodeInter<*, *>, MutableTreeNode<R>> = mutableMapOf(),
+    op: (T) -> R
+): MutableTreeNode<R> {
+
+    return mapped[this] ?: run {
+
+        val newValue: R = op(value)
+        val newNode = MutableTreeNode(newValue)
+        mapped[this] = newNode
+
+        children?.forEach {
+
+            newNode.children.add(it.mapCircular(mapped, op))
+        }
+
+        newNode
+    }
+
+
+}
+
+fun <T> MutableTreeNode<T>.toImmutableTreeCircular(
+    mapped: MutableMap<MutableTreeNode<T>, TreeNode<T>> = mutableMapOf(),
+): TreeNode<T> {
+
+//    println("Running toImmutableTreeCircular")
+
+    return mapped[this] ?: run {
+        val childList = mutableListOf<TreeNode<T>>()
+        val newNode = TreeNode(value, childList)
+        mapped[this] = newNode
+
+        children.forEach {
+            childList.add(it.toImmutableTreeCircular(mapped))
+        }
+        newNode
+    }
+
+
+}
+
+
+fun <T> TreeNode<T>.toBiTreeNodeCircular(
+    parent: BiTreeNode<T>? = null,
+    mapped: MutableMap<TreeNode<T>, BiTreeNode<T>> = mutableMapOf(),
+): BiTreeNode<T> {
+
+
+//    println("Running toBiTreeNodeCircular")
+
+    return mapped[this]?.also {
+        if (parent!=null) {
+//            println("YES ADDING SOME PARENT 1")
+            (it.parents as MutableSet<BiTreeNode<T>>).add(parent)
+        }
+    } ?: run {
+        val childList = mutableListOf<BiTreeNode<T>>()
+        val newNodeParents = mutableSetOf<BiTreeNode<T>>()
+//        println("YES ADDING SOME PARENT 2")
+        if (parent!=null) newNodeParents.add(parent)
+        val newNode = BiTreeNode(newNodeParents, value, childList)
+        mapped[this] = newNode
+
+        children?.forEach {
+            childList.add(it.toBiTreeNodeCircular(newNode, mapped))
+        }
+        newNode
+    }
+
+
+}
+
+
+fun <T> TreeDataNode<T>.allValuesRecursive() = allValuesRecursiveSequence().toList()
+fun <T> MutableTreeDataNode<T>.allValuesRecursive() = allValuesRecursiveSequence().toList()
+
+
+fun <T> TreeDataNode<T>.allValuesRecursiveSequence(): Sequence<T> = sequence {
+    yield(value)
+    children?.forEach {
+        yieldAll(it.allValuesRecursiveSequence())
+    }
+}
+
+fun <T> MutableTreeDataNode<T>.allValuesRecursiveSequence(): Sequence<T> = sequence {
+    yield(value)
+    children.forEach {
+        yieldAll(it.allValuesRecursiveSequence())
+    }
+}
+
+
+/*cannot do this with tree data node!! the hashCode will not work!*/
+fun <T, N : TreeNodeInter<T, N>> N.allValuesRecursiveSequenceCircular(
+    yielded: MutableSet<N> = mutableSetOf()
+): Sequence<T> = sequence {
+    if (yielded.add(this@allValuesRecursiveSequenceCircular)) {
+        yield(value)
+        children?.forEach {
+            yieldAll(it.allValuesRecursiveSequenceCircular(yielded))
+        }
+    }
 }
 
 

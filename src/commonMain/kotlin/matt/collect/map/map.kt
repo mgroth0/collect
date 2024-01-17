@@ -194,11 +194,16 @@ class MutableCaseInsensitiveMap<V> : CaseInsensitiveMap<V>(), MutableMap<String,
 }
 
 
-fun Map<*, *>.toDictString() = entries.joinToString(
-    prefix = "{\n",
-    postfix = "\n}",
-    separator = "\n"
-) { "${it.key}: ${it.value}" }
+fun Map<*, *>.toDictString(
+    multiLine: Boolean = true
+): String {
+    val newline = if (multiLine) '\n' else ' '
+    return entries.joinToString(
+        prefix = "{$newline",
+        postfix = "$newline}",
+        separator = ",$newline"
+    ) { "${it.key}: ${it.value}" }
+}
 
 
 fun <K, V> Map<K, V>.readOnly() = ReadOnlyMap(this)

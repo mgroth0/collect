@@ -20,50 +20,50 @@ class EvitctingQueue<E : Any>(val capacity: Int) : MyMutableQueue<E>, ReferenceM
     }
 
     override fun addAll(elements: Collection<E>): Boolean {
-        TODO("Not yet implemented")
+        TODO()
     }
 
     override fun clear() {
-        TODO("Not yet implemented")
+        TODO()
     }
 
     override fun iterator() = FakeMutableIterator<E>(data.iterator())
 
 
     override fun retainAll(elements: Collection<E>): Boolean {
-        TODO("Not yet implemented")
+        TODO()
     }
 
     override fun removeAll(elements: Collection<E>): Boolean {
-        TODO("Not yet implemented")
+        TODO()
     }
 
     override fun remove(element: E): Boolean {
-        TODO("Not yet implemented")
+        TODO()
     }
 
     override fun isEmpty(): Boolean {
-        TODO("Not yet implemented")
+        TODO()
     }
 
     override fun poll() = inSync { data.poll() }
 
     override fun element(): E {
-        TODO("Not yet implemented")
+        TODO()
     }
 
     override fun peek() = inSync { data.peek() }
 
     override fun offer(e: E): Boolean {
-        TODO("Not yet implemented")
+        TODO()
     }
 
     override fun containsAll(elements: Collection<E>): Boolean {
-        TODO("Not yet implemented")
+        TODO()
     }
 
     override fun contains(element: E): Boolean {
-        TODO("Not yet implemented")
+        TODO()
     }
 
     override val size: Int get() = data.size

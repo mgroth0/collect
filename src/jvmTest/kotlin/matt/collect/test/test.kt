@@ -24,12 +24,12 @@ import matt.collect.list.single.SingleElementListImpl
 import matt.collect.map.dmap.withStoringDefault
 import matt.collect.weak.bag.WeakBag
 import matt.lang.model.value.LazyValue
-import matt.test.assertions.JupiterTestAssertions.assertRunsInOneMinute
+import matt.test.Tests
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-class CollectTests {
+class CollectTests : Tests() {
     @Test
     fun constructClasses() = assertRunsInOneMinute {
         SingleElementListImpl(1)

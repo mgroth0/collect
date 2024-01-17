@@ -8,28 +8,28 @@ class FilteredMap<K, V : Any>(
     private val valueFilter: (V) -> Boolean
 ) : Map<K, V> {
     override val entries: Set<Entry<K, V>>
-        get() = TODO("Not yet implemented")
+        get() = TODO()
     override val keys: Set<K>
-        get() = TODO("Not yet implemented")
+        get() = TODO()
     override val size: Int
-        get() = TODO("Not yet implemented")
+        get() = TODO()
     override val values: Collection<V>
-        get() = TODO("Not yet implemented")
+        get() = TODO()
 
     override fun isEmpty(): Boolean {
-        TODO("Not yet implemented")
+        TODO()
     }
 
     override fun get(key: K): V? {
-        TODO("Not yet implemented")
+        TODO()
     }
 
     override fun containsValue(value: V): Boolean {
-        TODO("Not yet implemented")
+        TODO()
     }
 
     override fun containsKey(key: K): Boolean {
-        TODO("Not yet implemented")
+        TODO()
     }
 
 }
