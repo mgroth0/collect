@@ -82,11 +82,11 @@ class TreeNodeSerialDescriptor(private val elementDescriptor: SerialDescriptor) 
 @OptIn(ExperimentalSerializationApi::class)
 abstract class TreeMaybeDataNodeSerializer<T, N : TreeMaybeDataNodeInter<T, N>>(private val elementSerializer: KSerializer<T>) :
     KSerializer<N> {
-    override val descriptor by lazy {
+    final override val descriptor by lazy {
         TreeNodeSerialDescriptor(elementSerializer.descriptor)
     }
 
-    override fun deserialize(decoder: Decoder): N {
+    final override fun deserialize(decoder: Decoder): N {
 
         return decoder.decodeStructure(descriptor) {
             var theValue: Value<T>? = null
@@ -130,7 +130,7 @@ abstract class TreeMaybeDataNodeSerializer<T, N : TreeMaybeDataNodeInter<T, N>>(
         children: List<N>?
     ): N
 
-    override fun serialize(
+    final override fun serialize(
         encoder: Encoder,
         value: N
     ) {
@@ -189,26 +189,26 @@ interface TreeDataNodeInter<T, N : TreeDataNodeInter<T, N>> : TreeMaybeDataNodeI
 
 
 abstract class TreeDataNodeBase<T, N : TreeDataNodeBase<T, N>> : TreeDataNodeInter<T, N> {
-    override fun equals(other: Any?): Boolean {
+    final override fun equals(other: Any?): Boolean {
         return other is TreeDataNodeInter<*, *>
                 && other.value == value
                 && other.children == children
     }
 
-    override fun hashCode(): Int {
+    final override fun hashCode(): Int {
         var result = value?.hashCode() ?: 0
         result = 31 * result + (children?.hashCode() ?: 0)
         return result
     }
 
-    override fun toString(): String {
+    final override fun toString(): String {
         return "${this::class.simpleName}[value=$value,size=${children?.size}]"
     }
 }
 
 
 abstract class TreeNodeBase<T, N : TreeNodeBase<T, N>> : TreeNodeInter<T, N> {
-    override fun toString(): String {
+    final override fun toString(): String {
         return "${this::class.simpleName}[value=$value,size=${children?.size}]"
     }
 }
@@ -351,7 +351,7 @@ fun <T> TreeNode<T>.toBiTreeNodeCircular(
 //    println("Running toBiTreeNodeCircular")
 
     return mapped[this]?.also {
-        if (parent!=null) {
+        if (parent != null) {
 //            println("YES ADDING SOME PARENT 1")
             (it.parents as MutableSet<BiTreeNode<T>>).add(parent)
         }
@@ -359,7 +359,7 @@ fun <T> TreeNode<T>.toBiTreeNodeCircular(
         val childList = mutableListOf<BiTreeNode<T>>()
         val newNodeParents = mutableSetOf<BiTreeNode<T>>()
 //        println("YES ADDING SOME PARENT 2")
-        if (parent!=null) newNodeParents.add(parent)
+        if (parent != null) newNodeParents.add(parent)
         val newNode = BiTreeNode(newNodeParents, value, childList)
         mapped[this] = newNode
 

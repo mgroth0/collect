@@ -3,17 +3,16 @@ package matt.collect.list.singlen
 import matt.collect.single.SingleElementIterator
 import matt.collect.singlen.SingleElementOrEmptyCollection
 import matt.lang.NEVER
-import kotlin.jvm.JvmInline
 
 
-interface SingleElementOrEmptyList<E : Any> : SingleElementOrEmptyCollection<E>, List<E> {
-    override val size get() = super.size
-    override fun contains(element: E) = super.contains(element)
-    override fun containsAll(elements: Collection<E>) = super.containsAll(elements)
-    override fun isEmpty() = super.isEmpty()
-    override fun iterator() = super.iterator()
-    override fun listIterator() = listIterator(0)
-    override fun listIterator(index: Int): ListIterator<E> {
+abstract class SingleElementOrEmptyList<E : Any> : SingleElementOrEmptyCollection<E>(), List<E> {
+//    final override val size get() = super.size
+//    final override fun contains(element: E) = super.contains(element)
+//    final override fun containsAll(elements: Collection<E>) = super.containsAll(elements)
+//    final override fun isEmpty() = super.isEmpty()
+//    final override fun iterator() = super.iterator()
+    final override fun listIterator() = listIterator(0)
+    final override fun listIterator(index: Int): ListIterator<E> {
         require(index in 0..1)
         return e?.let {
             SingleElementIterator(it, got = index == 1)
@@ -21,14 +20,14 @@ interface SingleElementOrEmptyList<E : Any> : SingleElementOrEmptyCollection<E>,
 
     }
 
-    override fun indexOf(element: E) = if (e == element) 0 else -1
-    override fun lastIndexOf(element: E) = indexOf(element)
-    override fun get(index: Int): E {
+    final override fun indexOf(element: E) = if (e == element) 0 else -1
+    final override fun lastIndexOf(element: E) = indexOf(element)
+    final override fun get(index: Int): E {
         if (index != 0) throw IndexOutOfBoundsException()
         return e ?: throw IndexOutOfBoundsException()
     }
 
-    override fun subList(
+    final override fun subList(
         fromIndex: Int,
         toIndex: Int
     ): List<E> {
@@ -44,13 +43,22 @@ interface SingleElementOrEmptyList<E : Any> : SingleElementOrEmptyCollection<E>,
             else -> NEVER
         }
     }
+
+    final override fun equals(other: Any?): Boolean {
+        if (other !is List<*>) return false
+        if (this.isEmpty()) return other.isEmpty()
+        return other.singleOrNull() == e
+    }
+
+    final override fun hashCode(): Int {
+        return e.hashCode()
+    }
+
 }
 
-@JvmInline
-value class ChangingSingleElementOrEmptyList<E : Any>(private val provider: () -> E?) : SingleElementOrEmptyList<E> {
+class ChangingSingleElementOrEmptyList<E : Any>(private val provider: () -> E?) : SingleElementOrEmptyList<E>() {
     override val e get() = provider()
 }
 
 
-@JvmInline
-value class SingleElementListOrEmptyImpl<E : Any>(override val e: E?) : SingleElementOrEmptyList<E>
+class SingleElementListOrEmptyImpl<E : Any>(override val e: E?) : SingleElementOrEmptyList<E>()

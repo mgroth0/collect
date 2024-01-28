@@ -1,5 +1,6 @@
 package matt.collect.set.ordered
 
+import matt.lang.anno.Open
 import matt.lang.sync.ReferenceMonitor
 import matt.lang.sync.inSync
 
@@ -13,22 +14,23 @@ open class OrderedSet<E>(elements: Iterable<E>) : Set<E>, ReferenceMonitor {
 
     /*val quickLastIndex = data.lastIndex*/
 
-    override val size: Int get() = inSync { data.size }
+    final override val size: Int get() = inSync { data.size }
 
-    override fun contains(element: E): Boolean = inSync {
+    final override fun contains(element: E): Boolean = inSync {
         return element in data
     }
 
-    override fun containsAll(elements: Collection<E>): Boolean = inSync {
+    final override fun containsAll(elements: Collection<E>): Boolean = inSync {
         return data.containsAll(elements)
     }
 
-    override fun isEmpty(): Boolean = inSync {
+    final override fun isEmpty(): Boolean = inSync {
         return data.isEmpty()
     }
 
     protected var lastChangeStamp = ChangeStamp()
 
+    @Open
     override fun iterator(): Iterator<E> = inSync { OrderedSetIterator() }
 
     protected fun changeStamp(): ChangeStamp = inSync {
@@ -41,14 +43,14 @@ open class OrderedSet<E>(elements: Iterable<E>) : Set<E>, ReferenceMonitor {
         protected var myChangeStamp = lastChangeStamp
         protected val itr = data.iterator()
 
-        override fun hasNext(): Boolean {
+        final override fun hasNext(): Boolean {
             return inSync(this@OrderedSet) {
                 if (myChangeStamp != lastChangeStamp) throw ConcurrentModificationException()
                 itr.hasNext()
             }
         }
 
-        override fun next(): E {
+        final override fun next(): E {
             return inSync(this@OrderedSet) {
                 if (myChangeStamp != lastChangeStamp) throw ConcurrentModificationException()
                 itr.next()

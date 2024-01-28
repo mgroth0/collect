@@ -1,16 +1,16 @@
 package matt.collect.single
 
 
-interface SingleElementCollection<E> : Collection<E> {
-    val e: E
-    override val size get() = 1
-    override fun contains(element: E) = element == e
-    override fun containsAll(elements: Collection<E>) = e.let { p ->
+abstract class SingleElementCollection<E> : Collection<E> {
+    abstract val e: E
+    final override val size get() = 1
+    final override fun contains(element: E) = element == e
+    final override fun containsAll(elements: Collection<E>) = e.let { p ->
         elements.all { it == p }
     }
 
-    override fun isEmpty() = false
-    override fun iterator() = SingleElementIterator(e)
+    final override fun isEmpty() = false
+    final override fun iterator() = SingleElementIterator(e)
 }
 
 

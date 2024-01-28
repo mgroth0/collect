@@ -12,7 +12,6 @@ package matt.collect.weak.bag
  */
 
 
-import matt.lang.void
 import java.lang.ref.Reference
 import java.lang.ref.ReferenceQueue
 import java.lang.ref.WeakReference
@@ -24,27 +23,36 @@ import java.lang.ref.WeakReference
  * garbage collector wants to nuke. This class is not synchronized.
  */
 class WeakBag<T> {
-  private val set: HashSet<WeakReference<T>> = HashSet()
-  private val refQueue: ReferenceQueue<T> = ReferenceQueue<T>()
+    private val set: HashSet<WeakReference<T>> = HashSet()
+    private val refQueue: ReferenceQueue<T> = ReferenceQueue<T>()
 
 
-  operator fun plusAssign(o: T) = set.add(WeakReference(o, refQueue)).void
-  operator fun minusAssign(o: Reference<*>?) = set.remove(o).void
-  operator fun minusAssign(o: Any) = set.removeAll { it.get() == o }.void
-  fun approxSize() = set.size
-  fun values() = set.mapNotNull { it.get() }
-  operator fun contains(v: Any) = v in values()
+    operator fun plusAssign(o: T) {
+        set.add(WeakReference(o, refQueue))
+    }
 
-  /**
-   * Get rid of objects in the bag that the garbage collector wants to
-   * nuke. This does not block.
-   */
-  fun clean() {
-	while (true) {
-	  val r = refQueue.poll() ?: return
-	  set.remove(r)
-	}
-  }
+    operator fun minusAssign(o: Reference<*>?) {
+        set.remove(o)
+    }
+
+    operator fun minusAssign(o: Any) {
+        set.removeAll { it.get() == o }
+    }
+
+    fun approxSize() = set.size
+    fun values() = set.mapNotNull { it.get() }
+    operator fun contains(v: Any) = v in values()
+
+    /**
+     * Get rid of objects in the bag that the garbage collector wants to
+     * nuke. This does not block.
+     */
+    fun clean() {
+        while (true) {
+            val r = refQueue.poll() ?: return
+            set.remove(r)
+        }
+    }
 
 
 }

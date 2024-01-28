@@ -4,6 +4,7 @@ import matt.collect.itr.FakeMutableIterator
 import matt.collect.map.dmap.CanBeNotNullMap
 import matt.collect.map.dmap.CanBeNotNullMutableMap
 import matt.collect.map.dmap.withStoringDefault
+import matt.lang.anno.Open
 import matt.lang.err
 import matt.prim.str.lower
 import kotlin.collections.MutableMap.MutableEntry
@@ -83,28 +84,34 @@ class MapFromKeyValueLists<K, V>(
 
 sealed class CaseInsensitiveMap<V> : Map<String, V> {
     protected val map = mutableMapOf<String, V>()
+
+    @Open
     override val entries: Set<Map.Entry<String, V>>
         get() = map.entries
+
+    @Open
     override val keys: Set<String>
         get() = map.keys
-    override val size: Int
+    final override val size: Int
         get() = map.size
+
+    @Open
     override val values: Collection<V>
         get() = map.values
 
-    override fun containsKey(key: String): Boolean {
+    final override fun containsKey(key: String): Boolean {
         return map.containsKey(key.lower())
     }
 
-    override fun containsValue(value: V): Boolean {
+    final override fun containsValue(value: V): Boolean {
         return map.containsValue(value)
     }
 
-    override fun get(key: String): V? {
+    final override fun get(key: String): V? {
         return map[key.lower()]
     }
 
-    override fun isEmpty(): Boolean {
+    final override fun isEmpty(): Boolean {
         return map.isEmpty()
     }
 

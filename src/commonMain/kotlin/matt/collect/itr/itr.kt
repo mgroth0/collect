@@ -6,6 +6,7 @@ import matt.collect.itr.ItrChange.Replace
 import matt.collect.itr.ItrDir.NEXT
 import matt.collect.itr.ItrDir.PREVIOUS
 import matt.lang.ILLEGAL
+import matt.lang.anno.Open
 import matt.lang.assertions.require.requireNot
 import matt.lang.assertions.require.requireNotEmpty
 import matt.lang.assertions.require.requireOne
@@ -29,7 +30,7 @@ fun <E> Iterator<E>.toFakeMutableIterator() = FakeMutableIterator(this)
 open class FakeMutableIterator<E>(val itr: Iterator<E>) : Iterator<E> by itr, MutableIterator<E> {
 
 
-    override fun remove() {
+    final override fun remove() {
         err("tried remove in ${FakeMutableIterator::class.simpleName}")
     }
 
@@ -48,9 +49,8 @@ class FakeMutableListIterator<E>(itr: ListIterator<E>) : ListIterator<E> by itr,
 
 }
 
-interface LoopIteratorFun<E> : Iterator<E> {
-    val list: List<E>
-
+abstract class LoopIteratorFun<E> : Iterator<E> {
+    abstract val list: List<E>
     fun spin(op: () -> Unit = {}): E {
         require(hasNext())
         return (1..(1..list.size).random()).map {
@@ -61,7 +61,7 @@ interface LoopIteratorFun<E> : Iterator<E> {
 }
 
 
-class LoopIterator<E>(override val list: List<E>) : Iterator<E>, LoopIteratorFun<E> {
+class LoopIterator<E>(override val list: List<E>) : Iterator<E>, LoopIteratorFun<E>() {
     private var itr = list.iterator()
     override fun hasNext() = list.isNotEmpty()
 
@@ -78,7 +78,7 @@ class LoopIterator<E>(override val list: List<E>) : Iterator<E>, LoopIteratorFun
 
 }
 
-class MutableLoopIterator<E>(override val list: MutableList<E>) : MutableIterator<E>, LoopIteratorFun<E> {
+class MutableLoopIterator<E>(override val list: MutableList<E>) : MutableIterator<E>, LoopIteratorFun<E>() {
     private var itr = list.iterator()
     override fun hasNext() = list.isNotEmpty()
 
@@ -101,7 +101,7 @@ class MutableLoopIterator<E>(override val list: MutableList<E>) : MutableIterato
 }
 
 
-class LoopListIterator<E>(override val list: List<E>) : ListIterator<E>, LoopIteratorFun<E> {
+class LoopListIterator<E>(override val list: List<E>) : ListIterator<E>, LoopIteratorFun<E>() {
     fun atEnd(): Boolean {
         requireNotEmpty(list) /*or else definition is ambiguous*/
         return itr.hasPrevious() && itr.previousIndex() == list.lastIndex
@@ -158,7 +158,7 @@ class LoopListIterator<E>(override val list: List<E>) : ListIterator<E>, LoopIte
 }
 
 
-class MutableLoopListIterator<E>(override val list: MutableList<E>) : MutableListIterator<E>, LoopIteratorFun<E> {
+class MutableLoopListIterator<E>(override val list: MutableList<E>) : MutableListIterator<E>, LoopIteratorFun<E>() {
     fun atEnd(): Boolean {
         requireNotEmpty(list) /*or else definition is ambiguous*/
         return itr.hasPrevious() && itr.previousIndex() == list.lastIndex
@@ -248,7 +248,7 @@ abstract class IteratorExtender<E>(
     protected open val itr = collection.iterator()
 
     final override fun hasNext() = itr.hasNext()
-    override fun next(): E {
+    final override fun next(): E {
         val e = itr.next()
         postNext(e)
         return e
@@ -258,6 +258,7 @@ abstract class IteratorExtender<E>(
 
 }
 
+
 /*more performant than the wrapper, fewer lambda objects*/
 abstract class MutableIteratorExtender<E>(
     list: MutableCollection<E>,
@@ -266,7 +267,7 @@ abstract class MutableIteratorExtender<E>(
     protected open val itr = list.iterator()
 
     final override fun hasNext() = itr.hasNext()
-    override fun next(): E {
+    final override fun next(): E {
         val e = itr.next()
         postNext(e)
         return e
@@ -274,6 +275,7 @@ abstract class MutableIteratorExtender<E>(
 
     abstract fun postNext(e: E)
 
+    @Open
     override fun remove(): Unit = itr.remove()
 }
 
@@ -286,9 +288,9 @@ open class MutableIteratorWrapper<E>(
     protected open val itr = list.iterator()
 
     final override fun hasNext() = itr.hasNext()
-    override fun next() = itrWrapper(NEXT) { itr.next() }
+    final override fun next() = itrWrapper(NEXT) { itr.next() }
 
-    override fun remove(): Unit = changeWrapper(Remove) { itr.remove() }
+    final override fun remove(): Unit = changeWrapper(Remove) { itr.remove() }
 }
 
 enum class ItrChange {
@@ -306,14 +308,14 @@ abstract class MutableListIteratorExtender<E>(
     final override fun hasPrevious() = itr.hasPrevious()
     final override fun nextIndex() = itr.nextIndex()
     final override fun hasNext() = itr.hasNext()
-    override fun next(): E {
+    final override fun next(): E {
         val e = itr.next()
         postNext(e)
         return e
     }
 
     abstract fun postNext(e: E)
-    override fun previous(): E {
+    final override fun previous(): E {
         val e = itr.previous()
         postPrevious(e)
         return e
@@ -322,11 +324,17 @@ abstract class MutableListIteratorExtender<E>(
     abstract fun postPrevious(e: E)
 
 
+    @Open
     override fun remove(): Unit = itr.remove()
+
+    @Open
     override fun add(element: E) = itr.add(element)
+
+    @Open
     override fun set(element: E) = itr.set(element)
-    override fun previousIndex() = itr.previousIndex()
+    final override fun previousIndex() = itr.previousIndex()
 }
+
 
 
 open class MutableListIteratorWrapper<E>(
@@ -342,28 +350,24 @@ open class MutableListIteratorWrapper<E>(
 
     final override fun hasPrevious() = itr.hasPrevious()
     final override fun nextIndex() = itr.nextIndex()
-    final override fun next() = itrWrapper(NEXT) {
-        itr.next()
-    }
-
     final override fun previous() = itrWrapper(PREVIOUS) {
         itr.previous()
     }
 
     final override fun previousIndex() = itr.previousIndex()
 
-    override fun add(element: E) = changeWrapper(Add) {
+    final override fun add(element: E) = changeWrapper(Add) {
         itr.add(element)
     }
 
-    override fun set(element: E) = changeWrapper(Replace) { itr.set(element) }
+    final override fun set(element: E) = changeWrapper(Replace) { itr.set(element) }
 }
 
 
 open class MutableIteratorWithSomeMemory<E>(list: MutableCollection<E>) : MutableIteratorWrapper<E>(list) {
     var hadFirstReturn = false
     var lastReturned: E? = null
-    override val itrWrapper: (ItrDir, () -> E) -> E = { _, it ->
+    final override val itrWrapper: (ItrDir, () -> E) -> E = { _, it ->
         val r = it()
         hadFirstReturn = true
         lastReturned = r
@@ -752,7 +756,6 @@ fun <T> ListIterator<T>.firstBackwards(op: (T) -> Boolean): T {
     throw NoSuchElementException("couldn't find one")
 }
 
-object YesIUseCollect
 
 inline fun <T> Iterable<T>.forEachNested(action: (T, T) -> Unit): Unit {
     for (element1 in this) for (element2 in this) action(

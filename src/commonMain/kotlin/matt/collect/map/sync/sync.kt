@@ -1,5 +1,6 @@
 package matt.collect.map.sync
 
+import matt.lang.anno.Open
 import matt.lang.sync.ReferenceMonitor
 import matt.lang.sync.inSync
 import kotlin.collections.Map.Entry
@@ -9,24 +10,30 @@ fun <K, V> Map<K, V>.synchronized() = SynchronizedMap(this)
 
 
 open class SynchronizedMap<K, V>(protected open val map: Map<K, V>) : Map<K, V>, ReferenceMonitor {
+
+    @Open
     override val entries: Set<Entry<K, V>> get() = inSync { map.entries }
+
+    @Open
     override val keys: Set<K> get() = inSync { map.keys }
-    override val size: Int get() = inSync { map.size }
+    final override val size: Int get() = inSync { map.size }
+
+    @Open
     override val values: Collection<V> get() = inSync { map.values }
 
-    override fun isEmpty(): Boolean = inSync {
+    final override fun isEmpty(): Boolean = inSync {
         return map.isEmpty()
     }
 
-    override fun get(key: K): V? = inSync {
+    final override fun get(key: K): V? = inSync {
         return map[key]
     }
 
-    override fun containsValue(value: V): Boolean = inSync {
+    final override fun containsValue(value: V): Boolean = inSync {
         return map.containsValue(value)
     }
 
-    override fun containsKey(key: K): Boolean = inSync {
+    final override fun containsKey(key: K): Boolean = inSync {
         return map.containsKey(key)
     }
 

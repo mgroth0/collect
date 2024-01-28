@@ -61,3 +61,4 @@ fun <E> Sequence<E>.takeExactly(count: Int) = take(count).toList().also {
 }
 
 
+fun <T> Sequence<T>.hasAtLeast(threshold: Int) = take(threshold).count() == threshold

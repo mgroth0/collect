@@ -5,6 +5,7 @@ import matt.collect.suspending.SuspendCollection
 import matt.collect.suspending.SuspendMutableCollection
 import matt.collect.suspending.set.SuspendMutableSet
 import matt.collect.suspending.set.SuspendSet
+import matt.lang.anno.Open
 import kotlin.collections.Map.Entry
 
 /*@OptIn(
@@ -58,7 +59,7 @@ interface SuspendMap<K, V> {
 fun <K, V> Map<K, V>.suspending() = SuspendMapWrap(this)
 
 open class SuspendMapWrap<K, V>(protected open val map: Map<K, V>) : SuspendMap<K, V> {
-    override suspend fun snapshot(): Set<Entry<K, V>> {
+    final override suspend fun snapshot(): Set<Entry<K, V>> {
         TODO()
     }
 
@@ -66,39 +67,42 @@ open class SuspendMapWrap<K, V>(protected open val map: Map<K, V>) : SuspendMap<
 //        TODO()
 //    }
 
+    @Open
     override suspend fun currentEntries(): SuspendSet<SuspendEntry<K, V?>> {
         TODO()
     }
 
+    @Open
     override suspend fun keys(): SuspendSet<K> {
         TODO()
     }
 
-    override suspend fun size(): Int {
+    final override suspend fun size(): Int {
         TODO()
     }
 
+    @Open
     override suspend fun values(): SuspendCollection<V> {
         TODO()
     }
 
-    override suspend fun isEmpty(): Boolean {
+    final override suspend fun isEmpty(): Boolean {
         TODO()
     }
 
-    override suspend fun toNonSuspendMap(): Map<K, V> {
+    final override suspend fun toNonSuspendMap(): Map<K, V> {
         return map.toMap()
     }
 
-    override suspend fun get(key: K): V? {
+    final override suspend fun get(key: K): V? {
         TODO()
     }
 
-    override suspend fun containsValue(value: V): Boolean {
+    final override suspend fun containsValue(value: V): Boolean {
         TODO()
     }
 
-    override suspend fun containsKey(key: K): Boolean {
+    final override suspend fun containsKey(key: K): Boolean {
         TODO()
     }
 }
@@ -193,21 +197,24 @@ interface SuspendEntry<out K, out V> {
 fun <K, V> Map.Entry<K, V>.suspending() = SuspendEntryWrap(this)
 
 open class SuspendEntryWrap<K, V>(protected open val entry: Map.Entry<K, V>) : SuspendEntry<K, V> {
-    override suspend fun key(): K {
+    final override suspend fun key(): K {
         TODO()
     }
 
-    override suspend fun value(): V {
+    final override suspend fun value(): V {
         TODO()
     }
 }
 
 interface SuspendMutableEntry<K, V> : SuspendEntry<K, V>, SuspendVar<V>/*, DeletableSuspendVar<V>*/ {
     suspend fun setValue(newValue: V): V
+
+    @Open
     override suspend fun get(): V {
         return value()
     }
 
+    @Open
     override suspend fun set(t: V) {
         setValue(t)
     }

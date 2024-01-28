@@ -1,23 +1,30 @@
 package matt.collect.set.singlen
 
 import matt.collect.singlen.SingleElementOrEmptyCollection
-import kotlin.jvm.JvmInline
 
 
-interface SingleElementOrEmptySet<E : Any> : SingleElementOrEmptyCollection<E>, Set<E> {
-    override val size get() = super.size
-    override fun contains(element: E) = super.contains(element)
-    override fun containsAll(elements: Collection<E>) = super.containsAll(elements)
-    override fun isEmpty() = super.isEmpty()
-    override fun iterator() = super.iterator()
+abstract class SingleElementOrEmptySet<E : Any> : SingleElementOrEmptyCollection<E>(), Set<E> {
+//    final override val size get() = super.size
+//    final override fun contains(element: E) = super.contains(element)
+//    final override fun containsAll(elements: Collection<E>) = super.containsAll(elements)
+//    final override fun isEmpty() = super.isEmpty()
+//    final override fun iterator() = super.iterator()
+
+    final override fun equals(other: Any?): Boolean {
+        if (other !is Set<*>) return false
+        if (this.isEmpty()) return other.isEmpty()
+        return other.singleOrNull() == e
+    }
+
+    final override fun hashCode(): Int {
+        return e.hashCode()
+    }
 }
 
 
-@JvmInline
-value class ChangingSingleElementOrEmptySet<E : Any>(private val provider: () -> E?) : SingleElementOrEmptySet<E> {
+class ChangingSingleElementOrEmptySet<E : Any>(private val provider: () -> E?) : SingleElementOrEmptySet<E>() {
     override val e get() = provider()
 }
 
-@JvmInline
-value class SingleElementSetOrEmptyImpl<E : Any>(override val e: E?) : SingleElementOrEmptySet<E>
+class SingleElementSetOrEmptyImpl<E : Any>(override val e: E?) : SingleElementOrEmptySet<E>()
 
