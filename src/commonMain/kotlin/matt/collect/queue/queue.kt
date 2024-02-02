@@ -6,21 +6,23 @@ import matt.lang.sync.inSync
 
 interface MyQueue<E : Any> : Collection<E> {
     fun poll(): E?
+
     fun offer(e: E): Boolean
+
     fun peek(): E
+
     fun element(): E
 }
-
 
 interface MyMutableQueue<E : Any> : MyQueue<E>, MutableCollection<E>
 
 class MyMutableQueueImpl<E : Any>() : MyMutableQueue<E>, ReferenceMonitor {
-
     private val list = MyLinkedList<E>()
 
-    override fun poll(): E? = inSync {
-        return list.removeFirstOrNull()
-    }
+    override fun poll(): E? =
+        inSync {
+            return list.removeFirstOrNull()
+        }
 
     override fun peek(): E {
         TODO()
@@ -57,7 +59,6 @@ class MyMutableQueueImpl<E : Any>() : MyMutableQueue<E>, ReferenceMonitor {
         TODO()
     }
 
-
     /*In java, this would return the first element or throw an exception:
 
     java: (NOT THIS):  Retrieves and removes the head of this queue. This method differs from poll only in that it throws an exception if this queue is empty.
@@ -66,7 +67,7 @@ class MyMutableQueueImpl<E : Any>() : MyMutableQueue<E>, ReferenceMonitor {
     to get java remove behavior, use `removeJavaStyle`
 
 
-    * */
+     * */
     override fun remove(element: E): Boolean {
         TODO()
     }
@@ -75,10 +76,11 @@ class MyMutableQueueImpl<E : Any>() : MyMutableQueue<E>, ReferenceMonitor {
         TODO()
     }
 
-    override fun add(element: E): Boolean = inSync {
-        list.add(element)
-        return true
-    }
+    override fun add(element: E): Boolean =
+        inSync {
+            list.add(element)
+            return true
+        }
 
     override fun containsAll(elements: Collection<E>): Boolean {
         TODO()
@@ -87,11 +89,9 @@ class MyMutableQueueImpl<E : Any>() : MyMutableQueue<E>, ReferenceMonitor {
     override fun contains(element: E): Boolean {
         TODO()
     }
-
 }
 
 fun <E : Any> MyQueue<E>.removeJavaStyle() = poll() ?: throw NoSuchElementException("queue is empty")
-
 
 fun <E : Any> MyQueue<E>.pollUntilEnd(): List<E> {
     val list = mutableListOf<E>()
@@ -104,10 +104,10 @@ fun <E : Any> MyQueue<E>.pollUntilEnd(): List<E> {
     return list
 }
 
-
-fun <E : Any> MyQueue<E>.pollSequence() = sequence<E> {
-    do {
-        val e = poll()
-        if (e != null) yield(e)
-    } while (e != null)
-}
+fun <E : Any> MyQueue<E>.pollSequence() =
+    sequence<E> {
+        do {
+            val e = poll()
+            if (e != null) yield(e)
+        } while (e != null)
+    }

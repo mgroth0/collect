@@ -27,7 +27,7 @@ class SuspendMapSerializer<K : Any, V : Any>(
     }
 
     override fun deserialize(decoder: Decoder): SuspendMap<K, V> {
-        *//*Map<K, V>::class.serializer().descriptor
+ *//*Map<K, V>::class.serializer().descriptor
         val e = (decoder as JsonDecoder).decodeJsonElement()
         val map = decodeFromJsonElement<Map<K, V>>(e)
         Map<K, V>*//*
@@ -90,9 +90,7 @@ open class SuspendMapWrap<K, V>(protected open val map: Map<K, V>) : SuspendMap<
         TODO()
     }
 
-    final override suspend fun toNonSuspendMap(): Map<K, V> {
-        return map.toMap()
-    }
+    final override suspend fun toNonSuspendMap(): Map<K, V> = map.toMap()
 
     final override suspend fun get(key: K): V? {
         TODO()
@@ -210,9 +208,7 @@ interface SuspendMutableEntry<K, V> : SuspendEntry<K, V>, SuspendVar<V>/*, Delet
     suspend fun setValue(newValue: V): V
 
     @Open
-    override suspend fun get(): V {
-        return value()
-    }
+    override suspend fun get(): V = value()
 
     @Open
     override suspend fun set(t: V) {

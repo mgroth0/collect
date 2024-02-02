@@ -28,13 +28,9 @@ interface SuspendCollection<out E> : SuspendIterable<E> {
 
 open class SuspendWrapCollection<E>(private val collection: Collection<E>) : SuspendCollection<E> {
 
-    final override suspend fun size(): Int {
-        return collection.size
-    }
+    final override suspend fun size(): Int = collection.size
 
-    final override suspend fun isEmpty(): Boolean {
-        return collection.isEmpty()
-    }
+    final override suspend fun isEmpty(): Boolean = collection.isEmpty()
 
     final override suspend fun containsAll(elements: SuspendCollection<E>): Boolean {
         for (e in elements) {
@@ -43,14 +39,10 @@ open class SuspendWrapCollection<E>(private val collection: Collection<E>) : Sus
         return true
     }
 
-    final override suspend fun contains(element: E): Boolean {
-        return element in collection
-    }
+    final override suspend fun contains(element: E): Boolean = element in collection
 
     @Open
-    override suspend fun iterator(): SuspendIterator<E> {
-        return SuspendWrapIterator(collection.iterator())
-    }
+    override suspend fun iterator(): SuspendIterator<E> = SuspendWrapIterator(collection.iterator())
 
     @Open
     override suspend fun toNonSuspendCollection(): Collection<E> {
@@ -101,13 +93,9 @@ open class SuspendWrapMutableCollection<E>(private val col: MutableCollection<E>
     SuspendMutableCollection<E> {
 
     @Open
-    override suspend fun iterator(): SuspendMutableIterator<E> {
-        return col.iterator().suspending()
-    }
+    override suspend fun iterator(): SuspendMutableIterator<E> = col.iterator().suspending()
 
-    final override suspend fun add(element: E): Boolean {
-        return col.add(element)
-    }
+    final override suspend fun add(element: E): Boolean = col.add(element)
 
 
     // Bulk Modification Operations
@@ -126,9 +114,7 @@ open class SuspendWrapMutableCollection<E>(private val col: MutableCollection<E>
         return r
     }
 
-    final override suspend fun clear() {
-        return col.clear()
-    }
+    final override suspend fun clear() = col.clear()
 
 
     /**
@@ -137,9 +123,7 @@ open class SuspendWrapMutableCollection<E>(private val col: MutableCollection<E>
      *
      * @return `true` if the element has been successfully removed; `false` if it was not present in the collection.
      */
-    final override suspend fun remove(element: E): Boolean {
-        return col.remove(element)
-    }
+    final override suspend fun remove(element: E): Boolean = col.remove(element)
 
 
     final override suspend fun setAll(c: Collection<E>) {
@@ -195,17 +179,11 @@ interface SuspendIterator<out E> {
 fun <E> Iterator<E>.suspending() = SuspendWrapIterator(this)
 
 open class SuspendWrapIterator<E>(private val itr: Iterator<E>) : SuspendIterator<E> {
-    final override suspend fun hasNext(): Boolean {
-        return itr.hasNext()
-    }
+    final override suspend fun hasNext(): Boolean = itr.hasNext()
 
-    final override suspend fun next(): E {
-        return itr.next()
-    }
+    final override suspend fun next(): E = itr.next()
 
-    final override fun toNonSuspendingIterator(): Iterator<E> {
-        return itr
-    }
+    final override fun toNonSuspendingIterator(): Iterator<E> = itr
 }
 
 
@@ -213,13 +191,9 @@ class MappedSuspendIterator<S, T>(
     private val src: SuspendIterator<S>,
     private val op: (S) -> T
 ) : SuspendIterator<T> {
-    override suspend fun hasNext(): Boolean {
-        return src.hasNext()
-    }
+    override suspend fun hasNext(): Boolean = src.hasNext()
 
-    override suspend fun next(): T {
-        return op(src.next())
-    }
+    override suspend fun next(): T = op(src.next())
 
     override fun toNonSuspendingIterator(): Iterator<T> {
         TODO()
@@ -235,9 +209,7 @@ fun <E> MutableIterator<E>.suspending() = SuspendWrapMutableIterator(this)
 
 open class SuspendWrapMutableIterator<E>(private val itr: MutableIterator<E>) : SuspendWrapIterator<E>(itr),
     SuspendMutableIterator<E> {
-    final override suspend fun remove() {
-        return itr.remove()
-    }
+    final override suspend fun remove() = itr.remove()
 
 
 }
@@ -256,9 +228,7 @@ suspend inline fun <T, K, M : SuspendMutableMap<in K, SuspendMutableList<T>>> Su
 }
 
 
-suspend inline fun <T, K> SuspendIterable<T>.groupBy(keySelector: (T) -> K): SuspendMap<K, out SuspendList<T>> {
-    return groupByTo(LinkedHashMap<K, SuspendMutableList<T>>().suspending(), keySelector)
-}
+suspend inline fun <T, K> SuspendIterable<T>.groupBy(keySelector: (T) -> K): SuspendMap<K, out SuspendList<T>> = groupByTo(LinkedHashMap<K, SuspendMutableList<T>>().suspending(), keySelector)
 
 
 suspend inline fun <K, V> SuspendMutableMap<K, V>.getOrPut(

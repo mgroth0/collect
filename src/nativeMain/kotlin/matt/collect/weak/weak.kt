@@ -2,7 +2,6 @@ package matt.collect.weak
 
 import kotlin.collections.MutableMap.MutableEntry
 
-
 @Suppress("EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING")
 actual class WeakMap<K, V> actual constructor() : MutableMap<K, V> {
     actual override val entries: MutableSet<MutableEntry<K, V>>
@@ -32,7 +31,7 @@ actual class WeakMap<K, V> actual constructor() : MutableMap<K, V> {
 
     actual override fun put(
         key: K,
-        value: V
+        value: V,
     ): V? {
         TODO()
     }
@@ -48,5 +47,4 @@ actual class WeakMap<K, V> actual constructor() : MutableMap<K, V> {
     actual override fun containsKey(key: K): Boolean {
         TODO()
     }
-
 }

@@ -12,11 +12,17 @@ actual class MyLinkedList<E> : MutableList<E> {
         TODO()
     }
 
-    actual override fun addAll(index: Int, elements: Collection<E>): Boolean {
+    actual override fun addAll(
+        index: Int,
+        elements: Collection<E>,
+    ): Boolean {
         TODO()
     }
 
-    actual override fun add(index: Int, element: E) {
+    actual override fun add(
+        index: Int,
+        element: E,
+    ) {
         TODO()
     }
 
@@ -48,11 +54,17 @@ actual class MyLinkedList<E> : MutableList<E> {
         TODO()
     }
 
-    actual override fun subList(fromIndex: Int, toIndex: Int): MutableList<E> {
+    actual override fun subList(
+        fromIndex: Int,
+        toIndex: Int,
+    ): MutableList<E> {
         TODO()
     }
 
-    actual override fun set(index: Int, element: E): E {
+    actual override fun set(
+        index: Int,
+        element: E,
+    ): E {
         TODO()
     }
 
@@ -83,5 +95,4 @@ actual class MyLinkedList<E> : MutableList<E> {
     actual override fun contains(element: E): Boolean {
         TODO()
     }
-
 }

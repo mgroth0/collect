@@ -47,9 +47,7 @@ abstract class StructuralList<E> : List<E> {
     }
 
     /*taken from kotlin standard lib*/
-    final override fun hashCode(): Int {
-        return orderedHashCode(this)
-    }
+    final override fun hashCode(): Int = orderedHashCode(this)
 }
 
 fun <E : Any> List<E>.nullable(): List<E?> = map<E, E?> { it }
@@ -104,10 +102,10 @@ fun <E> MutableList<E>.setAllOneByOneNeverAllowingDuplicates(source: List<E>) {
     disabledCode {
         /*these checks are great for debugging, but extremely expensive and kill performance*/
         requireEmpty(source.duplicates()) {
-            "found duplicates in ${source}: ${source.duplicates().elementsToString()}"
+            "found duplicates in $source: ${source.duplicates().elementsToString()}"
         }
         requireEmpty(duplicates()) {
-            "found duplicate in ${this}: ${duplicates().elementsToString()}"
+            "found duplicate in $this: ${duplicates().elementsToString()}"
         }
     }
 
@@ -184,16 +182,14 @@ class ListDiff<E>(
         } else null
     }
 
-    override fun toString(): String {
-        return string {
-            lineDelimited {
-                +"To Add"
-                needToAdd.forEach { +"\t$it" }
-                blankLine()
-                +"To Remove"
-                needToRemove.forEach {
-                    +"\t$it"
-                }
+    override fun toString(): String = string {
+        lineDelimited {
+            +"To Add"
+            needToAdd.forEach { +"\t$it" }
+            blankLine()
+            +"To Remove"
+            needToRemove.forEach {
+                +"\t$it"
             }
         }
     }

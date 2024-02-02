@@ -5,9 +5,7 @@ import kotlin.contracts.ExperimentalContracts
 
 
 @ExperimentalContracts
-fun <T : Any> T.chain(op: (T) -> T?): Sequence<T> {
-    return ChainIterator(this, op).asSequence()
-}
+fun <T : Any> T.chain(op: (T) -> T?): Sequence<T> = ChainIterator(this, op).asSequence()
 
 
 interface RecurseLikeIterator<E> : Iterator<E>

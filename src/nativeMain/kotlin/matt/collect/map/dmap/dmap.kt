@@ -5,7 +5,7 @@ import kotlin.collections.MutableMap.MutableEntry
 @Suppress("EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING")
 actual class DefaultStoringMap<K, V : Any> actual constructor(
     map: MutableMap<K, V>,
-    d: (K) -> V
+    d: (K) -> V,
 ) : CanBeNotNullMutableMap<K, V> {
     actual override val entries: MutableSet<MutableEntry<K, V>>
         get() = TODO()
@@ -34,7 +34,7 @@ actual class DefaultStoringMap<K, V : Any> actual constructor(
 
     actual override fun put(
         key: K,
-        value: V
+        value: V,
     ): V? {
         TODO()
     }
@@ -59,5 +59,4 @@ actual class DefaultStoringMap<K, V : Any> actual constructor(
     actual fun getWithoutSetting(key: K): V? {
         TODO()
     }
-
 }

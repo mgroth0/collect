@@ -2,7 +2,6 @@ package matt.collect.set.singlen
 
 import matt.collect.singlen.SingleElementOrEmptyCollection
 
-
 abstract class SingleElementOrEmptySet<E : Any> : SingleElementOrEmptyCollection<E>(), Set<E> {
 //    final override val size get() = super.size
 //    final override fun contains(element: E) = super.contains(element)
@@ -16,15 +15,11 @@ abstract class SingleElementOrEmptySet<E : Any> : SingleElementOrEmptyCollection
         return other.singleOrNull() == e
     }
 
-    final override fun hashCode(): Int {
-        return e.hashCode()
-    }
+    final override fun hashCode(): Int = e.hashCode()
 }
-
 
 class ChangingSingleElementOrEmptySet<E : Any>(private val provider: () -> E?) : SingleElementOrEmptySet<E>() {
     override val e get() = provider()
 }
 
 class SingleElementSetOrEmptyImpl<E : Any>(override val e: E?) : SingleElementOrEmptySet<E>()
-

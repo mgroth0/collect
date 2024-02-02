@@ -43,18 +43,14 @@ open class OrderedSet<E>(elements: Iterable<E>) : Set<E>, ReferenceMonitor {
         protected var myChangeStamp = lastChangeStamp
         protected val itr = data.iterator()
 
-        final override fun hasNext(): Boolean {
-            return inSync(this@OrderedSet) {
-                if (myChangeStamp != lastChangeStamp) throw ConcurrentModificationException()
-                itr.hasNext()
-            }
+        final override fun hasNext(): Boolean = inSync(this@OrderedSet) {
+            if (myChangeStamp != lastChangeStamp) throw ConcurrentModificationException()
+            itr.hasNext()
         }
 
-        final override fun next(): E {
-            return inSync(this@OrderedSet) {
-                if (myChangeStamp != lastChangeStamp) throw ConcurrentModificationException()
-                itr.next()
-            }
+        final override fun next(): E = inSync(this@OrderedSet) {
+            if (myChangeStamp != lastChangeStamp) throw ConcurrentModificationException()
+            itr.next()
         }
     }
 
@@ -95,12 +91,10 @@ class MutableOrderedSet<E>() : OrderedSet<E>(setOf()), MutableSet<E> {
 
     private inner class MutableOrderedSetIterator : OrderedSetIterator(), MutableIterator<E> {
 
-        override fun remove() {
-            return inSync(this@MutableOrderedSet) {
-                if (myChangeStamp != lastChangeStamp) throw ConcurrentModificationException()
-                itr.remove()
-                myChangeStamp = changeStamp()
-            }
+        override fun remove() = inSync(this@MutableOrderedSet) {
+            if (myChangeStamp != lastChangeStamp) throw ConcurrentModificationException()
+            itr.remove()
+            myChangeStamp = changeStamp()
         }
 
     }

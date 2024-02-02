@@ -2,9 +2,7 @@ package matt.collect.map.dmap
 
 fun <K, V : Any> MutableMap<K, V>.withStoringDefault(
     d: (K) -> V
-): DefaultStoringMap<K, V> {
-    return DefaultStoringMap(this, d)
-}
+): DefaultStoringMap<K, V> = DefaultStoringMap(this, d)
 
 interface CanBeNotNullMutableMap<K, V : Any> : MutableMap<K, V>, CanBeNotNullMap<K, V>
 

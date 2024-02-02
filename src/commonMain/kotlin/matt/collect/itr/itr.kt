@@ -93,9 +93,7 @@ class MutableLoopIterator<E>(override val list: MutableList<E>) : MutableIterato
         }
     }
 
-    override fun remove() {
-        return itr.remove()
-    }
+    override fun remove() = itr.remove()
 
 
 }
@@ -223,17 +221,11 @@ class MutableLoopListIterator<E>(override val list: MutableList<E>) : MutableLis
         }
     }
 
-    override fun add(element: E) {
-        return itr.add(element)
-    }
+    override fun add(element: E) = itr.add(element)
 
-    override fun remove() {
-        return itr.remove()
-    }
+    override fun remove() = itr.remove()
 
-    override fun set(element: E) {
-        return itr.set(element)
-    }
+    override fun set(element: E) = itr.set(element)
 }
 
 enum class ItrDir {
@@ -343,8 +335,8 @@ open class MutableListIteratorWrapper<E>(
     itrWrapper: (ItrDir, () -> E) -> E = { _, it -> it() },
     changeWrapper: (ItrChange, () -> Unit) -> Unit = { _, it -> it() }
 ) : MutableIteratorWrapper<E>(
-    list, itrWrapper = itrWrapper, changeWrapper = changeWrapper
-), MutableListIterator<E> {
+        list, itrWrapper = itrWrapper, changeWrapper = changeWrapper
+    ), MutableListIterator<E> {
     final override val itr = if (index != null) list.listIterator(index) else list.listIterator()
 
 
@@ -379,8 +371,8 @@ open class MutableListIteratorWithSomeMemory<E>(
     list: MutableList<E>,
     index: Int? = null
 ) : MutableListIteratorWrapper<E>(
-    list, index = index
-) {
+        list, index = index
+    ) {
     private var hadFirstReturn = false
     var lastReturned: E? = null
         private set
@@ -407,38 +399,26 @@ inline fun <T> Iterable<T>.first(
     predicate: (T) -> Boolean
 ): T {
     for (element in this) if (predicate(element)) return element
-    throw NoSuchElementException("Collection contains no element matching the predicate (${errorMessage}).")
+    throw NoSuchElementException("Collection contains no element matching the predicate ($errorMessage).")
 }
 
 
-inline fun <E> MutableList<E>.iterateM(op: MutableListIterator<E>.(E) -> Unit) {
-    return listIterator().whileHasNext(op)
-}
+inline fun <E> MutableList<E>.iterateM(op: MutableListIterator<E>.(E) -> Unit) = listIterator().whileHasNext(op)
 
-inline fun <E> MutableSet<E>.iterateM(op: MutableIterator<E>.(E) -> Unit) {
-    return iterator().whileHasNext(op)
-}
+inline fun <E> MutableSet<E>.iterateM(op: MutableIterator<E>.(E) -> Unit) = iterator().whileHasNext(op)
 
-inline fun <E> List<E>.iterateL(op: ListIterator<E>.(E) -> Unit) {
-    return listIterator().whileHasNext(op)
-}
+inline fun <E> List<E>.iterateL(op: ListIterator<E>.(E) -> Unit) = listIterator().whileHasNext(op)
 
-inline fun <E> Iterable<E>.iterate(op: Iterator<E>.(E) -> Unit) {
-    return iterator().whileHasNext(op)
-}
+inline fun <E> Iterable<E>.iterate(op: Iterator<E>.(E) -> Unit) = iterator().whileHasNext(op)
 
-fun <T> Iterable<T>.filterNotIn(vararg matches: T): List<T> {
-    return filterTo(ArrayList()) { it !in matches }
-}
+fun <T> Iterable<T>.filterNotIn(vararg matches: T): List<T> = filterTo(ArrayList()) { it !in matches }
 
 fun <T> Iterable<T>.filterNot(vararg matches: T) = filterNotIn(*matches)
 fun <T> Iterable<T>.except(vararg matches: T) = filterNotIn(*matches)
 fun <T> Iterable<T>.besides(vararg matches: T) = filterNotIn(*matches)
 
 
-fun <T> Iterable<T>.filterIn(vararg matches: T): List<T> {
-    return filterTo(ArrayList()) { it in matches }
-}
+fun <T> Iterable<T>.filterIn(vararg matches: T): List<T> = filterTo(ArrayList()) { it in matches }
 
 inline fun <E, I : Iterator<E>> I.whileHasNext(op: I.(E) -> Unit) {
     contract {
@@ -470,23 +450,19 @@ inline fun <T, R> Iterable<T>.mapNested(converter: (T, T) -> R): List<R> {
 fun <T> Sequence<T>.onEvery(
     ith: Int,
     action: (T) -> Unit
-): Sequence<T> {
-    return mapIndexed { index, t ->
-        if (index % ith == 0) action(t)
-        t
-    }
+): Sequence<T> = mapIndexed { index, t ->
+    if (index % ith == 0) action(t)
+    t
 }
 
 fun <T> Sequence<T>.onEveryIndexed(
     ith: Int,
     action: (Int, T) -> Unit
-): Sequence<T> {
-    return mapIndexed { index, t ->
-        if (index % ith == 0) action(
-            index, t
-        )
-        t
-    }
+): Sequence<T> = mapIndexed { index, t ->
+    if (index % ith == 0) action(
+        index, t
+    )
+    t
 }
 
 inline fun <T> Array<out T>.applyEach(action: T.() -> Unit) {
@@ -632,7 +608,7 @@ tailrec fun <T : Any, R> T.search(
     }
     /*
     I guess this is broken for now? Fixed by https://youtrack.jetbrains.com/issue/KT-63529/K2-Compiler-does-not-detect-tailrec-call-in-elvis-expression
-    * */
+     * */
     return getTarget() ?: getNext()?.search(getTarget = getTarget, getNext = getNext)
 }
 
@@ -678,13 +654,11 @@ fun <E> Collection<E>.areAllUnique(): Boolean {
     }
 }
 
-fun <E> Collection<E>.areAllTheSame(): Boolean {
-    return if (this.size <= 1) {
-        true
-    } else {
-        val example = this.first()
-        this.all { it == example }
-    }
+fun <E> Collection<E>.areAllTheSame(): Boolean = if (this.size <= 1) {
+    true
+} else {
+    val example = this.first()
+    this.all { it == example }
 }
 
 fun <T> list(op: ListBuilder<T>.() -> Unit) = ListBuilder<T>().apply(op)
@@ -735,7 +709,7 @@ fun <E> Collection<E>.duplicates(): List<Pair<IndexedValue<E>, IndexedValue<E>>>
         }
     }
 
-    else    -> err("how to get duplicates of ${this}?")
+    else    -> err("how to get duplicates of $this?")
 }
 
 inline fun <reified T> arrayOfNotNull(vararg elements: T?): Array<T> = listOfNotNull(*elements).toTypedArray()

@@ -2,22 +2,20 @@
 
 package matt.collect.weak
 
-
 import matt.lang.err
 import java.lang.ref.WeakReference
-import java.util.*
+import java.util.Collections
+import java.util.WeakHashMap
 
-
-/*SERIOUS EQUALITY ISSUES HAVE LEAD ME TO USING HASH CODES INSTEAD OF THE OBJECTS THEMSELVES*//*... IT WORKED*/
+// SERIOUS EQUALITY ISSUES HAVE LEAD ME TO USING HASH CODES INSTEAD OF THE OBJECTS THEMSELVES
+// ... IT WORKED
 
 actual class WeakMap<K, V> : MutableMap<K, V> by Collections.synchronizedMap(
-    WeakHashMap()
-) /*/*need to do this or threads could deadlock or have any other weird issue (deadlocking HAS happened though) since WeakMap is not thread-safe. This issue has been discussed online, and this is the proper solution (also see WeakHashMap, where they say to do this) */*/
+    WeakHashMap(),
+) // /*need to do this or threads could deadlock or have any other weird issue (deadlocking HAS happened though) since WeakMap is not thread-safe. This issue has been discussed online, and this is the proper solution (also see WeakHashMap, where they say to do this) */
 
 class WeakSet<T> : MutableSet<T> {
-
     private var set = mutableSetOf<WeakReference<T>>()
-
 
     override fun add(element: T): Boolean {
         val itr = set.iterator()
@@ -49,6 +47,7 @@ class WeakSet<T> : MutableSet<T> {
         var next: T? = null
         var lastRef: WeakReference<T>? = null
         var needsCheck = true
+
         fun check() {
             while (next == null && itr.hasNext()) {
                 lastRef = itr.next()
@@ -169,7 +168,4 @@ class WeakSet<T> : MutableSet<T> {
         }
         return true
     }
-
 }
-
-

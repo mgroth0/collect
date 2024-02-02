@@ -3,11 +3,8 @@ package matt.collect.queue
 import java.util.Queue
 
 class JQueueWrapper<E : Any>(private val jQueue: Queue<E>) : MyMutableQueue<E> {
-
     @Synchronized
-    override fun poll(): E? {
-        return jQueue.poll()
-    }
+    override fun poll(): E? = jQueue.poll()
 
     override fun peek(): E {
         TODO()
@@ -25,9 +22,7 @@ class JQueueWrapper<E : Any>(private val jQueue: Queue<E>) : MyMutableQueue<E> {
         get() = TODO()
 
     @Synchronized
-    override fun isEmpty(): Boolean {
-        return jQueue.isEmpty()
-    }
+    override fun isEmpty(): Boolean = jQueue.isEmpty()
 
     override fun iterator(): MutableIterator<E> {
         TODO()
@@ -54,9 +49,7 @@ class JQueueWrapper<E : Any>(private val jQueue: Queue<E>) : MyMutableQueue<E> {
     }
 
     @Synchronized
-    override fun add(element: E): Boolean {
-        return jQueue.add(element)
-    }
+    override fun add(element: E): Boolean = jQueue.add(element)
 
     override fun containsAll(elements: Collection<E>): Boolean {
         TODO()
@@ -66,5 +59,3 @@ class JQueueWrapper<E : Any>(private val jQueue: Queue<E>) : MyMutableQueue<E> {
         TODO()
     }
 }
-
-

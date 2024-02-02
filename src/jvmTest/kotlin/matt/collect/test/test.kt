@@ -1,6 +1,5 @@
 package matt.collect.test
 
-
 import matt.collect.fake.FakeMutableList
 import matt.collect.itr.FakeMutableIterator
 import matt.collect.itr.FakeMutableListIterator
@@ -31,25 +30,26 @@ import kotlin.test.assertTrue
 
 class CollectTests : Tests() {
     @Test
-    fun constructClasses() = assertRunsInOneMinute {
-        SingleElementListImpl(1)
-        LazySet(sequenceOf(1, 2, 3).iterator())
-        WeakBag<Int>()
-        MutableLazyList(listOf(LazyValue { 1 }))
-        LazySequenceList(sequenceOf(1, 2, 3))
-        FakeMutableList(listOf(1, 2, 3))
-        Loop(listOf(1, 2, 3))
-        FakeMutableListIterator(listOf(1, 2, 3).listIterator())
-        FakeMutableIterator(setOf(1, 2, 3).iterator())
-        LoopIterator(listOf(1, 2, 3))
-        MutableLoopIterator(mutableListOf(1, 2, 3))
-        LoopListIterator(listOf(1, 2, 3))
-        MutableLoopListIterator(mutableListOf(1, 2, 3))
-        MutableIteratorWrapper(mutableListOf(1))
-        MutableListIteratorWrapper(mutableListOf(1))
-        MutableIteratorWithSomeMemory(mutableListOf(1))
-        MutableListIteratorWithSomeMemory(mutableListOf(1))
-    }
+    fun constructClasses() =
+        assertRunsInOneMinute {
+            SingleElementListImpl(1)
+            LazySet(sequenceOf(1, 2, 3).iterator())
+            WeakBag<Int>()
+            MutableLazyList(listOf(LazyValue { 1 }))
+            LazySequenceList(sequenceOf(1, 2, 3))
+            FakeMutableList(listOf(1, 2, 3))
+            Loop(listOf(1, 2, 3))
+            FakeMutableListIterator(listOf(1, 2, 3).listIterator())
+            FakeMutableIterator(setOf(1, 2, 3).iterator())
+            LoopIterator(listOf(1, 2, 3))
+            MutableLoopIterator(mutableListOf(1, 2, 3))
+            LoopListIterator(listOf(1, 2, 3))
+            MutableLoopListIterator(mutableListOf(1, 2, 3))
+            MutableIteratorWrapper(mutableListOf(1))
+            MutableListIteratorWrapper(mutableListOf(1))
+            MutableIteratorWithSomeMemory(mutableListOf(1))
+            MutableListIteratorWithSomeMemory(mutableListOf(1))
+        }
 
     @Test
     fun runFunctions() {
@@ -77,5 +77,4 @@ class CollectTests : Tests() {
         assertEquals(1, m.size)
         assertEquals("1", m.getWithoutSetting(1))
     }
-
 }

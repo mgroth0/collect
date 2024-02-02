@@ -27,9 +27,7 @@ class OrderedContentsSerializer<E>(private val dataSerializer: KSerializer<E>) :
         encoder.encodeSerializableValue(listSer, value.toList())
     }
 
-    override fun deserialize(decoder: Decoder): OrderedContents<E> {
-        return OrderedContents(decoder.decodeSerializableValue(listSer))
-    }
+    override fun deserialize(decoder: Decoder): OrderedContents<E> = OrderedContents(decoder.decodeSerializableValue(listSer))
 
 
 }
@@ -51,13 +49,9 @@ class OrderedContents<E>(set: OrderedSet<E>) : Set<E> by set {
     constructor(itr: Sequence<E>) : this(itr.toSet())
     constructor(vararg e: E) : this(e.toSet())
 
-    override fun equals(other: Any?): Boolean {
-        return other is OrderedContents<*> && other.size == size && zip(other).all { it.first == it.second }
-    }
+    override fun equals(other: Any?): Boolean = other is OrderedContents<*> && other.size == size && zip(other).all { it.first == it.second }
 
-    override fun hashCode(): Int {
-        return map { it.hashCode() }.sum()
-    }
+    override fun hashCode(): Int = map { it.hashCode() }.sum()
 }
 
 
@@ -77,9 +71,7 @@ class ContentsSerializer<E>(private val dataSerializer: KSerializer<E>) : KSeria
 
     }
 
-    override fun deserialize(decoder: Decoder): Contents<E> {
-        return Contents(decoder.decodeSerializableValue(listSer))
-    }
+    override fun deserialize(decoder: Decoder): Contents<E> = Contents(decoder.decodeSerializableValue(listSer))
 
 
 }
@@ -97,11 +89,7 @@ class Contents<E>(set: Set<E>) : Set<E> by set {
     constructor(itr: Sequence<E>) : this(itr.toSet())
     constructor(vararg e: E) : this(e.toSet())
 
-    override fun equals(other: Any?): Boolean {
-        return other is Contents<*> && other.size == size && containsAll(other)
-    }
+    override fun equals(other: Any?): Boolean = other is Contents<*> && other.size == size && containsAll(other)
 
-    override fun hashCode(): Int {
-        return map { it.hashCode() }.sum()
-    }
+    override fun hashCode(): Int = map { it.hashCode() }.sum()
 }

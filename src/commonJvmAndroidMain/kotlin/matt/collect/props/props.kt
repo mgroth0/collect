@@ -3,8 +3,7 @@
 package matt.collect.props
 
 import java.io.InputStream
-import java.util.*
-
+import java.util.Properties
 
 fun Properties(inputStream: InputStream): Properties {
     val props = Properties()
@@ -12,11 +11,11 @@ fun Properties(inputStream: InputStream): Properties {
     return props
 }
 
-
-fun propertiesOf(
-    vararg entries: Pair<String, String>
-): Properties {
+fun propertiesOf(vararg entries: Pair<String, String>): Properties {
     val props = Properties()
     props.putAll(entries)
     return props
 }
+
+
+

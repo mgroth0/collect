@@ -27,10 +27,10 @@ class DepthRecordingRecursionIterator<E>(
     childrenProvider: (E) -> Iterable<E>?,
     private val depth: Int
 ) : AbstractRecursionIterator<E, Pair<E, Int>>(
-    start = start,
-    giveSelf = includeSelf,
-    childrenProvider = childrenProvider
-) {
+        start = start,
+        giveSelf = includeSelf,
+        childrenProvider = childrenProvider
+    ) {
 
 
     private val myChildren = childrenProvider(start)?.iterator()
@@ -38,8 +38,8 @@ class DepthRecordingRecursionIterator<E>(
 
 
     override fun hasNext() = giveSelf
-            || (grandChildIterator?.hasNext() == true)
-            || (myChildren?.hasNext() == true)
+        || (grandChildIterator?.hasNext() == true)
+        || (myChildren?.hasNext() == true)
 
     override fun next(): Pair<E, Int> {
 

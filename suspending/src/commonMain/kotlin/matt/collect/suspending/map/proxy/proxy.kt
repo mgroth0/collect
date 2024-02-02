@@ -2,6 +2,7 @@ package matt.collect.suspending.map.proxy
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import matt.collect.mapToSet
 import matt.collect.suspending.SuspendMutableCollection
 import matt.collect.suspending.ext.map
 import matt.collect.suspending.ext.toSet
@@ -13,7 +14,6 @@ import matt.collect.suspending.map.SuspendMutableMap
 import matt.collect.suspending.map.toFakeSuspendMutableEntry
 import matt.collect.suspending.set.SuspendMutableSet
 import matt.collect.suspending.set.fake.toSuspendingFakeMutableSet
-import matt.collect.mapToSet
 import matt.lang.convert.BiConverter
 import matt.model.data.proxy.map.ImmutableProxyMap
 import kotlin.collections.Map.Entry
@@ -39,33 +39,22 @@ class SuspendProxyMap<SK : Any, SV : Any, TK : Any, TV : Any>(
     private fun TK.toSK() = keyConverter.convertToA(this)
     private fun TV.toSV() = valueConverter.convertToA(this)
 
-    override suspend fun currentEntries(): SuspendMutableSet<out SuspendMutableEntry<TK, TV?>> {
-
-        return innerMap.currentEntries().map { e ->
-            object : SuspendEntry<TK, TV?> {
-                override suspend fun key() = e.key().toTK()
-                override suspend fun value() = e.value()?.toTV()
-            }.toFakeSuspendMutableEntry()
-        }.toSet().toSuspendingFakeMutableSet()
-
-
-    }
+    override suspend fun currentEntries(): SuspendMutableSet<out SuspendMutableEntry<TK, TV?>> = innerMap.currentEntries().map { e ->
+        object : SuspendEntry<TK, TV?> {
+            override suspend fun key() = e.key().toTK()
+            override suspend fun value() = e.value()?.toTV()
+        }.toFakeSuspendMutableEntry()
+    }.toSet().toSuspendingFakeMutableSet()
 
     override fun entry(key: TK): SuspendMutableEntry<TK, TV?> {
         val skKey = key.toSK()
         val e = innerMap.entry(skKey)
         return object : SuspendMutableEntry<TK, TV?> {
-            override suspend fun setValue(newValue: TV?): TV? {
-                return e.setValue(newValue?.toSV())?.toTV()
-            }
+            override suspend fun setValue(newValue: TV?): TV? = e.setValue(newValue?.toSV())?.toTV()
 
-            override suspend fun key(): TK {
-                return key
-            }
+            override suspend fun key(): TK = key
 
-            override suspend fun value(): TV? {
-                return e.value()?.toTV()
-            }
+            override suspend fun value(): TV? = e.value()?.toTV()
 
         }
     }
@@ -92,13 +81,11 @@ class SuspendProxyMap<SK : Any, SV : Any, TK : Any, TV : Any>(
     }
 
     override suspend fun isEmpty() = innerMap.isEmpty()
-    override suspend fun toNonSuspendMap(): Map<TK, TV> {
-        return ImmutableProxyMap(
-            innerMap.toNonSuspendMap(),
-            keyConverter,
-            valueConverter
-        )
-    }
+    override suspend fun toNonSuspendMap(): Map<TK, TV> = ImmutableProxyMap(
+        innerMap.toNonSuspendMap(),
+        keyConverter,
+        valueConverter
+    )
 
     override suspend fun remove(key: TK) = innerMap.remove(key.toSK())?.toTV()
 
@@ -109,27 +96,17 @@ class SuspendProxyMap<SK : Any, SV : Any, TK : Any, TV : Any>(
     override suspend fun put(
         key: TK,
         value: TV
-    ): TV? {
-        return innerMap.put(
-            key.toSK(),
-            value.toSV()
-        )?.toTV()
-    }
+    ): TV? = innerMap.put(
+        key.toSK(),
+        value.toSV()
+    )?.toTV()
 
-    override suspend fun get(key: TK): TV? {
-        return innerMap.get(key.toSK())?.toTV()
-    }
+    override suspend fun get(key: TK): TV? = innerMap.get(key.toSK())?.toTV()
 
-    override suspend fun containsValue(value: TV): Boolean {
-        return innerMap.containsValue(value.toSV())
-    }
+    override suspend fun containsValue(value: TV): Boolean = innerMap.containsValue(value.toSV())
 
-    override suspend fun containsKey(key: TK): Boolean {
-        return innerMap.containsKey(key.toSK())
-    }
+    override suspend fun containsKey(key: TK): Boolean = innerMap.containsKey(key.toSK())
 
-    override suspend fun chunkFlow(): Flow<Map<TK, TV>> {
-        return innerMap.chunkFlow().map { it.mapKeys { it.key.toTK() }.mapValues { it.value.toTV() } }
-    }
+    override suspend fun chunkFlow(): Flow<Map<TK, TV>> = innerMap.chunkFlow().map { it.mapKeys { it.key.toTK() }.mapValues { it.value.toTV() } }
 
 }

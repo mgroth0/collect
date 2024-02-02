@@ -26,9 +26,7 @@ class FakeMutableSuspendSet<E>(val set: SuspendCollection<E>) : SuspendMutableSe
         err("tried to setAll in ${FakeMutableSuspendSet::class.simpleName}")
     }
 
-    override suspend fun iterator(): SuspendMutableIterator<E> {
-        return SuspendFakeMutableIterator(set.iterator())
-    }
+    override suspend fun iterator(): SuspendMutableIterator<E> = SuspendFakeMutableIterator(set.iterator())
 
 
     override suspend fun remove(element: E): Boolean {
@@ -45,20 +43,12 @@ class FakeMutableSuspendSet<E>(val set: SuspendCollection<E>) : SuspendMutableSe
 
     override suspend fun size(): Int = set.size()
 
-    override suspend fun contains(element: E): Boolean {
-        return set.contains(element)
-    }
+    override suspend fun contains(element: E): Boolean = set.contains(element)
 
-    override suspend fun containsAll(elements: SuspendCollection<E>): Boolean {
-        return set.containsAll(elements)
-    }
+    override suspend fun containsAll(elements: SuspendCollection<E>): Boolean = set.containsAll(elements)
 
-    override suspend fun isEmpty(): Boolean {
-        return set.isEmpty()
-    }
+    override suspend fun isEmpty(): Boolean = set.isEmpty()
 
-    override suspend fun toNonSuspendCollection(): Collection<E> {
-        return set.toNonSuspendCollection()
-    }
+    override suspend fun toNonSuspendCollection(): Collection<E> = set.toNonSuspendCollection()
 
 }

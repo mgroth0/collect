@@ -11,11 +11,9 @@ package matt.collect.weak.bag
  * Versant Corporation - initial API and implementation
  */
 
-
 import java.lang.ref.Reference
 import java.lang.ref.ReferenceQueue
 import java.lang.ref.WeakReference
-
 
 /**
  * This maintains a bag of weakly referenced objects. The clean method
@@ -25,7 +23,6 @@ import java.lang.ref.WeakReference
 class WeakBag<T> {
     private val set: HashSet<WeakReference<T>> = HashSet()
     private val refQueue: ReferenceQueue<T> = ReferenceQueue<T>()
-
 
     operator fun plusAssign(o: T) {
         set.add(WeakReference(o, refQueue))
@@ -40,7 +37,9 @@ class WeakBag<T> {
     }
 
     fun approxSize() = set.size
+
     fun values() = set.mapNotNull { it.get() }
+
     operator fun contains(v: Any) = v in values()
 
     /**
@@ -53,6 +52,4 @@ class WeakBag<T> {
             set.remove(r)
         }
     }
-
-
 }

@@ -4,9 +4,7 @@ import matt.lang.dyn.call
 import kotlin.collections.MutableMap.MutableEntry
 
 actual class WeakMap<K, V> : MutableMap<K, V> {
-
     private val map = call("WeakMap")
-
 
     actual override val entries: MutableSet<MutableEntry<K, V>>
         get() = TODO()
@@ -35,7 +33,7 @@ actual class WeakMap<K, V> : MutableMap<K, V> {
 
     actual override fun put(
         key: K,
-        value: V
+        value: V,
     ): V? {
         val oldValue = map[key.hashCode()]
         map[key.hashCode()] = value
@@ -43,9 +41,9 @@ actual class WeakMap<K, V> : MutableMap<K, V> {
     }
 
     actual override fun get(key: K): V? {
-//	if (verbose) println("looking at weakmap with key:${key}")
+// 	if (verbose) println("looking at weakmap with key:${key}")
         val r = map[key.hashCode()] as V?
-//	if (verbose) println("r=$r, r==null=${r == null}")
+// 	if (verbose) println("r=$r, r==null=${r == null}")
         return r
     }
 
@@ -56,5 +54,4 @@ actual class WeakMap<K, V> : MutableMap<K, V> {
     actual override fun containsKey(key: K): Boolean {
         TODO()
     }
-
 }
