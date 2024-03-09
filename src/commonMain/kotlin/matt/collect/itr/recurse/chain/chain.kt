@@ -1,6 +1,6 @@
 package matt.collect.itr.recurse.chain
 
-import matt.lang.err
+import matt.lang.common.err
 import kotlin.contracts.ExperimentalContracts
 
 
@@ -34,5 +34,4 @@ class ChainIterator<T : Any>(
             return nextO!!
         } else err("bad logic")
     }
-
 }

@@ -4,8 +4,8 @@ import matt.collect.itr.FakeMutableIterator
 import matt.collect.queue.MyMutableQueue
 import matt.collect.queue.MyMutableQueueImpl
 import matt.collect.queue.removeJavaStyle
-import matt.lang.sync.ReferenceMonitor
-import matt.lang.sync.inSync
+import matt.lang.sync.common.ReferenceMonitor
+import matt.lang.sync.common.inSync
 
 class EvitctingQueue<E : Any>(val capacity: Int) : MyMutableQueue<E>, ReferenceMonitor {
     private val data = MyMutableQueueImpl<E>()

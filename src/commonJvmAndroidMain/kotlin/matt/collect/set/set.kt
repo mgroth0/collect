@@ -1,4 +1,3 @@
-@file:JvmName("SetAndroidJvmKt")
 
 package matt.collect.set
 
@@ -25,7 +24,6 @@ abstract class DelegatedSet<E> : Set<E> {
     final override fun iterator() = delegate.iterator()
     final override fun containsAll(elements: Collection<E>) = delegate.containsAll(elements)
     final override fun contains(element: E) = delegate.contains(element)
-
 }
 
 @WorkaroundFor("https://youtrack.jetbrains.com/issue/KT-18427/Provide-a-way-to-reference-a-delegate-in-class-body")
@@ -44,5 +42,4 @@ abstract class DelegatedMutableSet<E> : MutableSet<E> {
     final override fun retainAll(elements: Collection<E>) = delegate.retainAll(elements)
     final override fun removeAll(elements: Collection<E>) = delegate.removeAll(elements)
     final override fun remove(element: E) = delegate.remove(element)
-
 }

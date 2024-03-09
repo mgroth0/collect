@@ -4,7 +4,7 @@ import kotlin.collections.Map.Entry
 
 class FilteredMap<K, V : Any>(
     private val map: Map<K, V>,
-    private val valueFilter: (V) -> Boolean,
+    private val valueFilter: (V) -> Boolean
 ) : Map<K, V> {
     override val entries: Set<Entry<K, V>>
         get() = TODO()

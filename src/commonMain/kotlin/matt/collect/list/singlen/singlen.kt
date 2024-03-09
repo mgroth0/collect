@@ -2,14 +2,9 @@ package matt.collect.list.singlen
 
 import matt.collect.single.SingleElementIterator
 import matt.collect.singlen.SingleElementOrEmptyCollection
-import matt.lang.NEVER
+import matt.lang.common.NEVER
 
 abstract class SingleElementOrEmptyList<E : Any> : SingleElementOrEmptyCollection<E>(), List<E> {
-//    final override val size get() = super.size
-//    final override fun contains(element: E) = super.contains(element)
-//    final override fun containsAll(elements: Collection<E>) = super.containsAll(elements)
-//    final override fun isEmpty() = super.isEmpty()
-//    final override fun iterator() = super.iterator()
     final override fun listIterator() = listIterator(0)
 
     final override fun listIterator(index: Int): ListIterator<E> {
@@ -30,7 +25,7 @@ abstract class SingleElementOrEmptyList<E : Any> : SingleElementOrEmptyCollectio
 
     final override fun subList(
         fromIndex: Int,
-        toIndex: Int,
+        toIndex: Int
     ): List<E> {
         require(fromIndex == 0)
         require(toIndex in 0..1)
@@ -47,7 +42,7 @@ abstract class SingleElementOrEmptyList<E : Any> : SingleElementOrEmptyCollectio
 
     final override fun equals(other: Any?): Boolean {
         if (other !is List<*>) return false
-        if (this.isEmpty()) return other.isEmpty()
+        if (isEmpty()) return other.isEmpty()
         return other.singleOrNull() == e
     }
 

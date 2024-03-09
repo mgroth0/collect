@@ -1,13 +1,16 @@
 package matt.collect.itr.recurse.depth
 
 import matt.collect.itr.recurse.AbstractRecursionIterator
-import matt.lang.NEVER
-import matt.lang.go
+import matt.lang.common.NEVER
+import matt.lang.common.go
 
 
-fun <T> T.recursionDepth(rChildren: (T) -> Iterable<T>): Int = (rChildren(this).maxOfOrNull {
-    it.recursionDepth(rChildren)
-} ?: 0) + 1
+fun <T> T.recursionDepth(rChildren: (T) -> Iterable<T>): Int =
+    (
+        rChildren(this).maxOfOrNull {
+            it.recursionDepth(rChildren)
+        } ?: 0
+    ) + 1
 
 fun <T> T.recurseWithDepth(
     includeSelf: Boolean = true,
@@ -37,9 +40,10 @@ class DepthRecordingRecursionIterator<E>(
     private var grandChildIterator: Iterator<Pair<E, Int>>? = null
 
 
-    override fun hasNext() = giveSelf
-        || (grandChildIterator?.hasNext() == true)
-        || (myChildren?.hasNext() == true)
+    override fun hasNext() =
+        giveSelf
+            || (grandChildIterator?.hasNext() == true)
+            || (myChildren?.hasNext() == true)
 
     override fun next(): Pair<E, Int> {
 
@@ -70,6 +74,4 @@ class DepthRecordingRecursionIterator<E>(
         }
         NEVER
     }
-
-
 }

@@ -1,8 +1,8 @@
 package matt.collect.queue
 
 import matt.collect.list.linked.MyLinkedList
-import matt.lang.sync.ReferenceMonitor
-import matt.lang.sync.inSync
+import matt.lang.sync.common.ReferenceMonitor
+import matt.lang.sync.common.inSync
 
 interface MyQueue<E : Any> : Collection<E> {
     fun poll(): E?

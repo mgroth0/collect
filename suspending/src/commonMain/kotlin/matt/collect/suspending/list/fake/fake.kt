@@ -9,7 +9,7 @@ import matt.collect.suspending.list.SuspendList
 import matt.collect.suspending.list.SuspendMutableList
 import matt.collect.suspending.list.SuspendMutableListIterator
 import matt.collect.suspending.list.toNonSuspendList
-import matt.lang.err
+import matt.lang.common.err
 
 fun <E> SuspendList<E>.toSuspendingFakeMutableList() = FakeMutableSuspendList(this)
 
@@ -93,6 +93,4 @@ class FakeMutableSuspendList<E>(val list: SuspendList<E>) : SuspendMutableList<E
     override suspend fun retainAll(elements: SuspendCollection<E>): Boolean {
         err("tried to retainAll in ${FakeMutableSuspendList::class.simpleName}")
     }
-
-
 }

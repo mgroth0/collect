@@ -1,7 +1,7 @@
 package matt.collect.list.linked
 
 
-fun <E> mutableLinkedList() = MyLinkedList<E>()
+
 expect class MyLinkedList<E>() : MutableList<E> {
     override fun add(element: E): Boolean
     override fun add(
@@ -39,5 +39,4 @@ expect class MyLinkedList<E>() : MutableList<E> {
         index: Int,
         element: E
     ): E
-
 }

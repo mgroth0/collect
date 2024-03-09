@@ -14,7 +14,7 @@ class BlockListBuilder<E : Any>(size: Int) {
 
 class BlockList<E : Any>(
     override val size: Int,
-    private val queue: ArrayBlockingQueue<E>,
+    private val queue: ArrayBlockingQueue<E>
 ) : StructuralList<E>(), List<E> {
     override fun isEmpty() = size == 0
 
@@ -74,7 +74,7 @@ class BlockList<E : Any>(
 
     override fun subList(
         fromIndex: Int,
-        toIndex: Int,
+        toIndex: Int
     ): List<E> {
         TODO()
     }

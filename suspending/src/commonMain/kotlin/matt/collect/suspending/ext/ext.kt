@@ -20,13 +20,13 @@ import matt.lang.function.SuspendConvert
 import kotlin.contracts.InvocationKind.UNKNOWN
 import kotlin.contracts.contract
 
-public suspend fun <T> SuspendIterator<T>.asFlow(): Flow<T> = flow {
+public suspend fun <T> SuspendIterator<T>.asFlow(): Flow<T> =
+    flow {
 
-    while (hasNext()) {
-        emit(next())
+        while (hasNext()) {
+            emit(next())
+        }
     }
-
-}
 
 @Suppress("UNCHECKED_CAST")
 public suspend inline fun <reified T> SuspendCollection<T>.toTypedArray(): Array<T> = toNonSuspendCollection().toTypedArray()
@@ -68,7 +68,7 @@ suspend inline fun <T, R> SuspendIterable<T>.map(transform: (T) -> R): SuspendLi
  */
 @PublishedApi
 internal suspend fun <T> SuspendIterable<T>.collectionSizeOrDefault(default: Int): Int =
-    if (this is SuspendCollection<*>) this.size() else default
+    if (this is SuspendCollection<*>) size() else default
 
 
 /**
@@ -77,7 +77,9 @@ internal suspend fun <T> SuspendIterable<T>.collectionSizeOrDefault(default: Int
  *
  * @sample samples.collections.Collections.Transformations.mapNotNull
  */
-public suspend inline fun <T, R : Any> SuspendIterable<T>.mapNotNull(transform: (T) -> R?): SuspendList<R> = mapNotNullTo(SuspendWrapMutableList(ArrayList<R>()), transform)
+public suspend inline fun <T, R : Any> SuspendIterable<T>.mapNotNull(
+    transform: (T) -> R?
+): SuspendList<R> = mapNotNullTo(SuspendWrapMutableList(ArrayList<R>()), transform)
 
 
 /**
@@ -95,7 +97,7 @@ public suspend inline fun <T, R : Any, C : SuspendMutableCollection<in R>> Suspe
 /**
  * Performs the given [action] on each element.
  */
-public suspend inline fun <T> SuspendIterable<T>.forEach(action: (T) -> Unit): Unit {
+public suspend inline fun <T> SuspendIterable<T>.forEach(action: (T) -> Unit) {
     for (element in this) action(element)
 }
 
@@ -121,17 +123,18 @@ suspend fun <T> SuspendIterable<T>.toList(): SuspendList<T> {
         return when (size()) {
             0    -> emptyList()
             1    -> suspendListOf(if (this is SuspendList) get(0) else iterator().next())
-            else -> this.toMutableList()
+            else -> toMutableList()
         }
     }
-    return this.toMutableList().optimizeReadOnlyList()
+    return toMutableList().optimizeReadOnlyList()
 }
 
-internal suspend fun <T> SuspendList<T>.optimizeReadOnlyList() = when (size()) {
-    0    -> emptyList()
-    1    -> suspendListOf(this.get(0))
-    else -> this
-}
+internal suspend fun <T> SuspendList<T>.optimizeReadOnlyList() =
+    when (size()) {
+        0    -> emptyList()
+        1    -> suspendListOf(get(0))
+        else -> this
+    }
 
 fun <T> emptySet(): SuspendSet<T> = EmptySuspendSet
 
@@ -151,7 +154,6 @@ internal object EmptySuspendSet : SuspendSet<Nothing> {
     override suspend fun containsAll(elements: SuspendCollection<Nothing>): Boolean = elements.isEmpty()
 
     override suspend fun iterator(): SuspendIterator<Nothing> = EmptySuspendIterator
-
 }
 
 internal object EmptySuspendIterator : SuspendListIterator<Nothing> {
@@ -176,7 +178,7 @@ suspend fun <T> suspendListOf(vararg elements: T): SuspendList<T> = listOf(*elem
 
 suspend fun <T> SuspendIterable<T>.toMutableList(): SuspendMutableList<T> {
     if (this is SuspendCollection<T>)
-        return this.toMutableList()
+        return toMutableList()
     return toCollection(ArrayList<T>().suspending())
 }
 
@@ -188,7 +190,7 @@ suspend fun <T, C : SuspendMutableCollection<in T>> SuspendIterable<T>.toCollect
 }
 
 
-suspend fun <T> SuspendCollection<T>.toMutableList(): SuspendMutableList<T> = ArrayList(this.toNonSuspendCollection()).suspending()
+suspend fun <T> SuspendCollection<T>.toMutableList(): SuspendMutableList<T> = ArrayList(toNonSuspendCollection()).suspending()
 
 
 fun <T> emptyList(): SuspendList<T> = EmptySuspendList
@@ -229,7 +231,6 @@ internal object EmptySuspendList : SuspendList<Nothing>, RandomAccess {
         if (fromIndexInclusive == 0 && toIndexExclusive == 0) return this
         throw IndexOutOfBoundsException("fromIndex: $fromIndexInclusive, toIndex: $toIndexExclusive")
     }
-
 }
 
 
@@ -250,7 +251,7 @@ suspend inline fun <T> SuspendIterable<T>.any(predicate: (T) -> Boolean): Boolea
 suspend fun <T> SuspendList<T>.first(): T {
     if (isEmpty())
         throw NoSuchElementException("List is empty.")
-    return this.get(0)
+    return get(0)
 }
 
 suspend inline fun <T> SuspendIterable<T>.first(predicate: (T) -> Boolean = { true }): T {
@@ -262,7 +263,7 @@ suspend fun <T> SuspendIterable<T>.firstOrNull(): T? {
     when (this) {
         is SuspendList -> {
             return if (isEmpty()) null
-            else this.get(0)
+            else get(0)
         }
 
         else           -> {
@@ -293,17 +294,18 @@ suspend fun <E, R> SuspendIterable<E>.mapToSet(transform: SuspendConvert<E, R>) 
 /**
  * Adds all elements of the given [elements] collection to this [MutableCollection].
  */
-suspend fun <T> SuspendMutableCollection<in T>.addAll(elements: SuspendIterable<T>): Boolean = when (elements) {
-    is SuspendCollection -> addAll(elements)
-    else                 -> {
-        var result: Boolean = false
-        val itr = elements.iterator()
-        while (itr.hasNext()) {
-            if (add(itr.next())) result = true
+suspend fun <T> SuspendMutableCollection<in T>.addAll(elements: SuspendIterable<T>): Boolean =
+    when (elements) {
+        is SuspendCollection -> addAll(elements)
+        else                 -> {
+            var result: Boolean = false
+            val itr = elements.iterator()
+            while (itr.hasNext()) {
+                if (add(itr.next())) result = true
+            }
+            result
         }
-        result
     }
-}
 
 suspend inline fun <T, R, C : SuspendMutableCollection<in R>> SuspendIterable<T>.flatMapTo(
     destination: C,

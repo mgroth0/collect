@@ -15,14 +15,14 @@ actual class MyLinkedList<E> actual constructor() : MutableList<E> {
 
     actual override fun addAll(
         index: Int,
-        elements: Collection<E>,
+        elements: Collection<E>
     ): Boolean {
         TODO()
     }
 
     actual override fun add(
         index: Int,
-        element: E,
+        element: E
     ) {
         TODO()
     }
@@ -57,14 +57,14 @@ actual class MyLinkedList<E> actual constructor() : MutableList<E> {
 
     actual override fun subList(
         fromIndex: Int,
-        toIndex: Int,
+        toIndex: Int
     ): MutableList<E> {
         TODO()
     }
 
     actual override fun set(
         index: Int,
-        element: E,
+        element: E
     ): E {
         TODO()
     }

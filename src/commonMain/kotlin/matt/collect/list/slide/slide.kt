@@ -14,12 +14,12 @@ interface SlidingWindow<E : Any> : SlidingWindowIdea {
 
 private class MutableSlidingWindow<E : Any>(
     override var centerElement: E,
-    override var window: List<E>,
+    override var window: List<E>
 ) : SlidingWindow<E>
 
 class SlidingWindowIterator<E : Any>(
     private val source: List<E>,
-    private val windowSize: Int,
+    private val windowSize: Int
 ) : SlidingWindowIdea, Iterator<SlidingWindow<E>> {
     init {
         requireNotEqual(windowSize % 2, 0) {
@@ -55,9 +55,9 @@ class SlidingWindowIterator<E : Any>(
                     centerElement =
                         center
                             ?: error(
-                                "null center (window.size=${window.size},centerI=$centerI,source.size=${source.size},windowSize=$windowSize)",
+                                "null center (window.size=${window.size},centerI=$centerI,source.size=${source.size},windowSize=$windowSize)"
                             ),
-                    window = window,
+                    window = window
                 )
             return slidingWindow!!
         } else {

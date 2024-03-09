@@ -94,7 +94,7 @@ class LazySequenceList<E>(sequence: Sequence<E>) : LazyList<E> {
 
     override fun subList(
         fromIndex: Int,
-        toIndex: Int,
+        toIndex: Int
     ): List<E> {
         requireNonNegative(fromIndex)
         requireNonNegative(toIndex)
@@ -109,19 +109,21 @@ class LazySequenceList<E>(sequence: Sequence<E>) : LazyList<E> {
         return list.lastIndexOf(element)
     }
 
-    override fun indexOf(element: E): Int = list.indexOf(element).takeIf { it != -1 } ?: run {
-        do {
-            val t = take()
-        } while (t != element && t != null)
-        list.indexOf(element)
-    }
+    override fun indexOf(element: E): Int =
+        list.indexOf(element).takeIf { it != -1 } ?: run {
+            do {
+                val t = take()
+            } while (t != element && t != null)
+            list.indexOf(element)
+        }
 
     override fun containsAll(elements: Collection<E>) = elements.all { contains(it) }
 
-    override fun contains(element: E): Boolean = list.contains(element).takeIf { it } ?: run {
-        do {
-            val t = take()
-        } while (t != element && t != null)
-        list.contains(element)
-    }
+    override fun contains(element: E): Boolean =
+        list.contains(element).takeIf { it } ?: run {
+            do {
+                val t = take()
+            } while (t != element && t != null)
+            list.contains(element)
+        }
 }

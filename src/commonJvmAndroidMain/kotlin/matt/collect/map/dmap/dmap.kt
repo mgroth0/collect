@@ -1,12 +1,12 @@
-@file:JvmName("DmapJvmAndroidKt")
 
 package matt.collect.map.dmap
 
+import matt.collect.map.dmap.inter.CanBeNotNullMutableMap
 import java.util.concurrent.CountDownLatch
 
 actual class DefaultStoringMap<K, V : Any> actual constructor(
     actual val map: MutableMap<K, V>,
-    actual val d: (K) -> V,
+    actual val d: (K) -> V
 ) : CanBeNotNullMutableMap<K, V> {
     actual override val size: Int
         get() = map.size
@@ -69,15 +69,15 @@ actual class DefaultStoringMap<K, V : Any> actual constructor(
     @Synchronized
     actual override fun isEmpty() = map.isEmpty()
 
-    // these all need to be more deephys synchronized... this is a common issue
+    /* these all need to be more deephys synchronized... this is a common issue */
     actual override val entries: MutableSet<MutableMap.MutableEntry<K, V>>
         @Synchronized get() = map.entries
 
-    // these all need to be more deephys synchronized... this is a common issue
+    /* these all need to be more deephys synchronized... this is a common issue */
     actual override val keys: MutableSet<K>
         @Synchronized get() = map.keys
 
-    // these all need to be more deephys synchronized... this is a common issue
+    /* these all need to be more deephys synchronized... this is a common issue */
     actual override val values: MutableCollection<V>
         @Synchronized get() = map.values
 
@@ -87,7 +87,7 @@ actual class DefaultStoringMap<K, V : Any> actual constructor(
     @Synchronized
     actual override fun put(
         key: K,
-        value: V,
+        value: V
     ): V? = map.put(key, value)
 
     @Synchronized

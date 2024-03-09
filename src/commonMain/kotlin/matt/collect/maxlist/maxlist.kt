@@ -3,7 +3,7 @@ package matt.collect.maxlist
 import matt.collect.fake.toFakeMutableList
 import matt.collect.itr.ItrChange.Add
 import matt.collect.itr.MutableListIteratorWrapper
-import matt.lang.err
+import matt.lang.common.err
 
 class MaxList<E>(val maxsize: Int) : MutableList<E> {
     private val list = mutableListOf<E>()
@@ -29,7 +29,7 @@ class MaxList<E>(val maxsize: Int) : MutableList<E> {
 
     override fun addAll(
         index: Int,
-        elements: Collection<E>,
+        elements: Collection<E>
     ): Boolean {
         ensureSpaceFor(elements.size)
         return list.addAll(index, elements)
@@ -37,7 +37,7 @@ class MaxList<E>(val maxsize: Int) : MutableList<E> {
 
     override fun add(
         index: Int,
-        element: E,
+        element: E
     ) {
         ensureSpaceFor(1)
         list.add(index, element)
@@ -68,12 +68,12 @@ class MaxList<E>(val maxsize: Int) : MutableList<E> {
 
     override fun subList(
         fromIndex: Int,
-        toIndex: Int,
+        toIndex: Int
     ) = list.subList(fromIndex, toIndex).toFakeMutableList()
 
     override fun set(
         index: Int,
-        element: E,
+        element: E
     ) = list.set(index, element)
 
     override fun retainAll(elements: Collection<E>) = list.retainAll(elements)

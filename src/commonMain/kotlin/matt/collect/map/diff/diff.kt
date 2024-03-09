@@ -26,7 +26,7 @@ infix fun <K : Any, V : Any> Map<K, V>.diff(other: Map<K, V>): MapDiff {
         differentValues =
             differentValues.map {
                 KeyWithDifferentValues(key = it, value1 = mutableThis[it]!!, value2 = mutableOther[it]!!)
-            },
+            }
     )
 }
 
@@ -34,19 +34,19 @@ fun <K, V> Map.Entry<K, V>.toImmutableEntry() = ImmutableEntry(key = key, value 
 
 class ImmutableEntry<K, V>(
     override val key: K,
-    override val value: V,
+    override val value: V
 ) : Map.Entry<K, V>
 
 class KeyWithDifferentValues<K, V>(
     val key: K,
     val value1: V,
-    val value2: V,
+    val value2: V
 )
 
 class MapDiff(
     val missingFrom1: List<ImmutableEntry<*, *>>,
     val missingFrom2: List<ImmutableEntry<*, *>>,
-    val differentValues: List<KeyWithDifferentValues<*, *>>,
+    val differentValues: List<KeyWithDifferentValues<*, *>>
 ) : Diff {
     val report by lazy {
         string {

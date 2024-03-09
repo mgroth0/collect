@@ -10,10 +10,11 @@ import matt.collect.suspending.SuspendWrapMutableCollection
 import matt.lang.anno.Open
 import matt.lang.setall.setAll
 
-suspend fun <E> SuspendCollection<E>.toNonSuspendList() = when (this) {
-    is SuspendList -> toNonSuspendCollection()
-    else           -> toNonSuspendCollection().toList()
-}
+suspend fun <E> SuspendCollection<E>.toNonSuspendList() =
+    when (this) {
+        is SuspendList -> toNonSuspendCollection()
+        else           -> toNonSuspendCollection().toList()
+    }
 
 
 interface SuspendList<out E> : SuspendCollection<E> {
@@ -35,7 +36,6 @@ interface SuspendList<out E> : SuspendCollection<E> {
     ): SuspendList<E>
 
     override suspend fun toNonSuspendCollection(): List<E>
-
 }
 
 
@@ -76,7 +76,8 @@ interface SuspendListIterator<out E> : SuspendIterator<E> {
 
 fun <E> ListIterator<E>.suspending() = SuspendWrapListIterator(this)
 
-open class SuspendWrapListIterator<E>(private val itr: ListIterator<E>) : SuspendWrapIterator<E>(itr),
+open class SuspendWrapListIterator<E>(private val itr: ListIterator<E>) :
+    SuspendWrapIterator<E>(itr),
     SuspendListIterator<E> {
     final override suspend fun hasPrevious(): Boolean = itr.hasPrevious()
 
@@ -85,7 +86,6 @@ open class SuspendWrapListIterator<E>(private val itr: ListIterator<E>) : Suspen
     final override suspend fun previous(): E = itr.previous()
 
     final override suspend fun previousIndex(): Int = itr.previousIndex()
-
 }
 
 
@@ -121,7 +121,6 @@ interface SuspendMutableList<E> : SuspendList<E>, SuspendMutableCollection<E> {
     ): E
 
     override suspend fun toNonSuspendCollection(): MutableList<E>
-
 }
 
 fun <E> MutableList<E>.suspending() = SuspendWrapMutableList(this)
@@ -182,13 +181,12 @@ interface SuspendMutableListIterator<E> : SuspendListIterator<E>, SuspendMutable
 
 fun <E> MutableListIterator<E>.suspending() = SuspendWrapMutableListIterator(this)
 
-class SuspendWrapMutableListIterator<E>(private val itr: MutableListIterator<E>) : SuspendWrapListIterator<E>(itr),
+class SuspendWrapMutableListIterator<E>(private val itr: MutableListIterator<E>) :
+    SuspendWrapListIterator<E>(itr),
     SuspendMutableListIterator<E> {
     override suspend fun add(element: E) = itr.add(element)
 
     override suspend fun set(element: E) = itr.set(element)
 
     override suspend fun remove() = itr.remove()
-
-
 }

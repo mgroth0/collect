@@ -1,4 +1,4 @@
-package matt.collect.suspending
+package matt.collect.suspending.test.suspending
 
 import matt.collect.suspending.ext.suspendSetOf
 import matt.collect.suspending.list.SuspendWrapList
@@ -9,14 +9,15 @@ import matt.collect.suspending.list.suspending
 import matt.collect.suspending.set.fake.FakeMutableSuspendSet
 import matt.model.op.convert.LongMillisConverter
 import matt.test.co.runTestWithTimeoutOnlyIfTestingPerformance
-import matt.test.scaffold.TestScaffold
+import matt.test.jcommon.Tests
+import kotlin.test.Test
 
 
-class SuspendingCollectionsTest : TestScaffold() {
-    override fun initEnums() {
+class SuspendingCollectionsTest :Tests() {
+    @Test fun initEnums() {
     }
 
-    override fun initObjects() {
+    @Test fun initObjects() {
 
         listOf(1).suspending()
         SuspendProxyList(
@@ -26,17 +27,15 @@ class SuspendingCollectionsTest : TestScaffold() {
         SuspendWrapListIterator(listOf(1).listIterator())
     }
 
-    override fun initVals() {
+    @Test fun initVals() {
     }
 
-    override fun instantiateClasses() {
+    @Test fun instantiateClasses() {
         runTestWithTimeoutOnlyIfTestingPerformance {
             FakeMutableSuspendSet(suspendSetOf<Int>())
         }
-
     }
 
-    override fun runFunctions() {
+    @Test fun runFunctions() {
     }
-
 }

@@ -1,4 +1,3 @@
-@file:JvmName("PropsJvmAndroidKt")
 
 package matt.collect.props
 

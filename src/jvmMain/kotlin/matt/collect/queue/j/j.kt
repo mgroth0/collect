@@ -1,5 +1,6 @@
-package matt.collect.queue
+package matt.collect.queue.j
 
+import matt.collect.queue.MyMutableQueue
 import java.util.Queue
 
 class JQueueWrapper<E : Any>(private val jQueue: Queue<E>) : MyMutableQueue<E> {

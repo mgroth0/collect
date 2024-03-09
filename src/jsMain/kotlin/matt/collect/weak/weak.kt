@@ -33,7 +33,7 @@ actual class WeakMap<K, V> : MutableMap<K, V> {
 
     actual override fun put(
         key: K,
-        value: V,
+        value: V
     ): V? {
         val oldValue = map[key.hashCode()]
         map[key.hashCode()] = value
@@ -41,9 +41,7 @@ actual class WeakMap<K, V> : MutableMap<K, V> {
     }
 
     actual override fun get(key: K): V? {
-// 	if (verbose) println("looking at weakmap with key:${key}")
         val r = map[key.hashCode()] as V?
-// 	if (verbose) println("r=$r, r==null=${r == null}")
         return r
     }
 

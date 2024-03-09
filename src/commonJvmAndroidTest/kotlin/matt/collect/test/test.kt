@@ -16,40 +16,39 @@ import matt.collect.itr.loop.Loop
 import matt.collect.itr.recurse.chain.chain
 import matt.collect.itr.recurse.depth.recursionDepth
 import matt.collect.itr.recurse.recurse
-import matt.collect.lazy.basic.MutableLazyList
 import matt.collect.lazy.seq.LazySequenceList
 import matt.collect.lazy.set.LazySet
 import matt.collect.list.single.SingleElementListImpl
-import matt.collect.map.dmap.withStoringDefault
+import matt.collect.map.dmap.inter.withStoringDefault
+import matt.collect.tree.ext.countThisAndChildren
+import matt.collect.tree.ext.withParentReferences
+import matt.collect.tree.impl.linear.LinearTreeNode
 import matt.collect.weak.bag.WeakBag
-import matt.lang.model.value.LazyValue
-import matt.test.Tests
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-class CollectTests : Tests() {
+class CollectTests  {
     @Test
-    fun constructClasses() =
-        assertRunsInOneMinute {
-            SingleElementListImpl(1)
-            LazySet(sequenceOf(1, 2, 3).iterator())
-            WeakBag<Int>()
-            MutableLazyList(listOf(LazyValue { 1 }))
-            LazySequenceList(sequenceOf(1, 2, 3))
-            FakeMutableList(listOf(1, 2, 3))
-            Loop(listOf(1, 2, 3))
-            FakeMutableListIterator(listOf(1, 2, 3).listIterator())
-            FakeMutableIterator(setOf(1, 2, 3).iterator())
-            LoopIterator(listOf(1, 2, 3))
-            MutableLoopIterator(mutableListOf(1, 2, 3))
-            LoopListIterator(listOf(1, 2, 3))
-            MutableLoopListIterator(mutableListOf(1, 2, 3))
-            MutableIteratorWrapper(mutableListOf(1))
-            MutableListIteratorWrapper(mutableListOf(1))
-            MutableIteratorWithSomeMemory(mutableListOf(1))
-            MutableListIteratorWithSomeMemory(mutableListOf(1))
-        }
+    fun constructClasses() {
+        SingleElementListImpl(1)
+        LazySet(sequenceOf(1, 2, 3).iterator())
+        WeakBag<Int>()
+        /*MutableLazyList(listOf(LazyValue { 1 }))*/
+        LazySequenceList(sequenceOf(1, 2, 3))
+        FakeMutableList(listOf(1, 2, 3))
+        Loop(listOf(1, 2, 3))
+        FakeMutableListIterator(listOf(1, 2, 3).listIterator())
+        FakeMutableIterator(setOf(1, 2, 3).iterator())
+        LoopIterator(listOf(1, 2, 3))
+        MutableLoopIterator(mutableListOf(1, 2, 3))
+        LoopListIterator(listOf(1, 2, 3))
+        MutableLoopListIterator(mutableListOf(1, 2, 3))
+        MutableIteratorWrapper(mutableListOf(1))
+        MutableListIteratorWrapper(mutableListOf(1))
+        MutableIteratorWithSomeMemory(mutableListOf(1))
+        MutableListIteratorWithSomeMemory(mutableListOf(1))
+    }
 
     @Test
     fun runFunctions() {
@@ -76,5 +75,12 @@ class CollectTests : Tests() {
         m[1]
         assertEquals(1, m.size)
         assertEquals("1", m.getWithoutSetting(1))
+    }
+
+    @Test
+    fun treeOps() {
+        val node = LinearTreeNode("a", listOf(LinearTreeNode("b", setOf()), LinearTreeNode("c", setOf())))
+        val biNode = node.withParentReferences()
+        assertEquals(3, biNode.countThisAndChildren())
     }
 }

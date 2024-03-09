@@ -1,12 +1,13 @@
 package matt.collect.lazy.set
 
 import matt.collect.lazy.LazyCollection
-import matt.lang.go
-import matt.lang.sync.ReferenceMonitor
+import matt.lang.common.go
+import matt.lang.sync.common.ReferenceMonitor
+import matt.lang.sync.common.inSync
 import matt.lang.sync.inSync
 
 class LazySet<E : Any>(
-    private val generator: Iterator<E>,
+    private val generator: Iterator<E>
 ) : LazyCollection<E>, Set<E>, ReferenceMonitor {
     constructor(generator: Sequence<E>) : this(generator.iterator())
 
@@ -74,32 +75,34 @@ class LazySet<E : Any>(
 
                 private var itr = theSet.toSet().iterator()
 
-                override fun hasNext(): Boolean = inSync(this@LazySet) {
-                    lastGeneratedFrom?.go {
-                        if (it != this) {
-                            error("bad lazy set")
+                override fun hasNext(): Boolean =
+                    inSync(this@LazySet) {
+                        lastGeneratedFrom?.go {
+                            if (it != this) {
+                                error("bad lazy set")
+                            }
+                        }
+
+                        if (itr.hasNext()) {
+                            true
+                        } else {
+                            generator.hasNext()
                         }
                     }
 
-                    if (itr.hasNext()) {
-                        true
-                    } else {
-                        generator.hasNext()
-                    }
-                }
-
-                override fun next(): E = inSync(this@LazySet) {
-                    lastGeneratedFrom?.go {
-                        if (it != this) {
-                            error("bad lazy set")
+                override fun next(): E =
+                    inSync(this@LazySet) {
+                        lastGeneratedFrom?.go {
+                            if (it != this) {
+                                error("bad lazy set")
+                            }
+                        }
+                        if (itr.hasNext()) {
+                            itr.next()
+                        } else {
+                            generateAnother(this)!!
                         }
                     }
-                    if (itr.hasNext()) {
-                        itr.next()
-                    } else {
-                        generateAnother(this)!!
-                    }
-                }
             }
         }
 }

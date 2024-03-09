@@ -1,8 +1,8 @@
 package matt.collect.map.sync
 
 import matt.lang.anno.Open
-import matt.lang.sync.ReferenceMonitor
-import matt.lang.sync.inSync
+import matt.lang.sync.common.ReferenceMonitor
+import matt.lang.sync.common.inSync
 import kotlin.collections.Map.Entry
 import kotlin.collections.MutableMap.MutableEntry
 
@@ -40,7 +40,7 @@ open class SynchronizedMap<K, V>(protected open val map: Map<K, V>) : Map<K, V>,
         }
 }
 
-fun <K, V> MutableMap<K, V>.synchronized(): MutableMap<K, V> = SynchronizedMutableMap(this)
+fun <K, V> MutableMap<K, V>.synchronized() = SynchronizedMutableMap(this)
 
 class SynchronizedMutableMap<K, V>(protected override val map: MutableMap<K, V>) :
     SynchronizedMap<K, V>(map),
@@ -59,7 +59,7 @@ class SynchronizedMutableMap<K, V>(protected override val map: MutableMap<K, V>)
 
     override fun put(
         key: K,
-        value: V,
+        value: V
     ): V? =
         inSync {
             return map.put(key, value)
@@ -77,7 +77,7 @@ class SynchronizedMutableMap<K, V>(protected override val map: MutableMap<K, V>)
 
     fun getOrPutAtomically(
         key: K,
-        defaultValue: () -> V,
+        defaultValue: () -> V
     ): V =
         inSync {
             return map.getOrPut(key, defaultValue)

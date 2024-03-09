@@ -22,8 +22,13 @@
     },
     {
       "type": "Project",
-      "cfg": "jvmTestImplementation",
+      "cfg": "commonJvmAndroidTestImplementation",
       "path": ":k:test"
+    },
+    {
+      "type": "Project",
+      "cfg": "androidInstrumentedTestImplementation",
+      "path": ":k:test:ainstrument"
     }
   ],
   "android": {
@@ -34,5 +39,5 @@
   "js": {
     "type": "lib"
   },
-  "native": "LIB"
+  "native": {"type":"Lib"}
 }

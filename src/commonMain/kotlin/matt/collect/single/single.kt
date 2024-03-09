@@ -18,7 +18,7 @@ abstract class SingleElementCollection<E> : Collection<E> {
 
 class SingleElementIterator<E>(
     private val e: E,
-    private var got: Boolean = false,
+    private var got: Boolean = false
 ) : ListIterator<E> {
     override fun hasNext() = !got
 

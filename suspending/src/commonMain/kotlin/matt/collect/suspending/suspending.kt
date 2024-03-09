@@ -48,7 +48,6 @@ open class SuspendWrapCollection<E>(private val collection: Collection<E>) : Sus
     override suspend fun toNonSuspendCollection(): Collection<E> {
         TODO()
     }
-
 }
 
 
@@ -84,12 +83,12 @@ interface SuspendMutableCollection<E> : SuspendCollection<E> {
 
     @SeeURL("https://youtrack.jetbrains.com/issue/KT-63233/K2-false-negative-Class-is-not-abstract-and-does-not-implement-abstract-member-with-abstract-suspend-function")
     suspend fun setAll(c: Collection<E>)
-
 }
 
 
 @SeeURL("https://youtrack.jetbrains.com/issue/KT-63233/K2-false-negative-Class-is-not-abstract-and-does-not-implement-abstract-member-with-abstract-suspend-function")
-open class SuspendWrapMutableCollection<E>(private val col: MutableCollection<E>) : SuspendWrapCollection<E>(col),
+open class SuspendWrapMutableCollection<E>(private val col: MutableCollection<E>) :
+    SuspendWrapCollection<E>(col),
     SuspendMutableCollection<E> {
 
     @Open
@@ -98,7 +97,6 @@ open class SuspendWrapMutableCollection<E>(private val col: MutableCollection<E>
     final override suspend fun add(element: E): Boolean = col.add(element)
 
 
-    // Bulk Modification Operations
     /**
      * Adds all of the elements of the specified collection to this collection.
      *
@@ -198,7 +196,6 @@ class MappedSuspendIterator<S, T>(
     override fun toNonSuspendingIterator(): Iterator<T> {
         TODO()
     }
-
 }
 
 interface SuspendMutableIterator<E> : SuspendIterator<E> {
@@ -207,11 +204,10 @@ interface SuspendMutableIterator<E> : SuspendIterator<E> {
 
 fun <E> MutableIterator<E>.suspending() = SuspendWrapMutableIterator(this)
 
-open class SuspendWrapMutableIterator<E>(private val itr: MutableIterator<E>) : SuspendWrapIterator<E>(itr),
+open class SuspendWrapMutableIterator<E>(private val itr: MutableIterator<E>) :
+    SuspendWrapIterator<E>(itr),
     SuspendMutableIterator<E> {
     final override suspend fun remove() = itr.remove()
-
-
 }
 
 

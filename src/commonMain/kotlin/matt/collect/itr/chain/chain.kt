@@ -25,7 +25,7 @@ fun <E> List<E>.circularChain(): ChainLink<E> {
 
 class ChainLink<E>(
     val element: E,
-    isStart: Boolean,
+    isStart: Boolean
 ) {
     var isStart = isStart
         private set
@@ -38,7 +38,7 @@ class ChainLink<E>(
         check(previous != next)
         previous.mutableNext = next
         next.mutablePrevious = previous
-        if (this.isStart) {
+        if (isStart) {
             next.isStart = true
         }
         mutableNext = null

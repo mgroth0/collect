@@ -5,7 +5,7 @@ import matt.collect.suspending.SuspendMutableIterator
 import matt.collect.suspending.fake.SuspendFakeMutableIterator
 import matt.collect.suspending.set.SuspendMutableSet
 import matt.collect.suspending.set.SuspendSet
-import matt.lang.err
+import matt.lang.common.err
 
 fun <E> SuspendSet<E>.toSuspendingFakeMutableSet() = FakeMutableSuspendSet(this)
 
@@ -50,5 +50,4 @@ class FakeMutableSuspendSet<E>(val set: SuspendCollection<E>) : SuspendMutableSe
     override suspend fun isEmpty(): Boolean = set.isEmpty()
 
     override suspend fun toNonSuspendCollection(): Collection<E> = set.toNonSuspendCollection()
-
 }

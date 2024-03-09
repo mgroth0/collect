@@ -1,17 +1,18 @@
-@file:OptIn(ExperimentalStdlibApi::class)
-
 package matt.collect.lazy.basic
 
-import matt.collect.itr.FakeMutableIterator
-import matt.collect.itr.FakeMutableListIterator
-import matt.collect.itr.iterateM
-import matt.collect.lazy.LazyList
-import matt.lang.NOT_IMPLEMENTED
-import matt.lang.anno.Open
-import matt.lang.model.value.LazyValue
+import matt.lang.anno.JetBrainsYouTrackProject.KT
+import matt.lang.anno.YouTrackIssue
+
+@YouTrackIssue(KT, 65555)
+object ToUnCommentInK2Beta
+/*
+
+ // I ACTUALLY WANT TO KEEP THIS CLASS. IT IS JUST BROKEN IN K2-BETA4. See https://youtrack.jetbrains.com/issue/KT-65555/K2-must-override-spliterator-because-it-inherits-multiple-implementations-for-it. Should be fixed in Beta5.
+
+
 
 class MutableLazyList<E>(
-    lazyValues: List<LazyValue<E>>,
+    lazyValues: List<LazyValue<E>>
 ) : BasicLazyList<E>(lazyValues), MutableList<E> {
     override val lazyValues = lazyValues.toMutableList()
 
@@ -23,7 +24,7 @@ class MutableLazyList<E>(
 
     override fun subList(
         fromIndex: Int,
-        toIndex: Int,
+        toIndex: Int
     ) = NOT_IMPLEMENTED
 
     override fun add(element: E): Boolean {
@@ -33,14 +34,14 @@ class MutableLazyList<E>(
 
     override fun add(
         index: Int,
-        element: E,
+        element: E
     ) {
         lazyValues.add(index, LazyValue { element })
     }
 
     override fun addAll(
         index: Int,
-        elements: Collection<E>,
+        elements: Collection<E>
     ): Boolean {
         lazyValues.addAll(index, elements.map { LazyValue { it } })
         return true
@@ -59,7 +60,7 @@ class MutableLazyList<E>(
 
     override fun set(
         index: Int,
-        element: E,
+        element: E
     ) = NOT_IMPLEMENTED
 
     override fun retainAll(elements: Collection<E>): Boolean = lazyValues.removeAll { it.value !in elements }
@@ -75,12 +76,14 @@ class MutableLazyList<E>(
         }
         return false
     }
+
+
 }
 
 open class BasicLazyList<E>(
     lazyValues: List<LazyValue<E>>,
     startIndex: Int = 0,
-    endIndex: Int? = null,
+    endIndex: Int? = null
 ) : LazyList<E> {
     protected open val lazyValues = lazyValues.subList(startIndex, endIndex ?: (lazyValues.size))
 
@@ -123,7 +126,7 @@ open class BasicLazyList<E>(
     @Open
     override fun subList(
         fromIndex: Int,
-        toIndex: Int,
+        toIndex: Int
     ) = BasicLazyList(lazyValues, fromIndex, toIndex)
 
     final override fun lastIndexOf(element: E): Int {
@@ -144,3 +147,4 @@ open class BasicLazyList<E>(
 
     final override fun contains(element: E) = indexOf(element) >= 0
 }
+*/

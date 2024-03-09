@@ -1,11 +1,11 @@
 package matt.collect.map
 
 import matt.collect.itr.FakeMutableIterator
-import matt.collect.map.dmap.CanBeNotNullMap
-import matt.collect.map.dmap.CanBeNotNullMutableMap
-import matt.collect.map.dmap.withStoringDefault
+import matt.collect.map.dmap.inter.CanBeNotNullMap
+import matt.collect.map.dmap.inter.CanBeNotNullMutableMap
+import matt.collect.map.dmap.inter.withStoringDefault
 import matt.lang.anno.Open
-import matt.lang.err
+import matt.lang.common.err
 import matt.prim.str.lower
 import kotlin.collections.MutableMap.MutableEntry
 
@@ -74,7 +74,6 @@ class MapFromKeyValueLists<K, V>(
     override fun containsValue(value: V) = mapSnap.containsValue(value)
 
     override fun containsKey(key: K) = mapSnap.containsKey(key)
-
 }
 
 
@@ -102,7 +101,6 @@ sealed class CaseInsensitiveMap<V> : Map<String, V> {
     final override fun get(key: String): V? = map[key.lower()]
 
     final override fun isEmpty(): Boolean = map.isEmpty()
-
 }
 
 fun <E> Set<E>.toFakeMutableSet() = FakeMutableSet(this)
@@ -144,7 +142,6 @@ class FakeMutableSet<E>(val set: Collection<E>) : MutableSet<E> {
     override fun containsAll(elements: Collection<E>): Boolean = set.containsAll(elements)
 
     override fun isEmpty(): Boolean = set.isEmpty()
-
 }
 
 
@@ -163,17 +160,17 @@ class MutableCaseInsensitiveMap<V> : CaseInsensitiveMap<V>(), MutableMap<String,
     override fun put(
         key: String,
         value: V
-    ): V? = map.put(
-        key.lower(),
-        value
-    )
+    ): V? =
+        map.put(
+            key.lower(),
+            value
+        )
 
     override fun putAll(from: Map<out String, V>) {
         map.putAll(from.mapKeys { it.key.lower() })
     }
 
     override fun remove(key: String): V? = map.remove(key.lower())
-
 }
 
 
@@ -216,9 +213,9 @@ fun <K, V> Map<K, V>.filterOutNullValues(): Map<K, V & Any> {
 
 
 
-class MapThatRemovesOnGet<K,V: Any>(
-    private val map: MutableMap<K,V>
-): MutableMap<K,V> {
+class MapThatRemovesOnGet<K, V: Any>(
+    private val map: MutableMap<K, V>
+): MutableMap<K, V> {
     override val size: Int
         get() = map.size
 
@@ -231,51 +228,51 @@ class MapThatRemovesOnGet<K,V: Any>(
     override fun isEmpty(): Boolean = map.isEmpty()
 
     override val entries: MutableSet<MutableEntry<K, V>>
-        get() = object: MutableSet<MutableEntry<K,V>> {
-            override fun add(element: MutableEntry<K, V>): Boolean {
-                TODO("Not yet implemented")
+        get() =
+            object: MutableSet<MutableEntry<K, V>> {
+                override fun add(element: MutableEntry<K, V>): Boolean {
+                    TODO("Not yet implemented")
+                }
+
+                override fun addAll(elements: Collection<MutableEntry<K, V>>): Boolean {
+                    TODO("Not yet implemented")
+                }
+
+                override val size: Int
+                    get() = TODO("Not yet implemented")
+
+                override fun clear() {
+                    TODO("Not yet implemented")
+                }
+
+                override fun isEmpty(): Boolean {
+                    TODO("Not yet implemented")
+                }
+
+                override fun containsAll(elements: Collection<MutableEntry<K, V>>): Boolean {
+                    TODO("Not yet implemented")
+                }
+
+                override fun contains(element: MutableEntry<K, V>): Boolean {
+                    TODO("Not yet implemented")
+                }
+
+                override fun iterator(): MutableIterator<MutableEntry<K, V>> {
+                    TODO("Not yet implemented")
+                }
+
+                override fun retainAll(elements: Collection<MutableEntry<K, V>>): Boolean {
+                    TODO("Not yet implemented")
+                }
+
+                override fun removeAll(elements: Collection<MutableEntry<K, V>>): Boolean {
+                    TODO("Not yet implemented")
+                }
+
+                override fun remove(element: MutableEntry<K, V>): Boolean {
+                    TODO("Not yet implemented")
+                }
             }
-
-            override fun addAll(elements: Collection<MutableEntry<K, V>>): Boolean {
-                TODO("Not yet implemented")
-            }
-
-            override val size: Int
-                get() = TODO("Not yet implemented")
-
-            override fun clear() {
-                TODO("Not yet implemented")
-            }
-
-            override fun isEmpty(): Boolean {
-                TODO("Not yet implemented")
-            }
-
-            override fun containsAll(elements: Collection<MutableEntry<K, V>>): Boolean {
-                TODO("Not yet implemented")
-            }
-
-            override fun contains(element: MutableEntry<K, V>): Boolean {
-                TODO("Not yet implemented")
-            }
-
-            override fun iterator(): MutableIterator<MutableEntry<K, V>> {
-                TODO("Not yet implemented")
-            }
-
-            override fun retainAll(elements: Collection<MutableEntry<K, V>>): Boolean {
-                TODO("Not yet implemented")
-            }
-
-            override fun removeAll(elements: Collection<MutableEntry<K, V>>): Boolean {
-                TODO("Not yet implemented")
-            }
-
-            override fun remove(element: MutableEntry<K, V>): Boolean {
-                TODO("Not yet implemented")
-            }
-
-        }
     override val keys: MutableSet<K>
         get() = map.keys
     override val values: MutableCollection<V>
@@ -288,7 +285,7 @@ class MapThatRemovesOnGet<K,V: Any>(
     override fun put(
         key: K,
         value: V
-    ): V? = map.put(key,value)
+    ): V? = map.put(key, value)
 
     override fun putAll(from: Map<out K, V>) {
         map.putAll(from)

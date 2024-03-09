@@ -1,15 +1,6 @@
 package matt.collect.map.dmap
 
-fun <K, V : Any> MutableMap<K, V>.withStoringDefault(
-    d: (K) -> V
-): DefaultStoringMap<K, V> = DefaultStoringMap(this, d)
-
-interface CanBeNotNullMutableMap<K, V : Any> : MutableMap<K, V>, CanBeNotNullMap<K, V>
-
-interface CanBeNotNullMap<K, V : Any> : Map<K, V> {
-    override operator fun get(key: K): V
-}
-
+import matt.collect.map.dmap.inter.CanBeNotNullMutableMap
 
 expect class DefaultStoringMap<K, V : Any>(
     map: MutableMap<K, V>,
@@ -45,5 +36,4 @@ expect class DefaultStoringMap<K, V : Any>(
     override fun putAll(from: Map<out K, V>)
 
     override fun remove(key: K): V?
-
 }

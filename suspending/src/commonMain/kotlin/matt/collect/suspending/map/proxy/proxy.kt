@@ -39,12 +39,13 @@ class SuspendProxyMap<SK : Any, SV : Any, TK : Any, TV : Any>(
     private fun TK.toSK() = keyConverter.convertToA(this)
     private fun TV.toSV() = valueConverter.convertToA(this)
 
-    override suspend fun currentEntries(): SuspendMutableSet<out SuspendMutableEntry<TK, TV?>> = innerMap.currentEntries().map { e ->
-        object : SuspendEntry<TK, TV?> {
-            override suspend fun key() = e.key().toTK()
-            override suspend fun value() = e.value()?.toTV()
-        }.toFakeSuspendMutableEntry()
-    }.toSet().toSuspendingFakeMutableSet()
+    override suspend fun currentEntries(): SuspendMutableSet<out SuspendMutableEntry<TK, TV?>> =
+        innerMap.currentEntries().map { e ->
+            object : SuspendEntry<TK, TV?> {
+                override suspend fun key() = e.key().toTK()
+                override suspend fun value() = e.value()?.toTV()
+            }.toFakeSuspendMutableEntry()
+        }.toSet().toSuspendingFakeMutableSet()
 
     override fun entry(key: TK): SuspendMutableEntry<TK, TV?> {
         val skKey = key.toSK()
@@ -55,7 +56,6 @@ class SuspendProxyMap<SK : Any, SV : Any, TK : Any, TV : Any>(
             override suspend fun key(): TK = key
 
             override suspend fun value(): TV? = e.value()?.toTV()
-
         }
     }
 
@@ -69,23 +69,21 @@ class SuspendProxyMap<SK : Any, SV : Any, TK : Any, TV : Any>(
         snapshot().map { it.value }.suspending().toSuspendingFakeMutableList()
 
     override suspend fun clear() = innerMap.clear()
-    override suspend fun snapshot(): Set<Entry<TK, TV>> {
-        return innerMap.snapshot().mapToSet { e ->
+    override suspend fun snapshot(): Set<Entry<TK, TV>> =
+        innerMap.snapshot().mapToSet { e ->
             object : Map.Entry<TK, TV> {
                 override val key = e.key.toTK()
                 override val value = e.value.toTV()
-
             }
         }
-//        toNonSuspendMap().entries
-    }
 
     override suspend fun isEmpty() = innerMap.isEmpty()
-    override suspend fun toNonSuspendMap(): Map<TK, TV> = ImmutableProxyMap(
-        innerMap.toNonSuspendMap(),
-        keyConverter,
-        valueConverter
-    )
+    override suspend fun toNonSuspendMap(): Map<TK, TV> =
+        ImmutableProxyMap(
+            innerMap.toNonSuspendMap(),
+            keyConverter,
+            valueConverter
+        )
 
     override suspend fun remove(key: TK) = innerMap.remove(key.toSK())?.toTV()
 
@@ -96,10 +94,11 @@ class SuspendProxyMap<SK : Any, SV : Any, TK : Any, TV : Any>(
     override suspend fun put(
         key: TK,
         value: TV
-    ): TV? = innerMap.put(
-        key.toSK(),
-        value.toSV()
-    )?.toTV()
+    ): TV? =
+        innerMap.put(
+            key.toSK(),
+            value.toSV()
+        )?.toTV()
 
     override suspend fun get(key: TK): TV? = innerMap.get(key.toSK())?.toTV()
 
@@ -107,6 +106,8 @@ class SuspendProxyMap<SK : Any, SV : Any, TK : Any, TV : Any>(
 
     override suspend fun containsKey(key: TK): Boolean = innerMap.containsKey(key.toSK())
 
-    override suspend fun chunkFlow(): Flow<Map<TK, TV>> = innerMap.chunkFlow().map { it.mapKeys { it.key.toTK() }.mapValues { it.value.toTV() } }
-
+    override suspend fun chunkFlow(): Flow<Map<TK, TV>> =
+        innerMap.chunkFlow().map {
+            it.mapKeys { it.key.toTK() }.mapValues { it.value.toTV() }
+        }
 }

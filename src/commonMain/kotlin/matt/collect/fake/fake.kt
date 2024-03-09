@@ -2,7 +2,7 @@ package matt.collect.fake
 
 import matt.collect.itr.toFakeMutableIterator
 import matt.collect.itr.toFakeMutableListIterator
-import matt.lang.err
+import matt.lang.common.err
 
 fun <E> List<E>.toFakeMutableList() = FakeMutableList(this)
 

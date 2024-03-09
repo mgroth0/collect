@@ -8,41 +8,6 @@ import matt.collect.suspending.set.SuspendSet
 import matt.lang.anno.Open
 import kotlin.collections.Map.Entry
 
-/*@OptIn(
-    ExperimentalSerializationApi::class,
-    InternalSerializationApi::class
-)
-class SuspendMapSerializer<K : Any, V : Any>(
-    val kSerializer: KSerializer<K>,
-    val vSerializer: KSerializer<V>
-) : KSerializer<SuspendMap<K, V>> {
-
-
-    override val descriptor: SerialDescriptor by lazy {
-
-        mapSerialDescriptor(
-            kSerializer.descriptor,
-            vSerializer.descriptor
-        )
-    }
-
-    override fun deserialize(decoder: Decoder): SuspendMap<K, V> {
- *//*Map<K, V>::class.serializer().descriptor
-        val e = (decoder as JsonDecoder).decodeJsonElement()
-        val map = decodeFromJsonElement<Map<K, V>>(e)
-        Map<K, V>*//*
-        TODO()
-    }
-
-    override fun serialize(
-        encoder: Encoder,
-        value: SuspendMap<K, V>
-    ) {
-        val nonSuspendMap = value.toNonSuspendMap()
-    }
-}*/
-
-
 interface SuspendMap<K, V> {
     suspend fun snapshot(): Set<Map.Entry<K, V>>
     suspend fun currentEntries(): SuspendSet<SuspendEntry<K, V?>>
@@ -62,10 +27,6 @@ open class SuspendMapWrap<K, V>(protected open val map: Map<K, V>) : SuspendMap<
     final override suspend fun snapshot(): Set<Entry<K, V>> {
         TODO()
     }
-
-//    override fun snapshot(): Set<Map.Entry<K, V>> {
-//        TODO()
-//    }
 
     @Open
     override suspend fun currentEntries(): SuspendSet<SuspendEntry<K, V?>> {
@@ -128,17 +89,15 @@ interface SuspendMutableMap<K, V> : SuspendMap<K, V> {
     ): V?
 
     suspend fun chunkFlow(): Flow<Map<K, V>>
-
-
 }
 
 fun <K, V> MutableMap<K, V>.suspending() = SuspendMutableMapWrap(this)
 
-class SuspendMutableMapWrap<K, V>(override val map: MutableMap<K, V>) : SuspendMapWrap<K, V>(map),
+class SuspendMutableMapWrap<K, V>(override val map: MutableMap<K, V>) :
+    SuspendMapWrap<K, V>(map),
     SuspendMutableMap<K, V> {
     override fun entry(key: K): SuspendMutableEntry<K, V?> = TODO()
 
-    //    override suspend fun snapshot(): Set<Map.Entry<K, V>> = TODO()
     override suspend fun currentEntries(): SuspendMutableSet<SuspendMutableEntry<K, V?>> {
         TODO()
     }
@@ -183,10 +142,6 @@ interface SuspendVar<T> : SuspendVal<T> {
     suspend fun set(t: T)
 }
 
-//interface DeletableSuspendVar<T>: SuspendVar<T> {
-//    fun delete()
-//}
-
 interface SuspendEntry<out K, out V> {
     suspend fun key(): K
     suspend fun value(): V
@@ -214,13 +169,12 @@ interface SuspendMutableEntry<K, V> : SuspendEntry<K, V>, SuspendVar<V>/*, Delet
     override suspend fun set(t: V) {
         setValue(t)
     }
-
-
 }
 
 fun <K, V> MutableMap.MutableEntry<K, V>.suspending() = SuspendMutableEntryWrap(this)
 
-class SuspendMutableEntryWrap<K, V>(override val entry: MutableMap.MutableEntry<K, V>) : SuspendEntryWrap<K, V>(entry),
+class SuspendMutableEntryWrap<K, V>(override val entry: MutableMap.MutableEntry<K, V>) :
+    SuspendEntryWrap<K, V>(entry),
     SuspendMutableEntry<K, V> {
     override suspend fun setValue(newValue: V): V {
         TODO()
@@ -229,7 +183,6 @@ class SuspendMutableEntryWrap<K, V>(override val entry: MutableMap.MutableEntry<
         override fun delete() {
             TODO()
         }*/
-
 }
 
 fun <K, V> SuspendEntry<K, V>.toFakeSuspendMutableEntry() = FakeSuspendMutableEntry(this)
@@ -243,5 +196,4 @@ class FakeSuspendMutableEntry<K, V>(e: SuspendEntry<K, V>) : SuspendMutableEntry
         override fun delete() {
             TODO()
         }*/
-
 }

@@ -3,7 +3,7 @@ package matt.collect.list
 import matt.collect.itr.duplicates
 import matt.collect.itr.subList
 import matt.lang.assertions.require.requireEmpty
-import matt.lang.disabledCode
+import matt.lang.common.disabledCode
 import matt.prim.str.elementsToString
 import matt.prim.str.mybuild.api.string
 import kotlin.math.max
@@ -58,11 +58,13 @@ inline fun <E, reified R : E> List<E>.requireEachIs(): List<R> = map { it as R }
 class ReadOnlyList<E>(private val list: List<E>) : StructuralList<E>(), List<E> by list
 
 
-fun <E> List<E>.phase(newStartIndex: Int) = (newStartIndex..<size).map {
-    this[it]
-} + (0..<newStartIndex).map {
-    this[it]
-}
+fun <E> List<E>.phase(newStartIndex: Int) =
+    (newStartIndex..<size).map {
+        this[it]
+    } +
+        (0..<newStartIndex).map {
+            this[it]
+        }
 
 
 fun <E> List<E>.downSampled() = slice(indices step 10)
@@ -137,16 +139,10 @@ fun <E> MutableList<E>.setAllOneByOneNeverAllowingDuplicates(source: List<E>) {
 
                 targetItr.remove()
                 addAfter[sourceItr.previousIndex()] = sourceNext
-
-
             } else {
                 targetItr.set(sourceNext)
             }
-
-
         }
-
-
     }
 
     while (targetItr.hasNext()) {
@@ -157,7 +153,6 @@ fun <E> MutableList<E>.setAllOneByOneNeverAllowingDuplicates(source: List<E>) {
     addAfter.entries.forEach {
         add(it.key, it.value)
     }
-
 }
 
 
@@ -171,28 +166,31 @@ class ListDiff<E>(
 ): Diff {
     val isSameSize = targetList.size == testList.size
 
-    val needToAdd = targetList.mapIndexedNotNull { index, e ->
-        if (index !in testList.indices || testList[index] != e) {
-            IndexedValue(index = index, value = e)
-        } else null
-    }
-    val needToRemove = testList.mapIndexedNotNull { index, e ->
-        if (index !in targetList.indices || targetList[index] != e) {
-            IndexedValue(index = index, value = e)
-        } else null
-    }
+    val needToAdd =
+        targetList.mapIndexedNotNull { index, e ->
+            if (index !in testList.indices || testList[index] != e) {
+                IndexedValue(index = index, value = e)
+            } else null
+        }
+    val needToRemove =
+        testList.mapIndexedNotNull { index, e ->
+            if (index !in targetList.indices || targetList[index] != e) {
+                IndexedValue(index = index, value = e)
+            } else null
+        }
 
-    override fun toString(): String = string {
-        lineDelimited {
-            +"To Add"
-            needToAdd.forEach { +"\t$it" }
-            blankLine()
-            +"To Remove"
-            needToRemove.forEach {
-                +"\t$it"
+    override fun toString(): String =
+        string {
+            lineDelimited {
+                +"To Add"
+                needToAdd.forEach { +"\t$it" }
+                blankLine()
+                +"To Remove"
+                needToRemove.forEach {
+                    +"\t$it"
+                }
             }
         }
-    }
 }
 
 
@@ -201,4 +199,43 @@ inline fun <reified R> List<*>.castToList(): List<R> {
     return List(size) {
         itr.next() as R
     }
+}
+
+/*copied from JVM List*/
+fun <E> MutableList<E>.replaceAll(
+    operator: (E) ->  E
+) {
+    val li = listIterator()
+    while (li.hasNext()) {
+        li.set(operator.invoke(li.next()))
+    }
+}
+
+
+fun <E> MutableList<E>.replaceEvery(
+    a: E,
+    b: E
+) = replaceAll {
+    when (it) {
+        a -> b
+        else -> it
+    }
+}
+
+
+fun <E> MutableList<E>.removeOrAdd(e: E) {
+    val removed = remove(e)
+    if (!removed) add(e)
+}
+
+
+
+
+
+fun <E> MutableList<E>.removeOrAdd(
+    e: E,
+    index: Int
+) {
+    val removed = remove(e)
+    if (!removed) add(index, e)
 }

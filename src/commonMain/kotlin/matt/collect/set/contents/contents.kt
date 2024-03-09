@@ -28,8 +28,6 @@ class OrderedContentsSerializer<E>(private val dataSerializer: KSerializer<E>) :
     }
 
     override fun deserialize(decoder: Decoder): OrderedContents<E> = OrderedContents(decoder.decodeSerializableValue(listSer))
-
-
 }
 
 
@@ -49,7 +47,10 @@ class OrderedContents<E>(set: OrderedSet<E>) : Set<E> by set {
     constructor(itr: Sequence<E>) : this(itr.toSet())
     constructor(vararg e: E) : this(e.toSet())
 
-    override fun equals(other: Any?): Boolean = other is OrderedContents<*> && other.size == size && zip(other).all { it.first == it.second }
+    override fun equals(other: Any?): Boolean =
+        other is OrderedContents<*>
+            && other.size == size
+            && zip(other).all { it.first == it.second }
 
     override fun hashCode(): Int = map { it.hashCode() }.sum()
 }
@@ -68,12 +69,9 @@ class ContentsSerializer<E>(private val dataSerializer: KSerializer<E>) : KSeria
         value: Contents<E>
     ) {
         encoder.encodeSerializableValue(listSer, value.toList())
-
     }
 
     override fun deserialize(decoder: Decoder): Contents<E> = Contents(decoder.decodeSerializableValue(listSer))
-
-
 }
 
 
