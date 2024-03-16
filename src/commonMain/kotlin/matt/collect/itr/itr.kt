@@ -493,10 +493,7 @@ fun Array<FloatArray>.flatten() =
         }
     }
 
-@Suppress(
-    "SimplifiableCall", "UNCHECKED_CAST"
-)
-fun <T> Array<T>.filterNotNull(): List<T & Any> = filter { it != null } as List<T & Any>
+fun <T> Array<T>.filterNotNull(): List<T & Any> = mapNotNull { it }
 
 inline fun <T> Iterable<T>.firstOrErr(
     msg: String,

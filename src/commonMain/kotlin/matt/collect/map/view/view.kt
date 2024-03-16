@@ -31,3 +31,34 @@ class FilteredMap<K, V : Any>(
         TODO()
     }
 }
+
+
+class MapView<K, V : Any, VV>(
+    private val map: Map<K, V>,
+    private val view: (V) -> VV?
+) : Map<K, VV> {
+    override val entries: Set<Entry<K, VV>>
+        get() = TODO()
+    override val keys: Set<K>
+        get() = TODO()
+    override val size: Int
+        get() = TODO()
+    override val values: Collection<VV>
+        get() = TODO()
+
+    override fun isEmpty(): Boolean {
+        TODO()
+    }
+
+    override fun get(key: K): VV? {
+        TODO()
+    }
+
+    override fun containsValue(value: VV): Boolean {
+        TODO()
+    }
+
+    override fun containsKey(key: K): Boolean {
+        TODO()
+    }
+}

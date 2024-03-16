@@ -28,7 +28,6 @@ public suspend fun <T> SuspendIterator<T>.asFlow(): Flow<T> =
         }
     }
 
-@Suppress("UNCHECKED_CAST")
 public suspend inline fun <reified T> SuspendCollection<T>.toTypedArray(): Array<T> = toNonSuspendCollection().toTypedArray()
 
 /**
