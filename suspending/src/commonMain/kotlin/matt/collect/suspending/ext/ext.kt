@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalContracts::class)
+
 package matt.collect.suspending.ext
 
 
@@ -17,6 +19,7 @@ import matt.collect.suspending.set.SuspendSet
 import matt.collect.suspending.set.SuspendWrapSet
 import matt.collect.suspending.set.suspending
 import matt.lang.function.SuspendConvert
+import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind.UNKNOWN
 import kotlin.contracts.contract
 

@@ -1,10 +1,8 @@
 package matt.collect.itr.recurse.chain
 
 import matt.lang.common.err
-import kotlin.contracts.ExperimentalContracts
 
 
-@ExperimentalContracts
 fun <T : Any> T.chain(op: (T) -> T?): Sequence<T> = ChainIterator(this, op).asSequence()
 
 

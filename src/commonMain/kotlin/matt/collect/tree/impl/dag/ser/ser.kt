@@ -1,5 +1,6 @@
 package matt.collect.tree.impl.dag.ser
 
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.builtins.MapSerializer
@@ -26,6 +27,7 @@ class DagSerializer<T>(private val vertexSerializer: KSerializer<T>): KSerialize
             element(Serialized<*>::edges.name, SetSerializer(ListSerializer(serializer<Int>())).descriptor)
         }
 
+    @OptIn(ExperimentalSerializationApi::class)
     private val ser =
         serializer(
             Serialized::class,

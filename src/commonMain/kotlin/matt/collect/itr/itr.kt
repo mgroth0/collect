@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalContracts::class)
+
 package matt.collect.itr
 
 import matt.collect.itr.ItrChange.Add
@@ -579,7 +581,6 @@ fun <T> Iterable<T>.onEachApply(op: T.() -> Unit) = onEach { it.apply(op) }
 
 
 @Suppress("NO_TAIL_CALLS_FOUND", "NON_TAIL_RECURSIVE_CALL")
-@ExperimentalContracts
 tailrec fun <T : Any, R> T.search(
     getTarget: T.() -> R?,
     getNext: T.() -> T?
@@ -599,7 +600,6 @@ tailrec fun <T : Any, R> T.search(
 }
 
 
-@ExperimentalContracts
 tailrec fun <T : Any> T.searchDepth(
     currentDepth: Int = 0,
     getNext: T.() -> T?
